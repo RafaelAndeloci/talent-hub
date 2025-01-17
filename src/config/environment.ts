@@ -27,6 +27,10 @@ const config = {
   },
   fileStorage: {
 
+  },
+  allowedMimeTypes: {
+    images: ['image/jpeg', 'image/png'],
+    documents: ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
   }
 };
 

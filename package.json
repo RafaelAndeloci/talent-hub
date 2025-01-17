@@ -8,7 +8,7 @@
     "start": "node dist/index.js",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write .",
-    "migrate:dev": "npx prisma migrate dev"
+    "migrate:dev": "npx prisma migrate dev  --name $(uuidgen)"
   },
   "keywords": [],
   "author": "",
@@ -17,7 +17,9 @@
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.7",
+    "@types/lodash": "^4.17.14",
     "@types/method-override": "^3.0.0",
+    "@types/multer": "^1.4.12",
     "@types/node": "^22.10.7",
     "@typescript-eslint/eslint-plugin": "^8.20.0",
     "@typescript-eslint/parser": "^8.20.0",
@@ -28,6 +30,7 @@
     "eslint-plugin-prettier": "^5.2.2",
     "nodemon": "^3.1.9",
     "prettier": "^3.4.2",
+    "prisma-query-log": "^3.2.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
   },
@@ -37,7 +40,9 @@
     "express": "^4.21.2",
     "http-status-codes": "^2.3.0",
     "jsonwebtoken": "^9.0.2",
+    "lodash": "^4.17.21",
     "method-override": "^3.0.0",
+    "multer": "^1.4.5-lts.1",
     "prisma": "^6.2.1",
     "uuid": "^11.0.5",
     "zod": "^3.24.1"
