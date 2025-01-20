@@ -1,16 +1,17 @@
 import CandidateController from './types/candidate-controller';
 import candidateBusiness from './candidate-business';
+import HTTPStatus from 'http-status';
 
 const candidateController: CandidateController = {
   async findById(req, res) {
     const { id } = req.params;
     const candidate = await candidateBusiness.findById(id);
-    res.status(200).json(candidate);
+    res.status(HTTPStatus.OK).json(candidate);
   },
 
   async findAll(req, res) {
     const candidates = await candidateBusiness.findAll(req.query);
-    res.status(200).json(candidates);
+    res.status(HTTPStatus.OK).json(candidates);
   },
 
   async create(req, res) {
@@ -18,7 +19,7 @@ const candidateController: CandidateController = {
       payload: req.body,
       userId: res.locals.user.id,
     });
-    res.status(201).json(candidate);
+    res.status(HTTPStatus.CREATED).json(candidate);
   },
 
   async update(req, res) {
@@ -27,13 +28,13 @@ const candidateController: CandidateController = {
       id,
       payload: req.body,
     });
-    res.status(200).json(candidate);
+    res.status(HTTPStatus.OK).json(candidate);
   },
 
   async remove(req, res) {
     const { id } = req.params;
     await candidateBusiness.remove(id);
-    res.status(204).end();
+    res.status(HTTPStatus.NO_CONTENT).end();
   },
 };
 

@@ -394,19 +394,19 @@ model Company {
   employerNumber  Int              @map("employer_number")
   foundationDate  DateTime         @map("foundation_date") @db.Date
   industry        String           @db.VarChar(100)
-  JobOpportunity  JobOpportunity[]
+  jobOpportunities  JobOpportunity[]
 
   @@map("companies")
 }
 
 enum JobOpportunityStatus {
-  // Em aberto
+  // Vaga aberta, pode receber candidaturas
   OPEN
-  // Em andamento
-  IN_PROGRESS
-  // Encerrada
+
+  // Vaga fechada, não pode receber candidaturas  
   CLOSED
-  // Pausada
+
+  // Pausada, não pode receber candidaturas temporariamente
   PAUSED
 }
 

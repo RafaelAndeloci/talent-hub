@@ -60,6 +60,18 @@ const schemaBuilder = {
       .transform(value => new Date(value).toISOString());
     return validation ? dateSchema.refine(validation) : dateSchema;
   },
+
+  buildAddressSchema() {
+    return z.object({
+      street: z.string().min(3).max(255),
+      number: z.string().min(1).max(10),
+      complement: z.string().min(3).max(255).optional().nullable(),
+      neighborhood: z.string().min(3).max(255),
+      city: z.string().min(3).max(255),
+      state: z.string().length(2),
+      zipCode: z.string().length(8),
+    });
+  }
 };
 
 export default schemaBuilder;
