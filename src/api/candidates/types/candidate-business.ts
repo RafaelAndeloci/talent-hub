@@ -7,10 +7,10 @@ import UpdateCandidateProps from './update-candidate-props';
 type CandidateBusiness = {
   findById: (id: string) => Promise<Candidate>;
   findAll: (
-    props: FindAllProps<Candidate>,
+    args: FindAllProps<Candidate>,
   ) => Promise<PagedList<Candidate>>;
-  create: (payload: CreateCandidateDto) => Promise<Candidate>;
-  update: (props: UpdateCandidateProps) => Promise<Candidate>;
+  create: (args: CreateCandidateDto) => Promise<Candidate>;
+  update: (args: UpdateCandidateProps) => Promise<Candidate>;
   remove: (id: string) => Promise<void>;
 };
 

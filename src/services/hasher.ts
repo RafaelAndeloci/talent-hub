@@ -1,12 +1,11 @@
 import bcrypt from 'bcrypt';
 
-const SALT_ROUNDS = 10;
+const saltRound = 10;
 
 const hasher = {
   async hash(password: string) {
-    const salt = await bcrypt.genSalt(SALT_ROUNDS);
-    const hashedPassword = await bcrypt.hash(password, salt);
-    return hashedPassword;
+    const salt = await bcrypt.genSalt(saltRound);
+    return await bcrypt.hash(password, salt);
   },
 
   async compare(password: string, hash: string) {

@@ -14,7 +14,10 @@ const candidateController: CandidateController = {
   },
 
   async create(req, res) {
-    const candidate = await candidateBusiness.create(req.body);
+    const candidate = await candidateBusiness.create({
+      payload: req.body,
+      userId: res.locals.user.id,
+    });
     res.status(201).json(candidate);
   },
 

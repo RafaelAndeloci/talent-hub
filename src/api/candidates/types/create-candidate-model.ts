@@ -1,5 +1,8 @@
 import { Candidate } from "./candidate";
 
-type CreateCandidateDto = Omit<Candidate, 'id'>;
+type CreateCandidateDto = {
+  payload: Omit<Candidate, 'id'>;
+  userId: string;
+}
 
 export default CreateCandidateDto;

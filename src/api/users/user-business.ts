@@ -1,4 +1,3 @@
-import { User } from '@prisma/client';
 import ApiError from '../../types/api-error';
 import hasher from '../../services/hasher';
 import UserBusiness from './types/user-business';
@@ -7,8 +6,9 @@ import * as uuid from 'uuid';
 import fileStorageService from '../../services/file-storage-service';
 import jwtService from '../../services/jwt-service';
 import UserModel from './types/user-model';
+import User from './types/user';
 
-const removeSensitiveData = (user: User): UserModel => {
+const removeSensitiveData = (user: UserModel): User => {
   const {
     hashedPassword,
     createdAt,
@@ -30,7 +30,7 @@ const userBusiness: UserBusiness = {
 
     const hashedPassword = await hasher.hash(password);
 
-    const user: User = {
+    const user: UserModel = {
       id: uuid.v4(),
       email,
       role,
@@ -68,12 +68,14 @@ const userBusiness: UserBusiness = {
   },
 
   async auth({ email, password }) {
-    const hashedPassword = await hasher.hash(password);
-
-    const user = await userRepository.findOne({ email, hashedPassword });
+    const user = await userRepository.findOne({ email });
 
     if (!user) {
-      ApiError.throwUnauthorized('E-mail ou senha inválidos.');
+      ApiError.throwUnauthorized('invalid email or password');
+    }
+
+    if (!(await hasher.compare(password, user.hashedPassword))) {
+      ApiError.throwUnauthorized('invalid email or password');
     }
 
     const accessToken = jwtService.generateToken(user);

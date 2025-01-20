@@ -1,57 +1,49 @@
 import config from '../config/environment';
 import jwt from 'jsonwebtoken';
-import { User } from '@prisma/client';
 import AuthTokenProps from '../api/users/types/auth-token-props';
+import User from '../api/users/types/user';
 
 const {
   security: { secret, issuer, audience, expiresIn },
 } = config;
 
-const unauthorizeError = {
-  code: 401,
-  errors: ['Unauthorized'],
-};
-
-type JwtService = {
-  validateToken: (token: string) => {
-    isValid: boolean;
-    error: typeof unauthorizeError | null;
-  };
-  generateToken: (user: User) => AuthTokenProps;
-};
-
-const jwtService: JwtService = {
-  validateToken: token => {
+const jwtService = {
+  authenticateToken: (token: string) => {
     try {
-      const decodedToken = jwt.verify(token, secret, {
-        issuer: issuer,
-        audience: audience,
+      const decoded: any = jwt.verify(token, secret, {
+        issuer,
+        audience,
+        algorithms: ['HS256'],
       });
-
-      if (!decodedToken) {
-        return { isValid: false, error: unauthorizeError };
-      }
-
-      return { isValid: true, error: null };
+      return {
+        id: decoded.id,
+        email: decoded.email,
+        role: decoded.role,
+        profilePictureUrl: decoded.profilePictureUrl,
+      } as User;
     } catch (error) {
-      return { isValid: false, error: unauthorizeError };
+      return null;
     }
   },
-  generateToken: user => {
+
+  generateToken: (user: User) => {
     const payload = {
       id: user.id,
       email: user.email,
       role: user.role,
+      profilePictureUrl: user.profilePictureUrl,
     };
 
+    const seconds = expiresIn * 60 * 60;
+
     const token = jwt.sign(payload, secret, {
-      issuer: issuer,
-      audience: audience,
-      expiresIn: `${expiresIn}h`,
+      issuer,
+      audience,
+      expiresIn: seconds,
+      algorithm: 'HS256',
     });
 
-    const unixEpochExpiration =
-      Math.floor(Date.now() / 1000) + expiresIn * 60 * 60;
+    const unixEpochExpiration = Math.floor(Date.now() / 1000) + seconds;
 
     const authToken: AuthTokenProps = {
       accessToken: token,

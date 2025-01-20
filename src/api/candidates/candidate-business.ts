@@ -66,10 +66,10 @@ const candidateBusiness: CandidateBusiness = {
     return candidates.parse(parse);
   },
 
-  async create(payload) {
+  async create({ userId, payload }) {
     if (
       !(await userRepository.exists({
-        id: payload.userId,
+        id: userId,
       }))
     ) {
       ApiError.throwBadRequest(`invalid user`);
@@ -77,7 +77,7 @@ const candidateBusiness: CandidateBusiness = {
 
     if (
       await candidateRepository.exists({
-        OR: [{ userId: payload.userId }, { phone: payload.phone }],
+        OR: [{ userId }, { phone: payload.phone }],
       })
     ) {
       ApiError.throwBadRequest('candidate already exists');

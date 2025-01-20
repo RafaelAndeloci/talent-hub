@@ -34,6 +34,7 @@ export type CandidateAchievement = Omit<
 
 export type Candidate = Omit<
   CandidateModel,
+  | 'userId'
   | 'skills'
   | 'references'
   | 'academicExperiences'
