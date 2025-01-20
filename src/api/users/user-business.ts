@@ -2,22 +2,30 @@ import { User } from '@prisma/client';
 import ApiError from '../../types/api-error';
 import hasher from '../../services/hasher';
 import UserBusiness from './types/user-business';
-import UserDtoProps from './types/user-dto-props';
 import userRepository from './user-repository';
 import * as uuid from 'uuid';
 import fileStorageService from '../../services/file-storage-service';
 import jwtService from '../../services/jwt-service';
+import UserModel from './types/user-model';
 
-const parseToDto = (user: User): UserDtoProps => {
-  const { hashedPassword, createdAt, updatedAt, deletedAt, ...dto } = user;
-  return dto;
+const removeSensitiveData = (user: User): UserModel => {
+  const {
+    hashedPassword,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    passwordResetToken,
+    passwordResetTokenExpires,
+    ...rest
+  } = user;
+  return rest;
 };
 
 const userBusiness: UserBusiness = {
   async create({ email, password, role }) {
     const existingUser = await userRepository.findOne({ email });
     if (existingUser) {
-      ApiError.throwUnprocessableEntity('e-mail inválido.');
+      ApiError.throwUnprocessableEntity('invalid operation');
     }
 
     const hashedPassword = await hasher.hash(password);
@@ -27,15 +35,17 @@ const userBusiness: UserBusiness = {
       email,
       role,
       hashedPassword,
+      passwordResetToken: null,
+      passwordResetTokenExpires: null,
       profilePictureUrl: null,
       createdAt: new Date(),
       updatedAt: new Date(),
       deletedAt: null,
     };
 
-    await userRepository.create(user);
+    const created = await userRepository.create(user);
 
-    return parseToDto(user);
+    return removeSensitiveData(created);
   },
 
   async updateProfilePicture({ userId, fileStream, contentType }) {
@@ -54,7 +64,7 @@ const userBusiness: UserBusiness = {
     user.profilePictureUrl = url;
     await userRepository.update(user);
 
-    return parseToDto(user);
+    return removeSensitiveData(user);
   },
 
   async auth({ email, password }) {
@@ -76,12 +86,12 @@ const userBusiness: UserBusiness = {
       ApiError.throwNotFound('Usuário não encontrado.');
     }
 
-    return parseToDto(user);
+    return removeSensitiveData(user);
   },
 
   async findAll(props) {
     const pagedListOfUsers = await userRepository.findAll(props);
-    return pagedListOfUsers.parse(parseToDto);
+    return pagedListOfUsers.parse(removeSensitiveData);
   },
 };
 

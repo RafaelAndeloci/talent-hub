@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["relationJoins"]
 }
 
@@ -202,11 +202,13 @@ enum AchievementType {
 }
 
 model User {
-  id                String    @id @db.VarChar(36) @default(uuid())
+  id                String    @id @default(uuid()) @db.VarChar(36)
   email             String    @unique @db.VarChar(150)
   hashedPassword    String    @map("hashed_password") @db.VarChar(256)
   role              Role
   profilePictureUrl String?   @map("profile_picture_url") @db.VarChar(255)
+  passwordResetToken String?  @map("password_reset_token") @db.VarChar(256)
+  passwordResetTokenExpires DateTime? @map("password_reset_token_expires") @db.Timestamptz
   createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz
   updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz
   deletedAt         DateTime? @map("deleted_at") @db.Timestamptz
@@ -217,7 +219,7 @@ model User {
 }
 
 model Candidate {
-  id                    String          @id @db.VarChar(36) @default(uuid())
+  id                    String          @id @default(uuid()) @db.VarChar(36)
   userId                String          @unique @map("user_id") @db.VarChar(36)
   fullName              String          @map("full_name") @db.VarChar(150)
   birthDate             DateTime        @map("birth_date") @db.Date
@@ -252,7 +254,7 @@ model Candidate {
 }
 
 model CandidateLanguage {
-  id          String              @id @db.VarChar(36) @default(uuid())
+  id          String              @id @default(uuid()) @db.VarChar(36)
   candidateId String              @map("candidate_id") @db.VarChar(36)
   language    String              @db.VarChar(100)
   written     LanguageProficiency @map("written")
@@ -268,8 +270,9 @@ model CandidateLanguage {
 }
 
 model CandidateAcademicExperience {
-  id                  String             @id @db.VarChar(36) @default(uuid())
+  id                  String             @id @default(uuid()) @db.VarChar(36)
   candidateId         String             @map("candidate_id") @db.VarChar(36)
+  name                String             @map("name") @db.VarChar(150)
   institutionName     String             @map("institution_name") @db.VarChar(150)
   institutionUrl      String?            @map("institution_url") @db.VarChar(255)
   type                AcademicCourseType @map("type")
@@ -291,30 +294,31 @@ model CandidateAcademicExperience {
 }
 
 model CandidateAcademicExperienceProject {
-  id           String   @id @db.VarChar(36) @default(uuid())
-  title        String   @db.VarChar(150)
-  description  String?  @db.VarChar(500)
+  id           String   @id @default(uuid()) @db.VarChar(36)
+  name         String   @map("name") @db.VarChar(150)
+  description  String?  @map("description") @db.VarChar(500)
   technologies String[] @map("technologies") @db.VarChar(100)
 
   // Relations
-  candidateAcademicExperienceId String                      @map("candidate_academic_experience_id") @db.VarChar(36)
-  candidateAcademicExperience   CandidateAcademicExperience @relation(fields: [candidateAcademicExperienceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  academicExperienceId String                      @map("academic_experience_id") @db.VarChar(36)
+  academicExperience   CandidateAcademicExperience @relation(fields: [academicExperienceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("candidate_academic_experience_projects")
 }
 
 model CandidateProfessionalExperience {
-  id               String         @id @db.VarChar(36) @default(uuid())
-  candidateId      String         @map("candidate_id") @db.VarChar(36)
-  companyName      String         @map("company_name") @db.VarChar(150)
-  companyUrl       String?        @map("company_url") @db.VarChar(255)
-  role             String         @db.VarChar(100)
-  description      String?        @db.VarChar(500)
-  startDate        DateTime       @map("start_date") @db.Date
-  endDate          DateTime?      @map("end_date") @db.Date
-  current          Boolean        @default(false)
-  responsibilities String[]       @map("responsibilities") @db.VarChar(100)
-  technologies     String[]       @map("technologies") @db.VarChar(100)
+  id               String    @id @default(uuid()) @db.VarChar(36)
+  candidateId      String    @map("candidate_id") @db.VarChar(36)
+  companyName      String    @map("company_name") @db.VarChar(150)
+  companyUrl       String?   @map("company_url") @db.VarChar(255)
+  position             String    @db.VarChar(100)
+  positionLevel    PositionLevel @map("position_level")
+  description      String?   @db.VarChar(500)
+  startDate        DateTime  @map("start_date") @db.Date
+  endDate          DateTime? @map("end_date") @db.Date
+  current          Boolean   @default(false)
+  responsibilities String[]  @map("responsibilities") @db.VarChar(100)
+  technologies     String[]  @map("technologies") @db.VarChar(100)
 
   // Relations
   candidate Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -323,7 +327,7 @@ model CandidateProfessionalExperience {
 }
 
 model CandidateSkill {
-  id          String      @id @db.VarChar(36) @default(uuid())
+  id          String      @id @default(uuid()) @db.VarChar(36)
   candidateId String      @map("candidate_id") @db.VarChar(36)
   name        String      @map("name") @db.VarChar(100)
   proficiency Proficiency @map("proficiency")
@@ -337,7 +341,7 @@ model CandidateSkill {
 }
 
 model CandidateAchievement {
-  id             String          @id @db.VarChar(36) @default(uuid())
+  id             String          @id @default(uuid()) @db.VarChar(36)
   candidateId    String          @map("candidate_id") @db.VarChar(36)
   type           AchievementType @map("type")
   title          String          @db.VarChar(150)
@@ -352,13 +356,12 @@ model CandidateAchievement {
 }
 
 model CandidateReference {
-  id            String        @id @db.VarChar(36) @default(uuid())
+  id            String        @id @default(uuid()) @db.VarChar(36)
   candidateId   String        @map("candidate_id") @db.VarChar(36)
   name          String        @db.VarChar(150)
   phone         String        @db.VarChar(11)
   email         String        @db.VarChar(150)
   relationship  String        @db.VarChar(100)
-  role          String        @db.VarChar(100)
   position      String        @db.VarChar(100)
   positionLevel PositionLevel @map("position_level")
   company       String        @db.VarChar(150)

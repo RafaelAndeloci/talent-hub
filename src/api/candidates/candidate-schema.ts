@@ -1,129 +1,128 @@
 import { z } from 'zod';
+import schemaBuilder from '../../utils/schema-builder';
 import {
-  AcademicCourseType,
-  AcademicStatus,
-  AchievementType,
   Benefit,
-  ContractType,
   EmploymentType,
-  LanguageProficiency,
-  PositionLevel,
-  Proficiency,
-  SkillType,
   WorkloadType,
   WorkplaceType,
+  ContractType,
+  LanguageProficiency,
+  Proficiency,
+  SkillType,
+  AcademicCourseType,
+  AcademicStatus,
+  PositionLevel,
+  AchievementType,
 } from '@prisma/client';
-import schemaBuilder from '../../utils/schema-builder';
 
 const urlSchema = z.string().url().max(255);
-const maxString = (max: number) => z.string().max(max);
 
-const nestedLanguageSchema = z.object({
-  language: maxString(100),
+const languageSchema = z.object({
+  language: z.string().max(100),
   written: z.nativeEnum(LanguageProficiency),
   spoken: z.nativeEnum(LanguageProficiency),
   listening: z.nativeEnum(LanguageProficiency),
   reading: z.nativeEnum(LanguageProficiency),
 });
 
-const nestedAcademicSchema = z.object({
-  institutionName: maxString(150),
-  institutionUrl: urlSchema,
-  type: z.nativeEnum(AcademicCourseType),
-  fieldOfStudy: maxString(100),
-  startDate: z.date(),
-  endDate: z.date().optional(),
-  description: maxString(500).optional(),
-  status: z.nativeEnum(AcademicStatus),
-  graduationForecast: z.date().optional(),
-  semesters: z.number().int().optional(),
-  currentSemester: z.number().int().optional(),
-  institutionRegistry: maxString(50).optional(),
-  projects: z.array(
-    z.object({
-      title: maxString(150),
-      description: maxString(500).optional(),
-      technologies: z.array(maxString(100)),
-    }),
-  ),
-});
-
-const nestedProfessionalSchema = z.object({
-  companyName: maxString(150),
-  companyUrl: urlSchema.optional(),
-  role: maxString(100),
-  description: maxString(500).optional(),
-  startDate: z.date().optional(),
-  endDate: z.date().optional(),
-  current: z.boolean().default(false),
-  responsibilities: z.array(maxString(100)),
-  technologies: z.array(maxString(100)),
-});
-
-const nestedSkillSchema = z.object({
-  name: maxString(100),
+const skillSchema = z.object({
+  name: z.string(),
   proficiency: z.nativeEnum(Proficiency),
   type: z.nativeEnum(SkillType),
 });
 
-const nestedAchievementSchema = z.object({
-  type: z.nativeEnum(AchievementType),
-  title: maxString(150),
-  description: maxString(500).optional(),
-  date: z.date().optional(),
-  certificateUrl: urlSchema.optional(),
+const academicProject = z.object({
+  name: z.string(),
+  description: z.string(),
+  technologies: z.array(z.string()),
 });
 
-const nestedReferenceSchema = z.object({
-  name: maxString(150),
+const academicExperienceSchema = z.object({
+  name: z.string().min(3).max(100),
+  institutionName: z.string().max(150),
+  institutionUrl: urlSchema,
+  type: z.nativeEnum(AcademicCourseType),
+  fieldOfStudy: z.string().max(100),
+  startDate: schemaBuilder.buildDate(),
+  endDate: schemaBuilder.buildDate().optional().nullable(),
+  description: z.string().max(500).optional().nullable(),
+  status: z.nativeEnum(AcademicStatus),
+  graduationForecast: schemaBuilder.buildDate().optional().nullable(),
+  semesters: z.number().int().optional().nullable(),
+  currentSemester: z.number().int().optional().nullable(),
+  institutionRegistry: z.string().max(50).optional().nullable(),
+  projects: z.array(academicProject),
+});
+
+const professionalExperienceSchema = z.object({
+  companyName: z.string().max(150),
+  companyUrl: urlSchema.optional().nullable(),
+  position: z.string().max(100),
+  positionLevel: z.nativeEnum(PositionLevel),
+  description: z.string().max(500).optional().nullable(),
+  startDate: schemaBuilder.buildDate(),
+  endDate: schemaBuilder.buildDate().optional().nullable(),
+  current: z.boolean().default(false),
+  responsibilities: z.array(z.string().max(100)),
+  technologies: z.array(z.string().max(100)),
+});
+
+const achievementSchema = z.object({
+  type: z.nativeEnum(AchievementType),
+  title: z.string().max(150),
+  description: z.string().max(500).optional().nullable(),
+  date: schemaBuilder.buildDate().optional().nullable(),
+  certificateUrl: urlSchema.optional().nullable(),
+});
+
+const referenceSchema = z.object({
+  name: z.string().max(150),
   phone: z.string().regex(/^\d{11}$/),
   email: z.string().email().max(150),
-  relationship: maxString(100),
-  role: maxString(100),
-  position: maxString(100),
+  relationship: z.string().max(100),
+  position: z.string().max(100),
   positionLevel: z.nativeEnum(PositionLevel),
-  company: maxString(150),
-  companyUrl: urlSchema.optional(),
+  company: z.string().max(150),
+  companyUrl: urlSchema.optional().nullable(),
 });
 
-// Schemas principais
-const bodySchema = z.object({
+const candidateSchema = z.object({
   userId: z.string().uuid(),
   fullName: z.string().min(3).max(255),
-  birthDate: z.date(),
+  birthDate: schemaBuilder.buildDate(),
   phone: z.string().regex(/^\d{11}$/),
   address: z.object({
-    neighborhood: maxString(255),
-    city: maxString(255),
+    neighborhood: z.string().max(255),
+    city: z.string().max(255),
     state: z.string().length(2),
   }),
-  bio: maxString(500),
-  hobbies: z.array(maxString(255)),
-  linkedinUrl: urlSchema,
-  githubUrl: urlSchema,
-  instagramUrl: urlSchema,
-  professionalHeadline: maxString(255),
-  desiredSalary: z.number().min(0),
+  bio: z.string().max(500).optional().nullable(),
+  hobbies: z.array(z.string().max(255)).optional().nullable(),
+  linkedinUrl: urlSchema.optional().nullable(),
+  githubUrl: urlSchema.optional().nullable(),
+  instagramUrl: urlSchema.optional().nullable(),
+  professionalHeadline: z.string().max(255).optional().nullable(),
+  desiredSalary: z.number().min(0).optional().nullable(),
   autoMatchEnabled: z.boolean().default(true),
-  desiredWorkplaceType: z.nativeEnum(WorkplaceType),
-  desiredWorkloadType: z.nativeEnum(WorkloadType),
-  desiredEmploymentType: z.nativeEnum(EmploymentType),
-  desiredContractType: z.nativeEnum(ContractType),
-  desiredBenefits: z.array(z.nativeEnum(Benefit)),
-  desiredPositionLevel: z.nativeEnum(PositionLevel),
-  languages: z.array(nestedLanguageSchema).default([]),
-  academicExperiences: z.array(nestedAcademicSchema).default([]),
-  professionalExperiences: z.array(nestedProfessionalSchema).default([]),
-  skills: z.array(nestedSkillSchema).default([]),
-  achievements: z.array(nestedAchievementSchema).default([]),
-  references: z.array(nestedReferenceSchema).default([]),
+  desiredWorkplaceType: z.nativeEnum(WorkplaceType).optional().nullable(),
+  desiredWorkloadType: z.nativeEnum(WorkloadType).optional().nullable(),
+  desiredEmploymentType: z.nativeEnum(EmploymentType).optional().nullable(),
+  desiredContractType: z.nativeEnum(ContractType).optional().nullable(),
+  desiredBenefits: z.array(z.nativeEnum(Benefit)).optional().nullable(),
+  desiredPositionLevel: z.nativeEnum(PositionLevel).optional().nullable(),
+  languages: z.array(languageSchema).default([]),
+  academicExperiences: z.array(academicExperienceSchema).default([]),
+  professionalExperiences: z.array(professionalExperienceSchema).default([]),
+  skills: z.array(skillSchema).default([]),
+  achievements: z.array(achievementSchema).default([]),
+  references: z.array(referenceSchema).default([]),
 });
 
 const candidateSchemas = {
-  create: z.object({ body: bodySchema.omit({ userId: true }) }),
+  create: z.object({ body: candidateSchema }),
   update: z.object({
     params: z.object({ id: z.string().uuid() }),
-    body: bodySchema.partial(),
+    body: candidateSchema.omit({ userId: true }).partial(),
   }),
   findById: z.object({ params: z.object({ id: z.string().uuid() }) }),
   findAll: z.object({

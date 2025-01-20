@@ -1,5 +1,5 @@
 import FindAllProps from '../../../types/find-all-props';
-import UserDtoProps from './user-dto-props';
+import UserDtoProps from './user-model';
 
 type FindUsersProps = FindAllProps<UserDtoProps> & Pick<UserDtoProps, 'role'>;
 

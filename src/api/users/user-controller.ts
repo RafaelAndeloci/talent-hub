@@ -31,7 +31,7 @@ const userController: UserController = {
 
     if (allowedMimeTypes.images.indexOf(mimetype) === -1) {
       ApiError.throwBadRequest(
-        `O tipo da imagem não é permitido. Tipos permitidos: ${allowedMimeTypes.images.join(', ')}`,
+        `The image type is not allowed. Allowed types: ${allowedMimeTypes.images.join(', ')}`,
       );
     }
 

@@ -4,16 +4,16 @@ import AuthTokenProps from './auth-token-props';
 import CreateUserProps from './create-user-props';
 import FindUsersProps from './find-users-props';
 import UpdateUserProfilePictureProps from './update-user-profile-picture-props';
-import UserDtoProps from './user-dto-props';
+import UserModel from './user-model';
 
 type UserBusiness = {
-  findAll: (props: FindUsersProps) => Promise<PagedList<UserDtoProps>>;
-  findById: (id: string) => Promise<UserDtoProps>;
-  create: (props: CreateUserProps) => Promise<UserDtoProps>;
+  findAll: (props: FindUsersProps) => Promise<PagedList<UserModel>>;
+  findById: (id: string) => Promise<UserModel>;
+  create: (props: CreateUserProps) => Promise<UserModel>;
   auth: (props: AuthProps) => Promise<AuthTokenProps>;
   updateProfilePicture: (
     props: UpdateUserProfilePictureProps,
-  ) => Promise<UserDtoProps>;
+  ) => Promise<UserModel>;
 };
 
 export default UserBusiness;

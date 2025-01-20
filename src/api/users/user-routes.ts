@@ -9,7 +9,7 @@ const userRouter = Router();
 
 userRouter.post(
   '/',
-  validate(userSchema.auth),
+  validate(userSchema.create),
   errorHandlerWrapper(userController.create),
 );
 userRouter.post(
@@ -17,7 +17,6 @@ userRouter.post(
   validate(userSchema.auth),
   errorHandlerWrapper(userController.auth),
 );
-
 userRouter.get(
   '/:id',
   authenticate,

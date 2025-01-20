@@ -3,13 +3,20 @@ import PagedList from '../types/paged-list';
 import Repository from '../types/repository';
 import { Prisma } from '@prisma/client';
 import _ from 'lodash';
-import prismaUtils from '../utils/prisma-utils';
-import FilterOperator from '../api/users/types/filter-operator';
 
-const buildFor = <T extends { id: string }>(
-  modelName: Prisma.ModelName,
-  inclusions: Record<string, boolean | any> = {},
-) => {
+type BuildRepositoryArgs = {
+  modelName: Prisma.ModelName;
+  inclusions?: Record<string, boolean | any>;
+  toUpdateTransform?: (data: any) => any;
+  toCreateTransform?: (data: any) => any;
+};
+
+const buildFor = <T extends { id: string }>({
+  modelName,
+  inclusions = {},
+  toUpdateTransform,
+  toCreateTransform,
+}: BuildRepositoryArgs): Repository<T> => {
   const model: any = prisma[modelName.toLowerCase() as keyof typeof prisma];
   const repository: Repository<T> = {
     async findAll({
@@ -67,27 +74,24 @@ const buildFor = <T extends { id: string }>(
     },
 
     async create(data) {
-      const transformedData = prismaUtils.transformNestedFields(
-        _.cloneDeep(data),
-        inclusions,
-      );
+      const transformed = toCreateTransform
+        ? toCreateTransform(_.cloneDeep(data))
+        : data;
 
       return await model.create({
-        data: transformedData,
         include: inclusions,
+        data: transformed,
       });
     },
 
     async update(data) {
-      const { id, ...rest } = data;
-      const transformedData = prismaUtils.transformNestedFields(
-        _.cloneDeep(rest),
-        inclusions,
-      );
+      const transformed = toUpdateTransform
+        ? toUpdateTransform(_.cloneDeep(data))
+        : data;
 
       return await model.update({
-        where: { id },
-        data: transformedData,
+        where: { id: data.id },
+        data: transformed,
         include: inclusions,
       });
     },

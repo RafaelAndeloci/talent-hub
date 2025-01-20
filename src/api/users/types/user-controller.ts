@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import UserDtoProps from './user-dto-props';
+import UserModel from './user-model';
 import { User } from '@prisma/client';
 import PagedList from '../../../types/paged-list';
 import AuthProps from './auth-props';
@@ -10,17 +10,17 @@ import AuthTokenProps from './auth-token-props';
 type UserController = {
   findById: (
     req: Request<Pick<User, 'id'>>,
-    res: Response<UserDtoProps>,
+    res: Response<UserModel>,
   ) => Promise<void>;
 
   findAll: (
     req: Request<void, void, void, FindUsersProps>,
-    res: Response<PagedList<UserDtoProps>>,
+    res: Response<PagedList<UserModel>>,
   ) => Promise<void>;
 
   create: (
     req: Request<void, void, CreateUserProps>,
-    res: Response<UserDtoProps>,
+    res: Response<UserModel>,
   ) => Promise<void>;
 
   updateProfilePicture: (
@@ -31,7 +31,7 @@ type UserController = {
       void,
       { file: Express.Multer.File }
     >,
-    res: Response<UserDtoProps>,
+    res: Response<UserModel>,
   ) => Promise<void>;
 
   auth: (

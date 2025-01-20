@@ -1,16 +1,16 @@
-import CandidateDtoProps from './candidate-dto-props';
 import FindAllProps from '../../../types/find-all-props';
 import PagedList from '../../../types/paged-list';
-import CreateCandidateProps from './create-candidate-props';
+import { Candidate } from './candidate';
+import CreateCandidateDto from './create-candidate-model';
 import UpdateCandidateProps from './update-candidate-props';
 
 type CandidateBusiness = {
-  findById: (id: string) => Promise<CandidateDtoProps>;
+  findById: (id: string) => Promise<Candidate>;
   findAll: (
-    props: FindAllProps<CandidateDtoProps>,
-  ) => Promise<PagedList<CandidateDtoProps>>;
-  create: (payload: CreateCandidateProps) => Promise<CandidateDtoProps>;
-  update: (props: UpdateCandidateProps) => Promise<void>;
+    props: FindAllProps<Candidate>,
+  ) => Promise<PagedList<Candidate>>;
+  create: (payload: CreateCandidateDto) => Promise<Candidate>;
+  update: (props: UpdateCandidateProps) => Promise<Candidate>;
   remove: (id: string) => Promise<void>;
 };
 

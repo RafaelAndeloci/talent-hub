@@ -1,5 +1,6 @@
-import { date, z } from 'zod';
+import { z } from 'zod';
 import FilterOperator from '../api/users/types/filter-operator';
+import _ from 'lodash';
 
 const schemaBuilder = {
   buildQuery({ sortingFields = ['id'], searchFields = ['id'] }) {
@@ -54,13 +55,10 @@ const schemaBuilder = {
   },
 
   buildDate(validation = null) {
-    const dateSchema = z.string().transform(value => new Date(value).toISOString());
-
-    if (validation) {
-      return dateSchema.refine(validation);
-    }
-
-    return dateSchema;
+    const dateSchema = z
+      .string()
+      .transform(value => new Date(value).toISOString());
+    return validation ? dateSchema.refine(validation) : dateSchema;
   },
 };
 

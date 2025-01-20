@@ -1,28 +1,26 @@
-import { Candidate } from '@prisma/client';
 import { Request, Response } from 'express';
-import CandidateDtoProps from './candidate-dto-props';
 import FindAllProps from '../../../types/find-all-props';
-import CreateCandidateProps from './create-candidate-props';
+import { Candidate } from './candidate';
 
 type CandidateController = {
   findById: (
     req: Request<Pick<Candidate, 'id'>, void, void, void>,
-    res: Response<CandidateDtoProps>,
+    res: Response<Candidate>,
   ) => Promise<void>;
 
   findAll: (
-    req: Request<void, void, void, FindAllProps<CandidateDtoProps>>,
+    req: Request<void, void, void, FindAllProps<Candidate>>,
     res: Response,
   ) => Promise<void>;
 
   create: (
-    req: Request<void, void, CreateCandidateProps>,
-    res: Response<CandidateDtoProps>,
+    req: Request<void, void, Omit<Candidate, 'id'>>,
+    res: Response<Candidate>,
   ) => Promise<void>;
 
   update: (
-    req: Request<Pick<Candidate, 'id'>, void, Partial<CandidateDtoProps>>,
-    res: Response<void>,
+    req: Request<Pick<Candidate, 'id'>, void, Partial<Candidate>>,
+    res: Response<Candidate>,
   ) => Promise<void>;
 
   remove: (
