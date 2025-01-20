@@ -374,26 +374,82 @@ model CandidateReference {
 }
 
 model Company {
-  id               String   @id @default(uuid()) @db.VarChar(36)
-  tradeName        String   @map("trade_name") @db.VarChar(150)
-  legalName        String   @map("legal_name") @db.VarChar(150)
-  cnpj             String   @unique @db.VarChar(14)
-  logoUrl          String?  @map("logo_url") @db.VarChar(255)
-  galeryUrl        String[] @map("galery_url") @db.VarChar(255)
-  websiteUrl       String?  @map("website_url") @db.VarChar(255)
-  phone            String   @db.VarChar(11)
-  recruitingEmail  String   @map("recruiting_email") @db.VarChar(150)
-  address          Json     @db.Json
-  about            String   @db.VarChar(500)
-  instagramUrl     String?  @map("instagram_url") @db.VarChar(255)
-  linkedinUrl      String?  @map("linkedin_url") @db.VarChar(255)
-  values           String[] @db.VarChar(100)
-  mission          String   @db.VarChar(500)
-  vision           String   @db.VarChar(500)
-  autoMatchEnabled Boolean  @map("auto_match_enabled")
-  employerNumber   Int      @map("employer_number")
-  foundationDate   DateTime @map("foundation_date") @db.Date
-  industry         String   @db.VarChar(100)
+  id              String           @id @default(uuid()) @db.VarChar(36)
+  tradeName       String           @map("trade_name") @db.VarChar(150)
+  legalName       String           @map("legal_name") @db.VarChar(150)
+  cnpj            String           @unique @db.VarChar(14)
+  logoUrl         String?          @map("logo_url") @db.VarChar(255)
+  galeryUrl       String[]         @map("galery_url") @db.VarChar(255)
+  websiteUrl      String?          @map("website_url") @db.VarChar(255)
+  phone           String           @db.VarChar(11)
+  recruitingEmail String           @map("recruiting_email") @db.VarChar(150)
+  address         Json             @db.Json
+  about           String           @db.VarChar(500)
+  instagramUrl    String?          @map("instagram_url") @db.VarChar(255)
+  linkedinUrl     String?          @map("linkedin_url") @db.VarChar(255)
+  values          String[]         @db.VarChar(100)
+  mission         String           @db.VarChar(500)
+  vision          String           @db.VarChar(500)
+  employerNumber  Int              @map("employer_number")
+  foundationDate  DateTime         @map("foundation_date") @db.Date
+  industry        String           @db.VarChar(100)
+  JobOpportunity  JobOpportunity[]
 
   @@map("companies")
+}
+
+enum JobOpportunityStatus {
+  // Em aberto
+  OPEN
+  // Em andamento
+  IN_PROGRESS
+  // Encerrada
+  CLOSED
+  // Pausada
+  PAUSED
+}
+
+model JobOpportunityDesiredLanguage {
+  id               String              @id @default(uuid()) @db.VarChar(36)
+  jobOpportunityId String              @map("job_opportunity_id") @db.VarChar(36)
+  language         String              @db.VarChar(100)
+  written          LanguageProficiency @map("written")
+  spoken           LanguageProficiency @map("spoken")
+  listening        LanguageProficiency @map("listening")
+  reading          LanguageProficiency @map("reading")
+
+  // Relations
+  jobOpportunity JobOpportunity @relation(fields: [jobOpportunityId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([jobOpportunityId, language])
+	@@map("JobOpportunityRequiredLanguage")
+}
+
+model JobOpportunity {
+  id               String               @id @default(uuid()) @db.VarChar(36)
+  companyId        String               @map("company_id") @db.VarChar(36)
+  title            String               @db.VarChar(150)
+  description      String               @db.VarChar(500)
+  positionLevel    PositionLevel        @map("position_level")
+  workloadType     WorkloadType         @map("workload_type")
+  workplaceType    WorkplaceType        @map("workplace_type")
+  employmentType   EmploymentType       @map("employment_type")
+  contractType     ContractType         @map("contract_type")
+  salary           Float?               @map("salary")
+  benefits         Benefit[]            @map("benefits")
+  requirements     String[]             @db.VarChar(100)
+  responsibilities String[]             @db.VarChar(100)
+  technologies     String[]             @db.VarChar(100)
+  deadline         DateTime             @db.Date
+  autoMatchEnabled Boolean              @map("auto_match_enabled")
+  status           JobOpportunityStatus @map("status")
+  desiredExperienceYears Int?          @map("desired_experience_years")
+  desiredEducationLevel AcademicCourseType? @map("desired_education_level")
+  desiredSkills    String[]             @map("desired_skills")
+  
+  // Relations
+  desiredLanguages JobOpportunityDesiredLanguage[]
+  company           Company                          @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("job_opportunities")
 }
