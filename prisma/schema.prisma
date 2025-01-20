@@ -249,6 +249,7 @@ model Candidate {
   achievements            CandidateAchievement[]
   references              CandidateReference[]
   languages               CandidateLanguage[]
+  applications JobApplication[]
 
   @@map("candidates")
 }
@@ -450,6 +451,48 @@ model JobOpportunity {
   // Relations
   desiredLanguages JobOpportunityDesiredLanguage[]
   company           Company                          @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  applications JobApplication[]
 
   @@map("job_opportunities")
+}
+
+enum JobApplicationStatus {
+  // Aguardando análise
+  PENDING
+
+  // Em processo seletivo
+  IN_PROGRESS
+
+  // Aprovado no processo seletivo
+  SELECTED
+
+  // Reprovado no processo seletivo
+  REJECTED
+
+  // Cancelado pelo candidato
+  CANCELED_BY_CANDIDATE
+
+  // Cancelado pela empresa
+  CANCELED_BY_COMPANY
+}
+
+
+model JobApplication {
+  id              String             @id @default(uuid()) @db.VarChar(36)
+  candidateId     String             @map("candidate_id") @db.VarChar(36)
+  jobOpportunityId String            @map("job_opportunity_id") @db.VarChar(36)
+  status          JobApplicationStatus @map("status")
+  appliedAt       DateTime           @map("applied_at") @db.Timestamptz
+  updatedAt       DateTime           @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt       DateTime?          @map("deleted_at") @db.Timestamptz
+  companyFeedback String?            @map("company_feedback") @db.VarChar(500)
+  candidateFeedback String?          @map("candidate_feedback") @db.VarChar(500)
+  interviewNotes String? @map("interview_notes") @db.Text
+  rejectionReason String? @map("rejection_reason") @db.VarChar(255)
+
+  // Relations
+  candidate      Candidate       @relation(fields: [candidateId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  jobOpportunity JobOpportunity  @relation(fields: [jobOpportunityId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("job_applications")
 }
