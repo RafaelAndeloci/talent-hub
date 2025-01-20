@@ -4,14 +4,21 @@ import Company from './types/company';
 import * as uuid from 'uuid';
 import ApiError from '../../types/api-error';
 import _ from 'lodash';
-import prisma from '../../config/database';
 import { JobOpportunityStatus } from '@prisma/client';
 
 const companyBusiness: CompanyBusiness = {
   async create(payload) {
+    if (
+      await companyRepository.exists({
+        cnpj: payload.cnpj,
+      })
+    ) {
+      ApiError.throwConflict(`company with cnpj ${payload.cnpj} already exists`);
+    }
+
     const company = {
-      ...payload,
       id: uuid.v4(),
+      ...payload,
     } as Company;
 
     await companyRepository.create(company);

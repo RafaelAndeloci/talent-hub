@@ -42,6 +42,8 @@ enum AcademicStatus {
   LOCKED
   // Interrompido
   INTERRUPTED
+
+  @@map("academic_statuses")
 }
 
 enum ContractType {
@@ -49,6 +51,8 @@ enum ContractType {
   CLT
   // Pj
   PJ
+
+  @@map("contract_types")
 }
 
 enum EmploymentType {
@@ -62,6 +66,8 @@ enum EmploymentType {
   TEMPORARY
   // Trainee
   TRAINEE
+
+  @@map("employment_types")
 }
 
 enum PositionLevel {
@@ -83,6 +89,8 @@ enum PositionLevel {
   DIRECTOR
   // CEO
   CEO
+
+  @@map("position_levels")
 }
 
 enum WorkloadType {
@@ -94,6 +102,8 @@ enum WorkloadType {
 
   // flexível -> sem horário fixo
   FLEXIBLE
+
+  @@map("workload_types")
 }
 
 enum WorkplaceType {
@@ -105,6 +115,8 @@ enum WorkplaceType {
 
   // Híbrido
   HYBRID
+
+  @@map("workplace_types")
 }
 
 enum Benefit {
@@ -143,6 +155,8 @@ enum Benefit {
 
   // Auxilio psicologico
   PSYCHOLOGICAL_ASSISTANCE
+
+  @@map("benefits")
 }
 
 enum Role {
@@ -154,6 +168,8 @@ enum Role {
   RECRUITER
   //Gerentes das empresas
   MANAGER
+
+  @@map("roles")
 }
 
 enum LanguageProficiency {
@@ -167,6 +183,8 @@ enum LanguageProficiency {
   FLUENT
   // Nativo
   NATIVE
+
+  @@map("language_proficiencies")
 }
 
 enum Proficiency {
@@ -185,6 +203,8 @@ enum SkillType {
 
   // Comportamental
   SOFT
+
+  @@map("skill_types")
 }
 
 //Conquistas, atividades, cursos, certificados, prêmios, reconhecimentos
@@ -199,6 +219,8 @@ enum AchievementType {
   RECOGNITION
   // Conquista
   ACHIEVEMENT
+
+  @@map("achievement_types")
 }
 
 model User {
@@ -392,7 +414,7 @@ model Company {
   mission         String           @db.VarChar(500)
   vision          String           @db.VarChar(500)
   employerNumber  Int              @map("employer_number")
-  foundationDate  DateTime         @map("foundation_date") @db.Date
+  foundationYear  Int              @map("foundation_year")
   industry        String           @db.VarChar(100)
   jobOpportunities  JobOpportunity[]
 
@@ -400,6 +422,9 @@ model Company {
 }
 
 enum JobOpportunityStatus {
+  // Em processo de criação
+  DRAFT
+
   // Vaga aberta, pode receber candidaturas
   OPEN
 
@@ -408,6 +433,8 @@ enum JobOpportunityStatus {
 
   // Pausada, não pode receber candidaturas temporariamente
   PAUSED
+
+  @@map("job_opportunity_statuses")
 }
 
 model JobOpportunityDesiredLanguage {
@@ -423,7 +450,7 @@ model JobOpportunityDesiredLanguage {
   jobOpportunity JobOpportunity @relation(fields: [jobOpportunityId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@unique([jobOpportunityId, language])
-	@@map("JobOpportunityRequiredLanguage")
+	@@map("job_opportunity_desired_languages")
 }
 
 model JobOpportunity {
@@ -445,7 +472,10 @@ model JobOpportunity {
   autoMatchEnabled Boolean              @map("auto_match_enabled")
   status           JobOpportunityStatus @map("status")
   desiredExperienceYears Int?          @map("desired_experience_years")
+  desiredExperienceArea String?        @map("desired_experience_area")
   desiredEducationLevel AcademicCourseType? @map("desired_education_level")
+  //TODO: Map to enum?
+  desiredCourse     String?             @map("desired_course")
   desiredSkills    String[]             @map("desired_skills")
   
   // Relations
@@ -474,6 +504,8 @@ enum JobApplicationStatus {
 
   // Cancelado pela empresa
   CANCELED_BY_COMPANY
+
+  @@map("job_application_statuses")
 }
 
 

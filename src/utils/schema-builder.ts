@@ -71,7 +71,7 @@ const schemaBuilder = {
       state: z.string().length(2),
       zipCode: z.string().length(8),
     });
-  }
+  },
 };
 
 export default schemaBuilder;
