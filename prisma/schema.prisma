@@ -202,16 +202,16 @@ enum AchievementType {
 }
 
 model User {
-  id                String    @id @default(uuid()) @db.VarChar(36)
-  email             String    @unique @db.VarChar(150)
-  hashedPassword    String    @map("hashed_password") @db.VarChar(256)
-  role              Role
-  profilePictureUrl String?   @map("profile_picture_url") @db.VarChar(255)
-  passwordResetToken String?  @map("password_reset_token") @db.VarChar(256)
+  id                        String    @id @default(uuid()) @db.VarChar(36)
+  email                     String    @unique @db.VarChar(150)
+  hashedPassword            String    @map("hashed_password") @db.VarChar(256)
+  role                      Role
+  profilePictureUrl         String?   @map("profile_picture_url") @db.VarChar(255)
+  passwordResetToken        String?   @map("password_reset_token") @db.VarChar(256)
   passwordResetTokenExpires DateTime? @map("password_reset_token_expires") @db.Timestamptz
-  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz
-  deletedAt         DateTime? @map("deleted_at") @db.Timestamptz
+  createdAt                 DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt                 DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt                 DateTime? @map("deleted_at") @db.Timestamptz
 
   candidate Candidate?
 
@@ -307,18 +307,18 @@ model CandidateAcademicExperienceProject {
 }
 
 model CandidateProfessionalExperience {
-  id               String    @id @default(uuid()) @db.VarChar(36)
-  candidateId      String    @map("candidate_id") @db.VarChar(36)
-  companyName      String    @map("company_name") @db.VarChar(150)
-  companyUrl       String?   @map("company_url") @db.VarChar(255)
-  position             String    @db.VarChar(100)
+  id               String        @id @default(uuid()) @db.VarChar(36)
+  candidateId      String        @map("candidate_id") @db.VarChar(36)
+  companyName      String        @map("company_name") @db.VarChar(150)
+  companyUrl       String?       @map("company_url") @db.VarChar(255)
+  position         String        @db.VarChar(100)
   positionLevel    PositionLevel @map("position_level")
-  description      String?   @db.VarChar(500)
-  startDate        DateTime  @map("start_date") @db.Date
-  endDate          DateTime? @map("end_date") @db.Date
-  current          Boolean   @default(false)
-  responsibilities String[]  @map("responsibilities") @db.VarChar(100)
-  technologies     String[]  @map("technologies") @db.VarChar(100)
+  description      String?       @db.VarChar(500)
+  startDate        DateTime      @map("start_date") @db.Date
+  endDate          DateTime?     @map("end_date") @db.Date
+  current          Boolean       @default(false)
+  responsibilities String[]      @map("responsibilities") @db.VarChar(100)
+  technologies     String[]      @map("technologies") @db.VarChar(100)
 
   // Relations
   candidate Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -371,4 +371,29 @@ model CandidateReference {
   candidate Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("candidate_references")
+}
+
+model Company {
+  id               String   @id @default(uuid()) @db.VarChar(36)
+  tradeName        String   @map("trade_name") @db.VarChar(150)
+  legalName        String   @map("legal_name") @db.VarChar(150)
+  cnpj             String   @unique @db.VarChar(14)
+  logoUrl          String?  @map("logo_url") @db.VarChar(255)
+  galeryUrl        String[] @map("galery_url") @db.VarChar(255)
+  websiteUrl       String?  @map("website_url") @db.VarChar(255)
+  phone            String   @db.VarChar(11)
+  recruitingEmail  String   @map("recruiting_email") @db.VarChar(150)
+  address          Json     @db.Json
+  about            String   @db.VarChar(500)
+  instagramUrl     String?  @map("instagram_url") @db.VarChar(255)
+  linkedinUrl      String?  @map("linkedin_url") @db.VarChar(255)
+  values           String[] @db.VarChar(100)
+  mission          String   @db.VarChar(500)
+  vision           String   @db.VarChar(500)
+  autoMatchEnabled Boolean  @map("auto_match_enabled")
+  employerNumber   Int      @map("employer_number")
+  foundationDate   DateTime @map("foundation_date") @db.Date
+  industry         String   @db.VarChar(100)
+
+  @@map("companies")
 }
