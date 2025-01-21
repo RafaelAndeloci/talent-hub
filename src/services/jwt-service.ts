@@ -2,6 +2,7 @@ import config from '../config/environment';
 import jwt from 'jsonwebtoken';
 import AuthTokenProps from '../api/users/types/auth-token-props';
 import User from '../api/users/types/user';
+import logger from './logging-service';
 
 const {
   security: { secret, issuer, audience, expiresIn },
@@ -9,21 +10,17 @@ const {
 
 const jwtService = {
   authenticateToken: (token: string) => {
-    try {
-      const decoded: any = jwt.verify(token, secret, {
-        issuer,
-        audience,
-        algorithms: ['HS256'],
-      });
-      return {
-        id: decoded.id,
-        email: decoded.email,
-        role: decoded.role,
-        profilePictureUrl: decoded.profilePictureUrl,
-      } as User;
-    } catch (error) {
-      return null;
-    }
+    const decoded: any = jwt.verify(token, secret, {
+      issuer,
+      audience,
+      algorithms: ['HS256'],
+    });
+    return {
+      id: decoded.id,
+      email: decoded.email,
+      role: decoded.role,
+      profilePictureUrl: decoded.profilePictureUrl,
+    } as User;
   },
 
   generateToken: (user: User) => {

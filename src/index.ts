@@ -1,9 +1,12 @@
 import { connectToDatabase } from './config/database';
-
-connectToDatabase();
-import './server';
+import logger from './services/logging-service';
 
 process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  logger.error(`Unhandled Rejection at: ${promise} reason: ${reason}`);
   process.exit(1);
 });
+
+(async () => {
+  await connectToDatabase();
+  await import('./server');
+})();

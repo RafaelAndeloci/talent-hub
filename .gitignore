@@ -9,3 +9,4 @@ coverage/
 *.log
 *.log.*
 *.log-*
+logs/

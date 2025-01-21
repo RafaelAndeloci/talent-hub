@@ -6,9 +6,11 @@ import config from '../config/environment';
 import logging from '../middlewares/logging-middleware';
 import multer from 'multer';
 import errorHandler from '../middlewares/error-handler-middleware';
+import logger from '../services/logging-service';
 
 const app = express();
 
+app.use(logging);
 app.use(multer().single('file'));
 app.use(
   bodyParser.urlencoded({
@@ -17,20 +19,19 @@ app.use(
 );
 app.use(bodyParser.json());
 app.use(methodOverride());
-app.use(logging);
 app.use('/api', apiRoutes);
 app.use(errorHandler);
 
 app.listen(config.api.port, () => {
-  console.log(`Server is running at http://localhost:${config.api.port}`);
+  logger.info(`Server is running at http://localhost:${config.api.port}`);
 });
 
 app.on('error', error => {
-  console.log('Server error:', error);
+  logger.error(error);
 });
 
 app.on('close', () => {
-  console.log('Server closed');
+  logger.info('Server is closing');
 });
 
 export default app;
