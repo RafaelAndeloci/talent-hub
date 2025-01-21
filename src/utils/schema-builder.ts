@@ -36,7 +36,13 @@ const schemaBuilder = {
       filter: z
         .string()
         .transform(value => {
-          const [field, operator, fieldValue] = value.split(':');
+          const match = value.match(/(\w+)\[(\w+)\]=(.+)/);
+
+          if (!match) {
+            throw new Error('Invalid filter format');
+          }
+
+          const [, field, operator, fieldValue] = match;
 
           return {
             field,
@@ -49,6 +55,7 @@ const schemaBuilder = {
             Object.values(FilterOperator).includes(operator) &&
             searchFields?.includes(field) &&
             value?.length,
+          { message: 'Invalid filter parameters' },
         )
         .optional(),
     });

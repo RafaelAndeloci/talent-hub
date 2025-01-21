@@ -5,6 +5,8 @@ import JobOpportunity from './job-opportunity';
 import UpdateJobOpportunityPayload from './update-job-opportunity-payload';
 
 export default interface JobOpportunityBusiness {
+  acceptApplication(jobOpportunity: JobOpportunity): boolean;
+
   create(payload: CreateJobOpportunityPayload): Promise<JobOpportunity>;
 
   update(
@@ -14,7 +16,9 @@ export default interface JobOpportunityBusiness {
 
   remove(id: string): Promise<void>;
 
-  findAll(args: FindAllJobOpportunitiesArgs): Promise<PagedList<JobOpportunity>>;
+  findAll(
+    args: FindAllJobOpportunitiesArgs,
+  ): Promise<PagedList<JobOpportunity>>;
 
   findById(id: string): Promise<JobOpportunity>;
 }

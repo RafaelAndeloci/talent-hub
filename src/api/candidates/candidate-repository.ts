@@ -26,7 +26,7 @@ const candidateRepository = repositoryFactory.buildFor<CandidateModel>({
       },
       upsert: data.academicExperiences.map((a: any) => {
         delete a.candidateId;
-        return ({
+        return {
           where: { id: a.id || uuid.v4() },
           create: {
             ...a,
@@ -44,15 +44,15 @@ const candidateRepository = repositoryFactory.buildFor<CandidateModel>({
               },
               upsert: a.projects.map((p: any) => {
                 delete p.academicExperienceId;
-                return ({
+                return {
                   where: { id: p.id || uuid.v4() },
                   create: p,
                   update: p,
-                });
+                };
               }),
             },
           },
-        });
+        };
       }),
     },
     references: {
@@ -63,11 +63,11 @@ const candidateRepository = repositoryFactory.buildFor<CandidateModel>({
       },
       upsert: data.references.map((r: any) => {
         delete r.candidateId;
-        return ({
+        return {
           where: { id: r.id || uuid.v4() },
           create: r,
           update: r,
-        });
+        };
       }),
     },
     professionalExperiences: {
@@ -78,11 +78,12 @@ const candidateRepository = repositoryFactory.buildFor<CandidateModel>({
       },
       upsert: data.professionalExperiences.map((p: any) => {
         delete p.candidateId;
-        return ({
-          where: { id: p.id || uuid.v4() },
+        p.id = p.id || uuid.v4();
+        return {
+          where: { id: p.id },
           create: p,
           update: p,
-        });
+        };
       }),
     },
     skills: {
@@ -93,11 +94,11 @@ const candidateRepository = repositoryFactory.buildFor<CandidateModel>({
       },
       upsert: data.skills.map((s: any) => {
         delete s.candidateId;
-        return ({
+        return {
           where: { id: s.id || uuid.v4() },
           create: s,
           update: s,
-        });
+        };
       }),
     },
     languages: {
@@ -108,11 +109,11 @@ const candidateRepository = repositoryFactory.buildFor<CandidateModel>({
       },
       upsert: data.languages.map((l: any) => {
         delete l.candidateId;
-        return ({
+        return {
           where: { id: l.id || uuid.v4() },
           create: l,
           update: l,
-        });
+        };
       }),
     },
     achievements: {
@@ -123,11 +124,11 @@ const candidateRepository = repositoryFactory.buildFor<CandidateModel>({
       },
       upsert: data.achievements.map((a: any) => {
         delete a.candidateId;
-        return ({
+        return {
           where: { id: a.id || uuid.v4() },
           create: a,
           update: a,
-        });
+        };
       }),
     },
   }),

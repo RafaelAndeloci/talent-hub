@@ -4,6 +4,7 @@ import ApiError from '../../types/api-error';
 import JobOpportunity from './types/job-opportunity';
 import * as uuid from 'uuid';
 import { JobOpportunityDesiredLanguageModel } from './types/job-opportunity-model';
+import { JobOpportunityStatus } from '@prisma/client';
 
 const jobOpportunityBusiness: JobOpportunityBusiness = {
   async create(payload) {
@@ -79,6 +80,10 @@ const jobOpportunityBusiness: JobOpportunityBusiness = {
     const jobOpportunities = await jobOpportunityRepository.findAll(args);
     return jobOpportunities;
   },
+
+  acceptApplication(jobOpportunity) { 
+    return jobOpportunity.status === JobOpportunityStatus.OPEN;
+  }
 };
 
 export default jobOpportunityBusiness;

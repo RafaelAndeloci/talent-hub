@@ -118,6 +118,10 @@ const candidateSchema = z.object({
   references: z.array(referenceSchema).default([]),
 });
 
+const jobApplicationSchema = z.object({
+  jobOpportunityId: z.string().uuid(),
+});
+
 const candidateSchemas = {
   create: z.object({ body: candidateSchema }),
   update: z.object({

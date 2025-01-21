@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import methodOverride from 'method-override';
-import routes from './routes';
+import apiRoutes from './routes';
 import config from '../config/environment';
 import logging from '../middlewares/logging-middleware';
 import multer from 'multer';
@@ -17,7 +17,7 @@ app.use(
 app.use(bodyParser.json());
 app.use(methodOverride());
 app.use(logging);
-app.use('/api', routes);
+app.use('/api', apiRoutes);
 
 app.listen(config.api.port, () => {
   console.log(`Server is running at http://localhost:${config.api.port}`);
