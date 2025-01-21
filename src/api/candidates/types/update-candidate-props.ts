@@ -1,4 +1,4 @@
-import  { Candidate } from "./candidate";
+import { Candidate } from './candidate';
 
 type UpdateCandidateProps = {
   id: string;

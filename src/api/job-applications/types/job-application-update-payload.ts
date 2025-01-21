@@ -1,4 +1,4 @@
-import { JobApplicationStatus } from "@prisma/client";
+import { JobApplicationStatus } from '@prisma/client';
 
 type JobApplicationUpdatePayload = {
   jobApplicationId: string;

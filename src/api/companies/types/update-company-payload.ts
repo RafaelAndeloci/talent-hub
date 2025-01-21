@@ -1,4 +1,4 @@
-import CreateCompanyPayload from "./create-company-payload";
+import CreateCompanyPayload from './create-company-payload';
 
 type UpdateCompanyPayload = Partial<CreateCompanyPayload>;
 

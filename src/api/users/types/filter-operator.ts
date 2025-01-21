@@ -6,7 +6,10 @@ enum FilterOperator {
   lte,
   contains,
   endsWith,
-  startsWith
+  startsWith,
+  not,
+  notIn,
+  in,
 }
 
 export default FilterOperator;

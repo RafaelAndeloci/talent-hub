@@ -2,38 +2,37 @@ import { Router } from 'express';
 import candidateController from './candidate-controller';
 import candidateSchemas from './candidate-schema';
 import validate from '../../middlewares/validation-middleware';
-import errorHandlerWrapper from '../../middlewares/error-handler-middle';
 
 const candidateRoutes = Router();
 
 candidateRoutes.get(
   '/:id',
   validate(candidateSchemas.findById),
-  errorHandlerWrapper(candidateController.findById),
+  candidateController.findById as any,
 );
 
 candidateRoutes.get(
   '/',
   validate(candidateSchemas.findAll),
-  errorHandlerWrapper(candidateController.findAll),
+  candidateController.findAll,
 );
 
 candidateRoutes.post(
   '/',
   validate(candidateSchemas.create),
-  errorHandlerWrapper(candidateController.create),
+  candidateController.create as any,
 );
 
 candidateRoutes.put(
   '/:id',
   validate(candidateSchemas.update),
-  errorHandlerWrapper(candidateController.update),
+  candidateController.update as any,
 );
 
 candidateRoutes.delete(
   '/:id',
   validate(candidateSchemas.remove),
-  errorHandlerWrapper(candidateController.remove),
+  candidateController.remove,
 );
 
 export default candidateRoutes;

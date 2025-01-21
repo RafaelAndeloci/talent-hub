@@ -100,7 +100,7 @@ const candidateBusiness: CandidateBusiness = {
       ...candidate,
       ...payload,
       languages:
-        payload.languages?.map(l => {
+        payload.languages?.map((l: CandidateLanguageModel) => {
           const existing = candidate.languages.find(
             e => e.language === l.language,
           );

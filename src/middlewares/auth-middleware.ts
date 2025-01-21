@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwtService from '../services/jwt-service';
+import ApiError from '../types/api-error';
 
 const authenticate = (req: Request, res: Response, next: NextFunction): any => {
   const [type, token] = req.headers.authorization?.split(' ') ?? [];
@@ -9,7 +10,7 @@ const authenticate = (req: Request, res: Response, next: NextFunction): any => {
 
   const user = jwtService.authenticateToken(token);
   if (!user) {
-    return res.status(401).json({ message: 'Unauthorized' });
+    ApiError.throwUnauthorized('invalid authorization token');
   }
 
   res.locals.user = user;

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import documentValidator from '../../utils/document-validator';
 import schemaBuilder from '../../utils/schema-builder';
+import Company from './types/company';
 
 const companySchema = z.object({
   tradeName: z.string().min(3).max(255),
@@ -49,7 +50,7 @@ const companySchemas = {
   }),
   findAll: z.object({
     query: schemaBuilder
-      .buildQuery({
+      .buildQuery<Company>({
         searchFields: [
           'tradeName',
           'legalName',

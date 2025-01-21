@@ -1,39 +1,38 @@
-import { Router } from "express";
-import JobOpportunityController from "./job-opportunity-controller";
-import jobOpportunitySchemas from "./job-opportunity-schema"; 
-import validate from "../../middlewares/validation-middleware";
-import errorHandlerWrapper from "../../middlewares/error-handler-middle";
+import { Router } from 'express';
+import JobOpportunityController from './job-opportunity-controller';
+import jobOpportunitySchemas from './job-opportunity-schema';
+import validate from '../../middlewares/validation-middleware';
 
 const jobOpportunityRouter = Router();
 
 jobOpportunityRouter.get(
-  "/",
+  '/',
   validate(jobOpportunitySchemas.findAll),
-  errorHandlerWrapper(JobOpportunityController.findAll)
+  JobOpportunityController.findAll as any,
 );
 
 jobOpportunityRouter.get(
-  "/:id",
+  '/:id',
   validate(jobOpportunitySchemas.findById),
-  errorHandlerWrapper(JobOpportunityController.findById)
+  JobOpportunityController.findById,
 );
 
 jobOpportunityRouter.post(
-  "/",
+  '/',
   validate(jobOpportunitySchemas.create),
-  errorHandlerWrapper(JobOpportunityController.create)
+  JobOpportunityController.create as any,
 );
 
 jobOpportunityRouter.put(
-  "/:id",
+  '/:id',
   validate(jobOpportunitySchemas.update),
-  errorHandlerWrapper(JobOpportunityController.update)
+  JobOpportunityController.update as any,
 );
 
 jobOpportunityRouter.delete(
-  "/:id",
+  '/:id',
   validate(jobOpportunitySchemas.remove),
-  errorHandlerWrapper(JobOpportunityController.remove)
+  JobOpportunityController.remove,
 );
 
 export default jobOpportunityRouter;

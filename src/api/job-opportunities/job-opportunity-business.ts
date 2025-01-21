@@ -81,9 +81,9 @@ const jobOpportunityBusiness: JobOpportunityBusiness = {
     return jobOpportunities;
   },
 
-  acceptApplication(jobOpportunity) { 
+  acceptApplication(jobOpportunity) {
     return jobOpportunity.status === JobOpportunityStatus.OPEN;
-  }
+  },
 };
 
 export default jobOpportunityBusiness;

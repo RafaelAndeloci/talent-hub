@@ -2,7 +2,6 @@ import FindAllProps from './find-all-props';
 import PagedList from './paged-list';
 import WhereOptions from './where-options';
 
-
 export default interface Repository<T extends { id: string }> {
   findAll: (
     props: FindAllProps<T> & { where?: WhereOptions<T> },
@@ -19,6 +18,6 @@ export default interface Repository<T extends { id: string }> {
   remove: (id: string) => Promise<void>;
 
   count: (where: WhereOptions<T>) => Promise<number>;
-  
+
   exists: (where: WhereOptions<T>) => Promise<boolean>;
 }

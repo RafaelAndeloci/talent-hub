@@ -1,4 +1,4 @@
-import User from "./user";
+import User from './user';
 
 type CreateUserProps = Pick<User, 'email' | 'role'> & {
   password: string;

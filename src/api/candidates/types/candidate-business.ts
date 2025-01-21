@@ -6,9 +6,7 @@ import UpdateCandidateProps from './update-candidate-props';
 
 type CandidateBusiness = {
   findById: (id: string) => Promise<Candidate>;
-  findAll: (
-    args: FindAllProps<Candidate>,
-  ) => Promise<PagedList<Candidate>>;
+  findAll: (args: FindAllProps<Candidate>) => Promise<PagedList<Candidate>>;
   create: (args: CreateCandidateDto) => Promise<Candidate>;
   update: (args: UpdateCandidateProps) => Promise<Candidate>;
   remove: (id: string) => Promise<void>;

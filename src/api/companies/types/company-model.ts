@@ -1,6 +1,4 @@
-import {
-  Company
-} from '@prisma/client';
+import { Company } from '@prisma/client';
 
 type CompanyModel = Company;
 

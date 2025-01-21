@@ -2,6 +2,8 @@ import { Role } from '@prisma/client';
 import { z } from 'zod';
 import schemaBuilder from '../../utils/schema-builder';
 import config from '../../config/environment';
+import User from './types/user';
+import AuditableEntity from '../../types/auditable-entity';
 
 const passwordRule = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,16}$/;
 
@@ -38,9 +40,9 @@ const userSchema = {
   }),
 
   findAll: z.object({
-    query: schemaBuilder.buildQuery({
+    query: schemaBuilder.buildQuery<User & AuditableEntity>({
       searchFields: ['role', 'email'],
-      sortingFields: ['role', 'email', 'createdAt', 'updatedAt'],
+      sortingFields: ['role', 'email', 'updatedAt'],
     }),
   }),
 

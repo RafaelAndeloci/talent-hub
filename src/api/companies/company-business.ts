@@ -13,7 +13,9 @@ const companyBusiness: CompanyBusiness = {
         cnpj: payload.cnpj,
       })
     ) {
-      ApiError.throwConflict(`company with cnpj ${payload.cnpj} already exists`);
+      ApiError.throwConflict(
+        `company with cnpj ${payload.cnpj} already exists`,
+      );
     }
 
     const company = {

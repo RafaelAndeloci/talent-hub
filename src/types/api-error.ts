@@ -67,8 +67,8 @@ export default class ApiError extends Error {
   public toJson() {
     return {
       code: this.code,
-      errors: this.errors,
       status: this.status,
+      errors: this.errors,
     };
   }
 }

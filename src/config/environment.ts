@@ -25,13 +25,15 @@ const config = {
     //** Token Expiration in hours */
     expiresIn: parseFloat(process.env.JWT_EXPIRES_IN || '1'),
   },
-  fileStorage: {
-
-  },
+  fileStorage: {},
   allowedMimeTypes: {
     images: ['image/jpeg', 'image/png'],
-    documents: ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
-  }
+    documents: [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    ],
+  },
 };
 
 export default config;

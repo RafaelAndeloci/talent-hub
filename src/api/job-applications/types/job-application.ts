@@ -5,7 +5,7 @@ export type JobApplicationFeedback = Omit<JobApplicationFeedbackModel, 'id'>;
 
 type JobApplication = Omit<
   JobApplicationModel,
-  'deletedAt'  | 'updatedAt' | 'feedbackHistory'
+  'deletedAt' | 'updatedAt' | 'feedbackHistory'
 > & {
   feedbackHistory: JobApplicationFeedback[];
 };

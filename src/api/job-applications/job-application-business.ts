@@ -5,9 +5,7 @@ import ApiError from '../../types/api-error';
 import JobApplicationModel, {
   JobApplicationFeedbackModel,
 } from './types/job-application-model';
-import JobApplication, {
-  JobApplicationFeedback,
-} from './types/job-application';
+import JobApplication from './types/job-application';
 import jobOpportunityRepository from '../job-opportunities/job-opportunity-repository';
 import jobOpportunityBusiness from '../job-opportunities/job-opportunity-business';
 import userRepository from '../users/user-repository';
@@ -82,7 +80,6 @@ const jobApplicationBusiness: JobApplicationBusiness = {
       updatedAt: new Date(),
       createdBy: payload.userId,
       feedbackHistory: [],
-      feedbacks: [],
       interviewNotes: [],
       deletedAt: null,
       rejectionReason: null,
@@ -214,7 +211,7 @@ const jobApplicationBusiness: JobApplicationBusiness = {
   },
 
   async findAll(args) {
-    const jobApplications = await jobApplicationRepository.findAll(args);
+    const jobApplications = await jobApplicationRepository.findAll(args as any);
     return jobApplications.parse(fromDatabase);
   },
 

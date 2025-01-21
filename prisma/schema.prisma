@@ -235,33 +235,36 @@ model User {
   updatedAt                 DateTime  @updatedAt @map("updated_at") @db.Timestamptz
   deletedAt                 DateTime? @map("deleted_at") @db.Timestamptz
 
-  candidate Candidate?
+  candidate                    Candidate?
+  jobApplicationCreator        JobApplication[]         @relation("job_application_creator")
+  jobApplicationUpdater        JobApplication[]         @relation("job_application_updater")
+  JobApplicationFeedbackWriter JobApplicationFeedback[]
 
   @@map("users")
 }
 
 model Candidate {
-  id                    String          @id @default(uuid()) @db.VarChar(36)
-  userId                String          @unique @map("user_id") @db.VarChar(36)
-  fullName              String          @map("full_name") @db.VarChar(150)
-  birthDate             DateTime        @map("birth_date") @db.Date
-  phone                 String          @unique @db.VarChar(11)
-  address               Json            @db.Json
-  cvUrl                 String?         @map("cv_url") @db.VarChar(255)
-  bio                   String?         @db.VarChar(500)
-  hobbies               String[]        @map("hobbies") @db.VarChar(100)
-  linkedinUrl           String?         @map("linkedin_url") @db.VarChar(255)
-  githubUrl             String?         @map("github_url") @db.VarChar(255)
-  instagramUrl          String?         @map("instagram_url") @db.VarChar(255)
-  professionalHeadline  String?         @map("professional_headline") @db.VarChar(100)
-  desiredSalary         Float?          @map("desired_salary")
-  autoMatchEnabled      Boolean         @map("auth_match_enabled")
-  desiredWorkplaceType  WorkplaceType?  @map("desired_workplace_type")
-  desiredWorkloadType   WorkloadType?   @map("desired_workload_type")
-  desiredEmploymentType EmploymentType? @map("desired_employment_type")
-  desiredContractType   ContractType?   @map("desired_contract_type")
-  desiredBenefits       Benefit[]       @map("desired_benefits")
-  desiredPositionLevel  PositionLevel?  @map("desired_position_level")
+  id                           String          @id @default(uuid()) @db.VarChar(36)
+  userId                       String          @unique @map("user_id") @db.VarChar(36)
+  fullName                     String          @map("full_name") @db.VarChar(150)
+  birthDate                    DateTime        @map("birth_date") @db.Date
+  phone                        String          @unique @db.VarChar(11)
+  address                      Json            @db.Json
+  cvUrl                        String?         @map("cv_url") @db.VarChar(255)
+  bio                          String?         @db.VarChar(500)
+  hobbies                      String[]        @map("hobbies") @db.VarChar(100)
+  linkedinUrl                  String?         @map("linkedin_url") @db.VarChar(255)
+  githubUrl                    String?         @map("github_url") @db.VarChar(255)
+  instagramUrl                 String?         @map("instagram_url") @db.VarChar(255)
+  professionalHeadline         String?         @map("professional_headline") @db.VarChar(100)
+  desiredSalary                Float?          @map("desired_salary")
+  acceptThirdPartyApplications Boolean         @map("accept_third_party_applications")
+  desiredWorkplaceType         WorkplaceType?  @map("desired_workplace_type")
+  desiredWorkloadType          WorkloadType?   @map("desired_workload_type")
+  desiredEmploymentType        EmploymentType? @map("desired_employment_type")
+  desiredContractType          ContractType?   @map("desired_contract_type")
+  desiredBenefits              Benefit[]       @map("desired_benefits")
+  desiredPositionLevel         PositionLevel?  @map("desired_position_level")
 
   // Relations
   user                    User                              @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -271,7 +274,7 @@ model Candidate {
   achievements            CandidateAchievement[]
   references              CandidateReference[]
   languages               CandidateLanguage[]
-  applications JobApplication[]
+  applications            JobApplication[]
 
   @@map("candidates")
 }
@@ -397,26 +400,26 @@ model CandidateReference {
 }
 
 model Company {
-  id              String           @id @default(uuid()) @db.VarChar(36)
-  tradeName       String           @map("trade_name") @db.VarChar(150)
-  legalName       String           @map("legal_name") @db.VarChar(150)
-  cnpj            String           @unique @db.VarChar(14)
-  logoUrl         String?          @map("logo_url") @db.VarChar(255)
-  galeryUrl       String[]         @map("galery_url") @db.VarChar(255)
-  websiteUrl      String?          @map("website_url") @db.VarChar(255)
-  phone           String           @db.VarChar(11)
-  recruitingEmail String           @map("recruiting_email") @db.VarChar(150)
-  address         Json             @db.Json
-  about           String           @db.VarChar(500)
-  instagramUrl    String?          @map("instagram_url") @db.VarChar(255)
-  linkedinUrl     String?          @map("linkedin_url") @db.VarChar(255)
-  values          String[]         @db.VarChar(100)
-  mission         String           @db.VarChar(500)
-  vision          String           @db.VarChar(500)
-  employerNumber  Int              @map("employer_number")
-  foundationYear  Int              @map("foundation_year")
-  industry        String           @db.VarChar(100)
-  jobOpportunities  JobOpportunity[]
+  id               String           @id @default(uuid()) @db.VarChar(36)
+  tradeName        String           @map("trade_name") @db.VarChar(150)
+  legalName        String           @map("legal_name") @db.VarChar(150)
+  cnpj             String           @unique @db.VarChar(14)
+  logoUrl          String?          @map("logo_url") @db.VarChar(255)
+  galeryUrl        String[]         @map("galery_url") @db.VarChar(255)
+  websiteUrl       String?          @map("website_url") @db.VarChar(255)
+  phone            String           @db.VarChar(11)
+  recruitingEmail  String           @map("recruiting_email") @db.VarChar(150)
+  address          Json             @db.Json
+  about            String           @db.VarChar(500)
+  instagramUrl     String?          @map("instagram_url") @db.VarChar(255)
+  linkedinUrl      String?          @map("linkedin_url") @db.VarChar(255)
+  values           String[]         @db.VarChar(100)
+  mission          String           @db.VarChar(500)
+  vision           String           @db.VarChar(500)
+  employerNumber   Int              @map("employer_number")
+  foundationYear   Int              @map("foundation_year")
+  industry         String           @db.VarChar(100)
+  jobOpportunities JobOpportunity[]
 
   @@map("companies")
 }
@@ -450,38 +453,38 @@ model JobOpportunityDesiredLanguage {
   jobOpportunity JobOpportunity @relation(fields: [jobOpportunityId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@unique([jobOpportunityId, language])
-	@@map("job_opportunity_desired_languages")
+  @@map("job_opportunity_desired_languages")
 }
 
 model JobOpportunity {
-  id               String               @id @default(uuid()) @db.VarChar(36)
-  companyId        String               @map("company_id") @db.VarChar(36)
-  title            String               @db.VarChar(150)
-  description      String               @db.VarChar(500)
-  positionLevel    PositionLevel        @map("position_level")
-  workloadType     WorkloadType         @map("workload_type")
-  workplaceType    WorkplaceType        @map("workplace_type")
-  employmentType   EmploymentType       @map("employment_type")
-  contractType     ContractType         @map("contract_type")
-  salary           Float?               @map("salary")
-  benefits         Benefit[]            @map("benefits")
-  requirements     String[]             @db.VarChar(100)
-  responsibilities String[]             @db.VarChar(100)
-  technologies     String[]             @db.VarChar(100)
-  deadline         DateTime             @db.Date
-  autoMatchEnabled Boolean              @map("auto_match_enabled")
-  status           JobOpportunityStatus @map("status")
-  desiredExperienceYears Int?          @map("desired_experience_years")
-  desiredExperienceArea String?        @map("desired_experience_area")
-  desiredEducationLevel AcademicCourseType? @map("desired_education_level")
+  id                     String               @id @default(uuid()) @db.VarChar(36)
+  companyId              String               @map("company_id") @db.VarChar(36)
+  title                  String               @db.VarChar(150)
+  description            String               @db.VarChar(500)
+  positionLevel          PositionLevel        @map("position_level")
+  workloadType           WorkloadType         @map("workload_type")
+  workplaceType          WorkplaceType        @map("workplace_type")
+  employmentType         EmploymentType       @map("employment_type")
+  contractType           ContractType         @map("contract_type")
+  salary                 Float?               @map("salary")
+  benefits               Benefit[]            @map("benefits")
+  requirements           String[]             @db.VarChar(100)
+  responsibilities       String[]             @db.VarChar(100)
+  technologies           String[]             @db.VarChar(100)
+  deadline               DateTime             @db.Date
+  autoMatchEnabled       Boolean              @map("auto_match_enabled")
+  status                 JobOpportunityStatus @map("status")
+  desiredExperienceYears Int?                 @map("desired_experience_years")
+  desiredExperienceArea  String?              @map("desired_experience_area")
+  desiredEducationLevel  AcademicCourseType?  @map("desired_education_level")
   //TODO: Map to enum?
-  desiredCourse     String?             @map("desired_course")
-  desiredSkills    String[]             @map("desired_skills")
-  
+  desiredCourse          String?              @map("desired_course")
+  desiredSkills          String[]             @map("desired_skills")
+
   // Relations
   desiredLanguages JobOpportunityDesiredLanguage[]
-  company           Company                          @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  applications JobApplication[]
+  company          Company                         @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  applications     JobApplication[]
 
   @@map("job_opportunities")
 }
@@ -508,23 +511,43 @@ enum JobApplicationStatus {
   @@map("job_application_statuses")
 }
 
-
-model JobApplication {
-  id              String             @id @default(uuid()) @db.VarChar(36)
-  candidateId     String             @map("candidate_id") @db.VarChar(36)
-  jobOpportunityId String            @map("job_opportunity_id") @db.VarChar(36)
-  status          JobApplicationStatus @map("status")
-  appliedAt       DateTime           @map("applied_at") @db.Timestamptz
-  updatedAt       DateTime           @updatedAt @map("updated_at") @db.Timestamptz
-  deletedAt       DateTime?          @map("deleted_at") @db.Timestamptz
-  companyFeedback String?            @map("company_feedback") @db.VarChar(500)
-  candidateFeedback String?          @map("candidate_feedback") @db.VarChar(500)
-  interviewNotes String? @map("interview_notes") @db.Text
-  rejectionReason String? @map("rejection_reason") @db.VarChar(255)
+model JobApplicationFeedback {
+  id            String   @id @default(uuid()) @db.VarChar(36)
+  applicationId String   @map("application_id") @db.VarChar(36)
+  title         String   @db.VarChar(150)
+  message       String   @db.VarChar(500)
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  createdBy     String   @map("created_by") @db.VarChar(36)
 
   // Relations
-  candidate      Candidate       @relation(fields: [candidateId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  jobOpportunity JobOpportunity  @relation(fields: [jobOpportunityId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  application JobApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  creator     User           @relation(fields: [createdBy], references: [id])
 
+  @@unique([applicationId, title])
+  @@map("job_application_feedbacks")
+}
+
+model JobApplication {
+  id               String               @id @default(uuid()) @db.VarChar(36)
+  candidateId      String               @map("candidate_id") @db.VarChar(36)
+  jobOpportunityId String               @map("job_opportunity_id") @db.VarChar(36)
+  status           JobApplicationStatus @map("status")
+  appliedAt        DateTime             @map("applied_at") @db.Timestamptz
+  updatedAt        DateTime             @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt        DateTime?            @map("deleted_at") @db.Timestamptz
+  interviewNotes   String[]             @map("interview_notes") @db.Text
+  rejectionReason  String?              @map("rejection_reason") @db.VarChar(255)
+  createdBy        String               @map("created_by") @db.VarChar(36)
+  updatedBy        String?              @map("updated_by") @db.VarChar(36)
+
+  // Relations
+  candidate        Candidate                @relation(fields: [candidateId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  jobOpportunity   JobOpportunity           @relation(fields: [jobOpportunityId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  creator          User                     @relation("job_application_creator", fields: [createdBy], references: [id])
+  updater          User?                    @relation("job_application_updater", fields: [updatedBy], references: [id])
+  feedbacksHistory JobApplicationFeedback[]
+
+  @@unique([candidateId, jobOpportunityId])
   @@map("job_applications")
 }

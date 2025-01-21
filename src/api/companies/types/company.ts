@@ -1,4 +1,4 @@
-import CompanyModel from "./company-model";
+import CompanyModel from './company-model';
 
 type Company = CompanyModel;
 

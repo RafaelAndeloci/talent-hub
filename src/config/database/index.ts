@@ -25,7 +25,6 @@ const log = createPrismaQueryEventHandler({
   colorQuery: 'yellow',
   format: true,
   language: 'sql',
-  indent: '    ',
 });
 
 prisma.$on('query', log);

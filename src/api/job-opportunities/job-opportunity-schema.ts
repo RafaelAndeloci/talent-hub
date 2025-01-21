@@ -11,6 +11,7 @@ import {
   WorkloadType,
   WorkplaceType,
 } from '@prisma/client';
+import JobOpportunity from './types/job-opportunity';
 
 const desiredLanguageSchema = z.object({
   language: z.string().min(3).max(255),
@@ -72,7 +73,7 @@ const jobOpportunitySchemas = {
   }),
 
   findAll: z.object({
-    query: schemaBuilder.buildQuery({
+    query: schemaBuilder.buildQuery<JobOpportunity>({
       searchFields: [
         'title',
         'description',

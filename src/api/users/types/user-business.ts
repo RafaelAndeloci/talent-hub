@@ -11,9 +11,7 @@ type UserBusiness = {
   findById: (id: string) => Promise<User>;
   create: (props: CreateUserProps) => Promise<User>;
   auth: (props: AuthProps) => Promise<AuthTokenProps>;
-  updateProfilePicture: (
-    props: UpdateUserProfilePictureProps,
-  ) => Promise<User>;
+  updateProfilePicture: (props: UpdateUserProfilePictureProps) => Promise<User>;
 };
 
 export default UserBusiness;

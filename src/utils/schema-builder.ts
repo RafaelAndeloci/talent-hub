@@ -1,9 +1,20 @@
 import { z } from 'zod';
 import FilterOperator from '../api/users/types/filter-operator';
 import _ from 'lodash';
+import Entity from '../types/entity';
+import ApiError from '../types/api-error';
+import { Filter, Sorting } from '../types/find-all-props';
+
+type BuildQueryArgs<T extends Entity> = {
+  sortingFields: (keyof T)[];
+  searchFields: (keyof T)[];
+};
 
 const schemaBuilder = {
-  buildQuery({ sortingFields = ['id'], searchFields = ['id'] }) {
+  buildQuery<T extends Entity>({
+    sortingFields = ['id'],
+    searchFields = ['id'],
+  }: BuildQueryArgs<T>) {
     return z.object({
       limit: z
         .string()
@@ -17,47 +28,58 @@ const schemaBuilder = {
         .refine(value => value >= 0)
         .default('0')
         .optional(),
-      sort: z
+      sortings: z
+        .string()
+        .transform(value =>
+          value.split(';').map(sort => {
+            const [field, order] = sort.split(':');
+            return {
+              field,
+              order,
+            } as Sorting<T>;
+          }),
+        )
+        .refine(value => {
+          return value.every(({ field, order }) => {
+            return (
+              sortingFields?.includes(field as keyof T) &&
+              (order === 'asc' || order === 'desc')
+            );
+          });
+        })
+        .optional()
+        .default(''),
+      filters: z
         .string()
         .transform(value => {
-          const [field, order] = value.split(':');
-          return {
-            field,
-            order,
-          };
+          const filters = value.split(';');
+          return filters.map(filter => {
+            const match = filter.match(/(\w+)\[(\w+)\]:(.+)/);
+
+            if (!match) {
+              ApiError.throwBadRequest('Invalid filter format');
+            }
+
+            const [, field, operator, value] = match!;
+
+            return {
+              field: field as keyof T,
+              operator: operator as unknown as FilterOperator,
+              value: value.split(','),
+            } as Filter<T>;
+          });
         })
-        .refine(
-          ({ field, order }) =>
-            sortingFields?.includes(field) &&
-            (order === 'asc' || order === 'desc'),
+        .refine(filters =>
+          filters.every(
+            ({ field, operator, value }) =>
+              Object.values(FilterOperator).includes(operator) &&
+              searchFields?.includes(field as keyof T) &&
+              [FilterOperator.in, FilterOperator.notIn].includes(operator) &&
+              Array.isArray(value),
+          ),
         )
-        .default('id:asc')
-        .optional(),
-      filter: z
-        .string()
-        .transform(value => {
-          const match = value.match(/(\w+)\[(\w+)\]=(.+)/);
-
-          if (!match) {
-            throw new Error('Invalid filter format');
-          }
-
-          const [, field, operator, fieldValue] = match;
-
-          return {
-            field,
-            operator,
-            value: fieldValue,
-          };
-        })
-        .refine(
-          ({ field, operator, value }) =>
-            Object.values(FilterOperator).includes(operator) &&
-            searchFields?.includes(field) &&
-            value?.length,
-          { message: 'Invalid filter parameters' },
-        )
-        .optional(),
+        .optional()
+        .default(''),
     });
   },
 

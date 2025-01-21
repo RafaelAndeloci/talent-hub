@@ -22,31 +22,23 @@ const buildFor = <T extends { id: string }>({
     async findAll({
       limit = 9999999,
       offset = 0,
-      sorting: { field: sortingField, order: sortingOrder } = {
-        field: 'id',
-        order: 'asc',
-      },
-      filter: {
-        field: filterField,
-        operator: filterOperator,
-        value: filterValue,
-      } = {},
+      sortings,
+      filters,
       where = {},
     }) {
-      if (filterField && filterOperator && filterValue) {
-        let op: any = filterOperator;
+      for (const filter of filters) {
+        const { field, operator, value } = filter;
+        let op: any = operator;
 
-        (where as any)[filterField] = {
-          [op]: filterValue,
+        (where as any)[field] = {
+          [op]: value,
         };
       }
 
       const options = {
         take: limit,
         skip: offset,
-        orderBy: {
-          [sortingField]: sortingOrder,
-        },
+        orderBy: [...sortings.map(s => ({ [s.field]: s.order }))],
         where,
         include: inclusions,
       };

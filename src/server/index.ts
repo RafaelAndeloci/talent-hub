@@ -5,6 +5,7 @@ import apiRoutes from './routes';
 import config from '../config/environment';
 import logging from '../middlewares/logging-middleware';
 import multer from 'multer';
+import errorHandler from '../middlewares/error-handler-middleware';
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(bodyParser.json());
 app.use(methodOverride());
 app.use(logging);
 app.use('/api', apiRoutes);
+app.use(errorHandler);
 
 app.listen(config.api.port, () => {
   console.log(`Server is running at http://localhost:${config.api.port}`);

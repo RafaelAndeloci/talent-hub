@@ -26,8 +26,5 @@ export default interface JobOpportunityController {
     res: Response<JobOpportunity>,
   ): Promise<void>;
 
-  remove(
-    req: Request<{ id: string }>,
-    res: Response<void>,
-  ): Promise<void>;
+  remove(req: Request<{ id: string }>, res: Response<void>): Promise<void>;
 }

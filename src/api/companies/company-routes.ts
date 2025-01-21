@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import companyController from './company-controller';
 import companySchemas from './company-schema';
-import errorHandlerWrapper from '../../middlewares/error-handler-middle';
 import validate from '../../middlewares/validation-middleware';
 
 const companyRouter = Router();
@@ -9,23 +8,31 @@ const companyRouter = Router();
 companyRouter.post(
   '/',
   validate(companySchemas.create),
-  errorHandlerWrapper(companyController.create),
+  companyController.create as any,
 );
 
 companyRouter.put(
   '/:id',
   validate(companySchemas.update),
-  errorHandlerWrapper(companyController.update),
+  companyController.update as any,
 );
 
-companyRouter.delete('/:id', errorHandlerWrapper(companyController.remove));
+companyRouter.delete(
+  '/:id',
+  validate(companySchemas.remove),
+  companyController.remove,
+);
 
-companyRouter.get('/:id', errorHandlerWrapper(companyController.findById));
+companyRouter.get(
+  '/:id',
+  validate(companySchemas.findById),
+  companyController.findById,
+);
 
 companyRouter.get(
   '/',
   validate(companySchemas.findAll),
-  errorHandlerWrapper(companyController.findAll),
+  companyController.findAll as any,
 );
 
 export default companyRouter;

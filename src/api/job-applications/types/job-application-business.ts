@@ -18,7 +18,9 @@ export default interface JobApplicationBusiness {
 
   findById: (id: string) => Promise<JobApplication>;
 
-  findAll: (args: FindAllJobApplicationsArgs) => Promise<PagedList<JobApplication>>;
+  findAll: (
+    args: FindAllJobApplicationsArgs,
+  ) => Promise<PagedList<JobApplication>>;
 
   isCanceled: (jobApplication: JobApplication) => boolean;
 }

@@ -14,6 +14,7 @@ import {
   PositionLevel,
   AchievementType,
 } from '@prisma/client';
+import { Candidate } from './types/candidate';
 
 const urlSchema = z.string().url().max(255);
 
@@ -130,7 +131,7 @@ const candidateSchemas = {
   }),
   findById: z.object({ params: z.object({ id: z.string().uuid() }) }),
   findAll: z.object({
-    query: schemaBuilder.buildQuery({
+    query: schemaBuilder.buildQuery<Candidate>({
       searchFields: [
         'fullName',
         'phone',

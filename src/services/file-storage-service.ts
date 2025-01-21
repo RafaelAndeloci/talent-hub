@@ -1,4 +1,4 @@
-import config from "../config/environment";
+import config from '../config/environment';
 
 export type FileStorageService = {
   upload({
@@ -30,6 +30,6 @@ const fileStorageService: FileStorageService = {
     // Delete file from S3
     Promise.resolve();
   },
-}
+};
 
 export default fileStorageService;
