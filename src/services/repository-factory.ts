@@ -19,18 +19,21 @@ const buildFor = <T extends { id: string }>({
 }: BuildRepositoryArgs): Repository<T> => {
   const model: any = prisma[modelName.toLowerCase() as keyof typeof prisma];
   const repository: Repository<T> = {
-    async findAll({
-      limit = 9999999,
-      offset = 0,
-      sortings,
-      filters,
-      where = {},
-    }) {
+    async findAll(props = null) {
+      const { limit, offset, sortings, filters, where } = props || {
+        limit: 10,
+        offset: 0,
+        sortings: [],
+        filters: [],
+        where: {},
+      };
+
       for (const filter of filters) {
         const { field, operator, value } = filter;
-        let op: any = operator;
+        const op: any = operator;
 
         (where as any)[field] = {
+          ...((where as any)[field] || {}),
           [op]: value,
         };
       }
@@ -38,7 +41,7 @@ const buildFor = <T extends { id: string }>({
       const options = {
         take: limit,
         skip: offset,
-        orderBy: [...sortings.map(s => ({ [s.field]: s.order }))],
+        orderBy: sortings.map(s => ({ [s.field]: s.order })),
         where,
         include: inclusions,
       };
@@ -48,7 +51,12 @@ const buildFor = <T extends { id: string }>({
         model.count({ where }),
       ]);
 
-      return PagedList.create(offset, limit, total ?? 0, records ?? []);
+      return PagedList.create(
+        offset ?? 0,
+        limit ?? 10,
+        total ?? 0,
+        records ?? [],
+      );
     },
 
     async findById(id: string) {

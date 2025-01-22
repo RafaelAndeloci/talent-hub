@@ -1,20 +1,18 @@
 import { z } from 'zod';
 import FilterOperator from '../api/users/types/filter-operator';
 import _ from 'lodash';
-import Entity from '../types/entity';
-import ApiError from '../types/api-error';
-import { Filter, Sorting } from '../types/find-all-props';
+import { Filter } from '../types/find-all-props';
 
-type BuildQueryArgs<T extends Entity> = {
-  sortingFields: (keyof T)[];
-  searchFields: (keyof T)[];
+type BuildQueryArgs = {
+  sortingFields: string[];
+  searchFields: string[];
 };
 
 const schemaBuilder = {
-  buildQuery<T extends Entity>({
+  buildQuery({
     sortingFields = ['id'],
     searchFields = ['id'],
-  }: BuildQueryArgs<T>) {
+  }: BuildQueryArgs) {
     return z.object({
       limit: z
         .string()
@@ -36,47 +34,61 @@ const schemaBuilder = {
             return {
               field,
               order,
-            } as Sorting<T>;
+            };
           }),
         )
         .refine(value => {
           return value.every(({ field, order }) => {
             return (
-              sortingFields?.includes(field as keyof T) &&
+              sortingFields?.includes(field) &&
               (order === 'asc' || order === 'desc')
             );
           });
         })
         .optional()
-        .default(''),
+        .default('id:asc'),
       filters: z
         .string()
         .transform(value => {
-          const filters = value.split(';');
-          return filters.map(filter => {
-            const match = filter.match(/(\w+)\[(\w+)\]:(.+)/);
+          const filters = value.split(';').map(f => f.trim());
+
+          if (filters.length === 1 && filters[0] === '') {
+            return [];
+          }
+
+          return filters.map(f => {
+            const match = f.match(/(.+)\[(.+)\]:(.+)/);
 
             if (!match) {
-              ApiError.throwBadRequest('Invalid filter format');
+              return {} as Filter;
             }
 
             const [, field, operator, value] = match!;
 
-            return {
-              field: field as keyof T,
+            const filter = {
+              field: field as string,
               operator: operator as unknown as FilterOperator,
-              value: value.split(','),
-            } as Filter<T>;
+              value: value as string | string[],
+            };
+
+            if (
+              filter.operator === FilterOperator.in ||
+              filter.operator === FilterOperator.notIn
+            ) {
+              filter.value = _.uniq(value.split(','));
+            }
+
+            return filter;
           });
         })
-        .refine(filters =>
-          filters.every(
-            ({ field, operator, value }) =>
-              Object.values(FilterOperator).includes(operator) &&
-              searchFields?.includes(field as keyof T) &&
-              [FilterOperator.in, FilterOperator.notIn].includes(operator) &&
-              Array.isArray(value),
-          ),
+        .refine(
+          filters =>
+            _.isArray(filters) &&
+            filters.every(
+              ({ field, operator }) =>
+                Object.values(FilterOperator).includes(operator) &&
+                searchFields?.includes(field),
+            ),
         )
         .optional()
         .default(''),

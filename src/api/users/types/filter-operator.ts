@@ -1,15 +1,15 @@
 enum FilterOperator {
-  equals,
-  gt,
-  gte,
-  lt,
-  lte,
-  contains,
-  endsWith,
-  startsWith,
-  not,
-  notIn,
-  in,
+  equals = 'equals',
+  gt = 'gt',
+  gte = 'gte',
+  lt = 'lt',
+  lte = 'lte',
+  contains = 'contains',
+  endsWith = 'endsWith',
+  startsWith = 'startsWith',
+  not = 'not',
+  notIn = 'notIn',
+  in = 'in',
 }
 
 export default FilterOperator;

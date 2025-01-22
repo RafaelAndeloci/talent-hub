@@ -50,7 +50,7 @@ const companySchemas = {
   }),
   findAll: z.object({
     query: schemaBuilder
-      .buildQuery<Company>({
+      .buildQuery({
         searchFields: [
           'tradeName',
           'legalName',

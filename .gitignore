@@ -10,3 +10,5 @@ coverage/
 *.log.*
 *.log-*
 logs/
+/**/*.session.sql
+uploads/

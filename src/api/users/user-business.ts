@@ -48,23 +48,25 @@ const userBusiness: UserBusiness = {
     return removeSensitiveData(created);
   },
 
-  async updateProfilePicture({ userId, fileStream, contentType }) {
+  async updateProfilePicture({ userId, file, contentType }) {
     const user = await userRepository.findById(userId);
     if (!user) {
-      ApiError.throwNotFound('Usuário não encontrado.');
+      ApiError.throwNotFound('user not found');
     }
 
-    const fileName = `${userId}.${contentType.split('/')[1]}`;
     const url = await fileStorageService.upload({
-      fileStream,
-      fileName,
-      contentType,
+      key: `USER-${userId}-PROFILE-PICTURE.${contentType.split('/')[1]}`,
+      file: file,
+      contentType: contentType,
     });
 
-    user.profilePictureUrl = url;
-    await userRepository.update(user);
+    const updated = await userRepository.update({
+      ...user,
+      updatedAt: new Date(),
+      profilePictureUrl: url,
+    });
 
-    return removeSensitiveData(user);
+    return removeSensitiveData(updated);
   },
 
   async auth({ email, password }) {

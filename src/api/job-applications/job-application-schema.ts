@@ -1,8 +1,6 @@
 import { z } from 'zod';
 import schemaBuilder from '../../utils/schema-builder';
 import { JobApplicationStatus } from '@prisma/client';
-import JobApplication from './types/job-application';
-import AuditableEntity from '../../types/auditable-entity';
 
 const jobApplicationSchemas = {
   apply: z.object({
@@ -31,7 +29,7 @@ const jobApplicationSchemas = {
     }),
   }),
   findAll: z.object({
-    query: schemaBuilder.buildQuery<JobApplication & AuditableEntity>({
+    query: schemaBuilder.buildQuery({
       sortingFields: ['appliedAt', 'updatedAt', 'status'],
       searchFields: ['status', 'jobOpportunityId', 'candidateId'],
     }),

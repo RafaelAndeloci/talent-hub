@@ -19,6 +19,7 @@ const config = {
     database: process.env.DB_NAME || 'postgres',
   },
   security: {
+    enabled: process.env.JWT_ENABLED === 'true',
     secret: process.env.JWT_SECRET || 'secret',
     audience: process.env.JWT_AUDIENCE || 'audience',
     issuer: process.env.JWT_ISSUER || 'issuer',
@@ -34,6 +35,19 @@ const config = {
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     ],
   },
+  sysAdmin: {
+    id: process.env.SYS_ADMIN_ID,
+    email: process.env.SYS_ADMIN_EMAIL,
+    password: process.env.SYS_ADMIN_PASSWORD,
+  },
+  bucket: {
+    accessKeyId: process.env.BUCKET_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.BUCKET_SECRET_ACCESS_KEY!,
+    defaultBucket: process.env.BUCKET_DEFAULT!,
+    serviceUrl: process.env.BUCKET_SERVICE_URL!,
+    region: process.env.BUCKET_REGION!,
+    exposeUrl: process.env.BUCKET_EXPOSE_URL!,
+  }
 };
 
 export default config;

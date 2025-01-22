@@ -10,6 +10,10 @@ type CandidateBusiness = {
   create: (args: CreateCandidateDto) => Promise<Candidate>;
   update: (args: UpdateCandidateProps) => Promise<Candidate>;
   remove: (id: string) => Promise<void>;
+  updateCv: (args: {
+    candidateId: string;
+    file: { buffer: Buffer; mimetype: string };
+  }) => Promise<Candidate>;
 };
 
 export default CandidateBusiness;

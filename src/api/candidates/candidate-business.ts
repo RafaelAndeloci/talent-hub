@@ -21,6 +21,9 @@ import CandidateModel, {
   CandidateSkillModel,
 } from './types/candidate-model';
 import { CandidateAcademicExperience } from './types/candidate';
+import WhereOptions from '../../types/where-options';
+import FilterOperator from '../users/types/filter-operator';
+import fileStorageService from '../../services/file-storage-service';
 
 const removeKeys = (model: any) => {
   delete model.id;
@@ -62,7 +65,26 @@ const candidateBusiness: CandidateBusiness = {
   },
 
   async findAll(props) {
-    const candidates = await candidateRepository.findAll(props as any);
+    const where: WhereOptions<CandidateModel> = {};
+    for (const filter of props.filters) {
+      if (!filter.field.includes('address')) {
+        continue;
+      }
+
+      where['address'] = {
+        path: [filter.field.split('.')[1]],
+        [filter.operator === FilterOperator.contains
+          ? 'string_contains'
+          : filter.operator]: filter.value,
+      };
+
+      props.filters = props.filters.filter(f => f.field !== filter.field);
+    }
+
+    const candidates = await candidateRepository.findAll({
+      ...props,
+      where,
+    });
     return candidates.parse(parse);
   },
 
@@ -86,7 +108,8 @@ const candidateBusiness: CandidateBusiness = {
     const candidate = {
       ...payload,
       id: uuid.v4(),
-    } as Candidate;
+      userId: userId,
+    };
 
     return parse(await candidateRepository.create(candidate as any));
   },
@@ -190,6 +213,31 @@ const candidateBusiness: CandidateBusiness = {
     }
 
     await candidateRepository.remove(id);
+  },
+
+  async updateCv({ candidateId, file }) {
+    const candidate = await candidateRepository.findById(candidateId);
+    if (!candidate) {
+      ApiError.throwNotFound(`candidate with id ${candidateId} not found`);
+    }
+
+    const existingCvKey = candidate.cvUrl?.split('/').pop();
+    if (existingCvKey) {
+      await fileStorageService.delete({ key: existingCvKey });
+    }
+
+    const exposeUrl = await fileStorageService.upload({
+      key: `CANDIDATE-${candidateId}-CV.${file.mimetype.split('/')[1]}`,
+      file: file.buffer,
+      contentType: file.mimetype,
+    });
+
+    const updated = await candidateRepository.update({
+      ...candidate,
+      cvUrl: exposeUrl,
+    });
+
+    return parse(updated);
   },
 };
 

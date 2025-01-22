@@ -4,7 +4,7 @@ import WhereOptions from './where-options';
 
 export default interface Repository<T extends { id: string }> {
   findAll: (
-    props: FindAllProps<T> & { where?: WhereOptions<T> },
+    props: (FindAllProps<T> & { where?: WhereOptions<T> }) | null,
   ) => Promise<PagedList<T>>;
 
   findById: (id: string) => Promise<T>;

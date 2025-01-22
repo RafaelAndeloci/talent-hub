@@ -2,9 +2,7 @@ import { Role } from '@prisma/client';
 import { z } from 'zod';
 import schemaBuilder from '../../utils/schema-builder';
 import config from '../../config/environment';
-import User from './types/user';
-import AuditableEntity from '../../types/auditable-entity';
-
+  
 const passwordRule = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,16}$/;
 
 const userSchema = {
@@ -40,7 +38,7 @@ const userSchema = {
   }),
 
   findAll: z.object({
-    query: schemaBuilder.buildQuery<User & AuditableEntity>({
+    query: schemaBuilder.buildQuery({
       searchFields: ['role', 'email'],
       sortingFields: ['role', 'email', 'updatedAt'],
     }),
@@ -48,7 +46,7 @@ const userSchema = {
 
   updateProfilePicture: z.object({
     file: z.object({
-      mimeType: z
+      mimetype: z
         .string()
         .refine(value => config.allowedMimeTypes.images.includes(value)),
     }),

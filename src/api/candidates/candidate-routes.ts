@@ -2,6 +2,7 @@ import { Router } from 'express';
 import candidateController from './candidate-controller';
 import candidateSchemas from './candidate-schema';
 import validate from '../../middlewares/validation-middleware';
+import upload, { singleFileUpload } from '../../middlewares/file-upload-middleware';
 
 const candidateRoutes = Router();
 
@@ -33,6 +34,13 @@ candidateRoutes.delete(
   '/:id',
   validate(candidateSchemas.remove),
   candidateController.remove,
+);
+
+candidateRoutes.put(
+  '/:id/cv',
+  singleFileUpload,
+  validate(candidateSchemas.updateCv),
+  candidateController.updateCv as any,
 );
 
 export default candidateRoutes;

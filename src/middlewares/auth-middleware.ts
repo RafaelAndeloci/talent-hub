@@ -5,7 +5,7 @@ import ApiError from '../types/api-error';
 const authenticate = (req: Request, res: Response, next: NextFunction): any => {
   const [type, token] = req.headers.authorization?.split(' ') ?? [];
   if (!token || type !== 'Bearer') {
-    return res.status(401).json({ message: 'Unauthorized' });
+    ApiError.throwUnauthorized('missing authorization token');
   }
 
   const user = jwtService.authenticateToken(token);

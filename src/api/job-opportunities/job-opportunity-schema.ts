@@ -73,7 +73,7 @@ const jobOpportunitySchemas = {
   }),
 
   findAll: z.object({
-    query: schemaBuilder.buildQuery<JobOpportunity>({
+    query: schemaBuilder.buildQuery({
       searchFields: [
         'title',
         'description',

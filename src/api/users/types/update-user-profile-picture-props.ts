@@ -1,6 +1,6 @@
 type UpdateUserProfilePictureProps = {
   userId: string;
-  fileStream: NodeJS.ReadableStream;
+  file: Buffer 
   contentType: 'image/jpeg' | 'image/png';
 };
 

@@ -35,7 +35,6 @@ prisma.$on('info', ({ message }) => logger.info(message));
 prisma.$on('warn', ({ message }) => logger.warn(message));
 prisma.$on('error', ({ message }) => logger.error(message));
 
-
 export default prisma;
 
 export const connectToDatabase = async () => {

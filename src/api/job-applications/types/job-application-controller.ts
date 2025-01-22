@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import JobApplyPayload from './job-apply-payload';
 import JobApplicationUpdateFeedbackPayload from './job-application-update-feedback-payload';
 import JobApplication from './job-application';
@@ -10,6 +10,7 @@ export default interface JobApplicationController {
   apply(
     req: Request<void, void, Omit<JobApplyPayload, 'userId'>>,
     res: Response,
+    next: NextFunction,
   ): Promise<void>;
 
   updateFeeback(
@@ -19,6 +20,7 @@ export default interface JobApplicationController {
       Omit<JobApplicationUpdateFeedbackPayload, 'jobApplicationId' | 'userId'>
     >,
     res: Response,
+    next: NextFunction,
   ): Promise<void>;
 
   update(
@@ -28,17 +30,24 @@ export default interface JobApplicationController {
       Omit<JobApplicationUpdatePayload, 'id' | 'userId'>
     >,
     res: Response<JobApplication>,
+    next: NextFunction,
   ): Promise<void>;
 
-  remove(req: Request<{ id: string }>, res: Response): Promise<void>;
+  remove(
+    req: Request<{ id: string }>,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void>;
 
   findById(
     req: Request<{ id: string }>,
     res: Response<JobApplication>,
+    next: NextFunction,
   ): Promise<void>;
 
   findAll(
     req: Request<void, void, void, FindAllJobApplicationsArgs>,
     res: Response<PagedList<JobApplication>>,
+    next: NextFunction,
   ): Promise<void>;
 }

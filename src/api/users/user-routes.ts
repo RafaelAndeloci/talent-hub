@@ -3,6 +3,7 @@ import userController from './user-controller';
 import authenticate from '../../middlewares/auth-middleware';
 import userSchema from './user-schema';
 import validate from '../../middlewares/validation-middleware';
+import upload, { singleFileUpload } from '../../middlewares/file-upload-middleware';
 
 const userRouter = Router();
 
@@ -25,8 +26,9 @@ userRouter.get(
   userController.findAll as any,
 );
 userRouter.put(
-  '/:id/profile-picture',
+  '/current/profile-picture',
   authenticate,
+  singleFileUpload,
   validate(userSchema.updateProfilePicture),
   userController.updateProfilePicture as any,
 );

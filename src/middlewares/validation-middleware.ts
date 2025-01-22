@@ -8,21 +8,18 @@ const validate =
       body: req.body,
       query: req.query,
       params: req.params,
+      file: req.file,
+      files: req.files,
     });
-
-    if (success) {
-      req.body = data.body;
-      req.query = data.query;
-      req.params = data.params;
-
-      return next();
+    if (!success) {
+      return next(error);
     }
 
-    return res.status(400).json({
-      code: 400,
-      message: 'Validation error',
-      errors: error.errors,
-    });
+    req.body = data.body;
+    req.query = data.query;
+    req.params = data.params;
+
+    return next();
   };
 
 export default validate;

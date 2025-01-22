@@ -88,7 +88,6 @@ const referenceSchema = z.object({
 });
 
 const candidateSchema = z.object({
-  userId: z.string().uuid(),
   fullName: z.string().min(3).max(255),
   birthDate: schemaBuilder.buildDate(),
   phone: z.string().regex(/^\d{11}$/),
@@ -97,6 +96,7 @@ const candidateSchema = z.object({
     city: z.string().max(255),
     state: z.string().length(2),
   }),
+  acceptThirdPartyApplications: z.boolean().default(true),
   bio: z.string().max(500).optional().nullable(),
   hobbies: z.array(z.string().max(255)).optional().nullable(),
   linkedinUrl: urlSchema.optional().nullable(),
@@ -104,7 +104,6 @@ const candidateSchema = z.object({
   instagramUrl: urlSchema.optional().nullable(),
   professionalHeadline: z.string().max(255).optional().nullable(),
   desiredSalary: z.number().min(0).optional().nullable(),
-  autoMatchEnabled: z.boolean().default(true),
   desiredWorkplaceType: z.nativeEnum(WorkplaceType).optional().nullable(),
   desiredWorkloadType: z.nativeEnum(WorkloadType).optional().nullable(),
   desiredEmploymentType: z.nativeEnum(EmploymentType).optional().nullable(),
@@ -119,19 +118,15 @@ const candidateSchema = z.object({
   references: z.array(referenceSchema).default([]),
 });
 
-const jobApplicationSchema = z.object({
-  jobOpportunityId: z.string().uuid(),
-});
-
 const candidateSchemas = {
   create: z.object({ body: candidateSchema }),
   update: z.object({
     params: z.object({ id: z.string().uuid() }),
-    body: candidateSchema.omit({ userId: true }).partial(),
+    body: candidateSchema.partial(),
   }),
   findById: z.object({ params: z.object({ id: z.string().uuid() }) }),
   findAll: z.object({
-    query: schemaBuilder.buildQuery<Candidate>({
+    query: schemaBuilder.buildQuery({
       searchFields: [
         'fullName',
         'phone',
@@ -139,11 +134,21 @@ const candidateSchemas = {
         'desiredWorkplaceType',
         'desiredContractType',
         'professionalHeadline',
+        'address.neighborhood',
+        'address.city',
+        'address.state',
       ],
       sortingFields: ['id', 'phone', 'fullName', 'desiredSalary'],
     }),
   }),
   remove: z.object({ params: z.object({ id: z.string().uuid() }) }),
+  updateCv: z.object({
+    params: z.object({ id: z.string().uuid() }),
+    file: z.object({
+      mimetype: z.enum(['application/pdf']),
+      size: z.number().max(10485760),
+    }),
+  }),
 };
 
 export default candidateSchemas;
