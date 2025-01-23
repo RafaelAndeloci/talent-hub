@@ -1,63 +1,58 @@
-import candidateRoutes from '../api/candidates/candidate-routes';
-import { Router, Request, Response, NextFunction } from 'express';
-import authenticate from '../middlewares/auth-middleware';
-import userRouter from '../api/users/user-routes';
-import companyRoutes from '../api/companies/company-routes';
-import jobOpportunityRoutes from '../api/job-opportunities/job-opportunity-routes';
-import jobApplicationRoutes from '../api/job-applications/job-application-routes';
-import fileStorageService from '../services/file-storage-service';
-import validate from '../middlewares/validation-middleware';
-import { z } from 'zod';
-import logger from '../services/logging-service';
+import { Router, Request, Response, NextFunction } from 'express'
+import { z } from 'zod'
+import { authenticate } from '../middlewares/auth-middleware'
+import { candidatesRouter } from '../api/candidates/candidate-routes'
+import { logger } from '../shared/services/logging-service'
+import { validate } from '../middlewares/validation-middleware'
+import { fileStorageService } from '../shared/services/file-storage-service'
+import { userRouter } from '../api/users/user-router'
 
-const apiRoutes = Router();
+export const apiRoutes = Router()
 
-apiRoutes.use('/candidates', authenticate, candidateRoutes);
-apiRoutes.use('/users', userRouter);
-apiRoutes.use('/companies', authenticate, companyRoutes);
-apiRoutes.use('/job-opportunities', authenticate, jobOpportunityRoutes);
-apiRoutes.use('/job-applications', authenticate, jobApplicationRoutes);
+apiRoutes.use('/candidates', authenticate, candidatesRouter)
+apiRoutes.use('/users', userRouter)
 
-const staticRoutes = Router();
+export const staticRoutes = Router()
 
 const staticFileHandler: (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   req: Request<{ fileKey: string }, any, any, any>,
   res: Response,
   next: NextFunction,
 ) => Promise<void> = async (req, res, next) => {
   try {
-    const { fileKey } = req.params;
+    const { fileKey } = req.params
     const { stream, contentType } = await fileStorageService.getFileStream({
       key: fileKey,
-    });
+    })
 
     if (!stream) {
-      res.status(404).send('File not found');
-      return;
+      res.status(404).send('File not found')
+      return
     }
 
-    res.setHeader('Content-Type', contentType);
-    stream.pipe(res);
+    res.setHeader('Content-Type', contentType)
+    stream.pipe(res)
 
-    stream.on('error', error => {
-      logger.error(error);
-      res.status(500).send('Internal server error');
-    });
+    stream.on('error', (error) => {
+      logger.error(error)
+      res.status(500).send('Internal server error')
+    })
 
     stream.on('end', () => {
-      res.end();
-    });
+      res.end()
+    })
 
-    const destroyEvents = ['close', 'error', 'end'];
-    destroyEvents.forEach(event => {
+    const destroyEvents = ['close', 'error', 'end']
+    destroyEvents.forEach((event) => {
       res.on(event, () => {
-        stream.destroy();
-      });
-    });
+        stream.destroy()
+      })
+    })
   } catch (err) {
-    next(err);
+    next(err)
   }
-};
+}
 
 staticRoutes.get(
   '/:fileKey',
@@ -70,11 +65,4 @@ staticRoutes.get(
     }),
   ),
   staticFileHandler,
-);
-
-const routes = {
-  static: staticRoutes,
-  api: apiRoutes,
-};
-
-export default routes;
+)

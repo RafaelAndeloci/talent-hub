@@ -1,56 +1,25 @@
-import { Role } from '@prisma/client';
-import { z } from 'zod';
-import schemaBuilder from '../../utils/schema-builder';
-import config from '../../config/environment';
-  
-const passwordRule = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,16}$/;
+import { z } from 'zod'
+import { Role } from './types/enums/role'
 
-const userSchema = {
-  create: z.object({
-    body: z.object({
-      email: z.string().email({
-        message: 'Endereço de e-mail inválido.',
-      }),
-      password: z.string().regex(passwordRule, {
-        message:
-          'A senha deve conter pelo menos 8 caracteres, uma letra maiúscula, uma letra minúscula e um número.',
-      }),
-      role: z.nativeEnum(Role),
-    }),
+export const CreateUserSchema = z.object({
+  body: z.object({
+    email: z.string().email(),
+    password: z.string().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,20}$/),
+    username: z.string().min(3).max(20),
+    role: z.enum(
+      Object.freeze(Object.values(Role)) as readonly [string, ...string[]],
+    ),
   }),
+})
 
-  auth: z.object({
-    body: z.object({
-      email: z.string().email({
-        message: 'Endereço de e-mail inválido.',
-      }),
-      password: z.string().regex(passwordRule, {
-        message:
-          'A senha deve conter pelo menos 8 caracteres, uma letra maiúscula, uma letra minúscula e um número.',
-      }),
+export const AuthSchema = z.object({
+  body: z
+    .object({
+      email: z.string().email().optional(),
+      password: z.string().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,20}$/),
+      username: z.string().min(3).max(20).optional(),
+    })
+    .refine((data) => !!data.email || !!data.username, {
+      message: 'email or username is required',
     }),
-  }),
-
-  findById: z.object({
-    params: z.object({
-      id: z.string().uuid(),
-    }),
-  }),
-
-  findAll: z.object({
-    query: schemaBuilder.buildQuery({
-      searchFields: ['role', 'email'],
-      sortingFields: ['role', 'email', 'updatedAt'],
-    }),
-  }),
-
-  updateProfilePicture: z.object({
-    file: z.object({
-      mimetype: z
-        .string()
-        .refine(value => config.allowedMimeTypes.images.includes(value)),
-    }),
-  }),
-};
-
-export default userSchema;
+})

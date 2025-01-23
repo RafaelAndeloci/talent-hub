@@ -1,154 +1,113 @@
-import { z } from 'zod';
-import schemaBuilder from '../../utils/schema-builder';
-import {
-  Benefit,
-  EmploymentType,
-  WorkloadType,
-  WorkplaceType,
-  ContractType,
-  LanguageProficiency,
-  Proficiency,
-  SkillType,
-  AcademicCourseType,
-  AcademicStatus,
-  PositionLevel,
-  AchievementType,
-} from '@prisma/client';
-import { Candidate } from './types/candidate';
+import { z } from 'zod'
+import { AddressSchema } from '../../shared/schemas/address-schema'
+import { Language } from '../../shared/enums/language'
+import { LanguageProficiency } from './types/enums/language-proficiency'
+import { AchievementType } from './types/enums/achievement-type'
+import { YearMonthSchema } from '../../shared/schemas/year-month-schema'
+import { EmploymentType } from './types/enums/employment-type'
+import { WorkplaceType } from './types/enums/workplace-type'
+import { PositionLevel } from './types/enums/position-level'
+import { PeriodSchema } from '../../shared/schemas/period-schema'
+import { AcademicDegreeType } from './types/enums/academic-degree-type'
+import { AcademicStatus } from './types/enums/academic-status'
+import { ContractType } from './types/enums/contract-type'
+import { Benefit } from './types/enums/benefit'
+import { ContactSchema } from '../../shared/schemas/contact-schema'
+import { RelatedWebsiteSchema } from '../../shared/schemas/related-websites-schema'
+import { buildDateSchema } from '../../shared/utils/schema-builder'
 
-const urlSchema = z.string().url().max(255);
+const CandidateLanguageSchema = z.object({
+  id: z.string().uuid(),
+  language: z.nativeEnum(Language),
+  writtenLevel: z.nativeEnum(LanguageProficiency),
+  spokenLevel: z.nativeEnum(LanguageProficiency),
+  readingLevel: z.nativeEnum(LanguageProficiency),
+  listeningLevel: z.nativeEnum(LanguageProficiency),
+})
 
-const languageSchema = z.object({
-  language: z.string().max(100),
-  written: z.nativeEnum(LanguageProficiency),
-  spoken: z.nativeEnum(LanguageProficiency),
-  listening: z.nativeEnum(LanguageProficiency),
-  reading: z.nativeEnum(LanguageProficiency),
-});
-
-const skillSchema = z.object({
+const CandidateReferenceSchema = z.object({
+  id: z.string().uuid(),
   name: z.string(),
-  proficiency: z.nativeEnum(Proficiency),
-  type: z.nativeEnum(SkillType),
-});
+  position: z.string(),
+  company: z.string().nullable(),
+  email: z.string().email(),
+  phone: z.string(),
+  relationship: z.string(),
+})
 
-const academicProject = z.object({
+const CandidateAchievementSchema = z.object({
+  id: z.string().uuid(),
   name: z.string(),
-  description: z.string(),
-  technologies: z.array(z.string()),
-});
-
-const academicExperienceSchema = z.object({
-  name: z.string().min(3).max(100),
-  institutionName: z.string().max(150),
-  institutionUrl: urlSchema,
-  type: z.nativeEnum(AcademicCourseType),
-  fieldOfStudy: z.string().max(100),
-  startDate: schemaBuilder.buildDate(),
-  endDate: schemaBuilder.buildDate().optional().nullable(),
-  description: z.string().max(500).optional().nullable(),
-  status: z.nativeEnum(AcademicStatus),
-  graduationForecast: schemaBuilder.buildDate().optional().nullable(),
-  semesters: z.number().int().optional().nullable(),
-  currentSemester: z.number().int().optional().nullable(),
-  institutionRegistry: z.string().max(50).optional().nullable(),
-  projects: z.array(academicProject),
-});
-
-const professionalExperienceSchema = z.object({
-  companyName: z.string().max(150),
-  companyUrl: urlSchema.optional().nullable(),
-  position: z.string().max(100),
-  positionLevel: z.nativeEnum(PositionLevel),
-  description: z.string().max(500).optional().nullable(),
-  startDate: schemaBuilder.buildDate(),
-  endDate: schemaBuilder.buildDate().optional().nullable(),
-  current: z.boolean().default(false),
-  responsibilities: z.array(z.string().max(100)),
-  technologies: z.array(z.string().max(100)),
-});
-
-const achievementSchema = z.object({
   type: z.nativeEnum(AchievementType),
-  title: z.string().max(150),
-  description: z.string().max(500).optional().nullable(),
-  date: schemaBuilder.buildDate().optional().nullable(),
-  certificateUrl: urlSchema.optional().nullable(),
-});
+  issuer: z.string(),
+  issueDate: YearMonthSchema,
+  expirationDate: YearMonthSchema.nullable(),
+  credentialId: z.string().nullable(),
+  credentialUrl: z.string().nullable(),
+  relatedSkills: z.array(z.string().max(100)),
+})
 
-const referenceSchema = z.object({
-  name: z.string().max(150),
-  phone: z.string().regex(/^\d{11}$/),
-  email: z.string().email().max(150),
-  relationship: z.string().max(100),
-  position: z.string().max(100),
+const CandidateProfessionalExperienceSchema = z.object({
+  id: z.string().uuid(),
+  title: z.string(),
+  description: z.string().nullable(),
+  company: z.string(),
+  employmentType: z.nativeEnum(EmploymentType),
+  workplaceType: z.nativeEnum(WorkplaceType),
   positionLevel: z.nativeEnum(PositionLevel),
-  company: z.string().max(150),
-  companyUrl: urlSchema.optional().nullable(),
-});
+  isCurrent: z.boolean(),
+  period: PeriodSchema,
+  location: z.object({}),
+  relatedSkills: z.array(z.string().max(100)),
+})
 
-const candidateSchema = z.object({
-  fullName: z.string().min(3).max(255),
-  birthDate: schemaBuilder.buildDate(),
-  phone: z.string().regex(/^\d{11}$/),
-  address: z.object({
-    neighborhood: z.string().max(255),
-    city: z.string().max(255),
-    state: z.string().length(2),
-  }),
-  acceptThirdPartyApplications: z.boolean().default(true),
-  bio: z.string().max(500).optional().nullable(),
-  hobbies: z.array(z.string().max(255)).optional().nullable(),
-  linkedinUrl: urlSchema.optional().nullable(),
-  githubUrl: urlSchema.optional().nullable(),
-  instagramUrl: urlSchema.optional().nullable(),
-  professionalHeadline: z.string().max(255).optional().nullable(),
-  desiredSalary: z.number().min(0).optional().nullable(),
-  desiredWorkplaceType: z.nativeEnum(WorkplaceType).optional().nullable(),
-  desiredWorkloadType: z.nativeEnum(WorkloadType).optional().nullable(),
-  desiredEmploymentType: z.nativeEnum(EmploymentType).optional().nullable(),
-  desiredContractType: z.nativeEnum(ContractType).optional().nullable(),
-  desiredBenefits: z.array(z.nativeEnum(Benefit)).optional().nullable(),
-  desiredPositionLevel: z.nativeEnum(PositionLevel).optional().nullable(),
-  languages: z.array(languageSchema).default([]),
-  academicExperiences: z.array(academicExperienceSchema).default([]),
-  professionalExperiences: z.array(professionalExperienceSchema).default([]),
-  skills: z.array(skillSchema).default([]),
-  achievements: z.array(achievementSchema).default([]),
-  references: z.array(referenceSchema).default([]),
-});
+const CandidateEducationalExperienceSchema = z.object({
+  degree: z.string(),
+  fieldOfStudy: z.string(),
+  type: z.nativeEnum(AcademicDegreeType),
+  status: z.nativeEnum(AcademicStatus),
+  institution: z.string(),
+  institutionWebsite: z.string().nullable(),
+  description: z.string().nullable(),
+  period: PeriodSchema,
+  isCurrent: z.boolean(),
+  semesters: z.number().nullable(),
+  currentSemester: z.number().nullable(),
+  institutionRegistrationNumber: z.string().nullable(),
+  gradePointAverage: z.number().nullable(),
+  expectedGraduation: YearMonthSchema.nullable(),
+})
 
-const candidateSchemas = {
-  create: z.object({ body: candidateSchema }),
-  update: z.object({
-    params: z.object({ id: z.string().uuid() }),
-    body: candidateSchema.partial(),
-  }),
-  findById: z.object({ params: z.object({ id: z.string().uuid() }) }),
-  findAll: z.object({
-    query: schemaBuilder.buildQuery({
-      searchFields: [
-        'fullName',
-        'phone',
-        'desiredSalary',
-        'desiredWorkplaceType',
-        'desiredContractType',
-        'professionalHeadline',
-        'address.neighborhood',
-        'address.city',
-        'address.state',
-      ],
-      sortingFields: ['id', 'phone', 'fullName', 'desiredSalary'],
-    }),
-  }),
-  remove: z.object({ params: z.object({ id: z.string().uuid() }) }),
-  updateCv: z.object({
-    params: z.object({ id: z.string().uuid() }),
-    file: z.object({
-      mimetype: z.enum(['application/pdf']),
-      size: z.number().max(10485760),
-    }),
-  }),
-};
+const CandidatePreferencesSchema = z.object({
+  salary: z.number().nullable(),
+  contractType: z.nativeEnum(ContractType).nullable(),
+  employmentType: z.nativeEnum(EmploymentType).nullable(),
+  workplaceType: z.nativeEnum(WorkplaceType).nullable(),
+  benefits: z.array(z.nativeEnum(Benefit)),
+  positionLevel: z.nativeEnum(PositionLevel).nullable(),
+})
 
-export default candidateSchemas;
+const CandidateExperiencesSchema = z.object({
+  education: z.array(CandidateEducationalExperienceSchema).default([]),
+  professional: z.array(CandidateProfessionalExperienceSchema).default([]),
+})
+
+export const CreateCandidateSchema = z.object({
+  body: z.object({
+    fullName: z.string().min(3).max(100),
+    birthDate: buildDateSchema(),
+    contact: ContactSchema,
+    address: AddressSchema,
+    about: z.string().max(500).nullable(),
+    professionalHeadline: z.string().max(100).nullable().default(null),
+    hobbies: z.array(z.string().max(100)),
+    social: RelatedWebsiteSchema,
+    isAvailableForWork: z.boolean(),
+    allowThirdPartyApplications: z.boolean(),
+    preferences: CandidatePreferencesSchema,
+    experiences: CandidateExperiencesSchema,
+    languages: z.array(CandidateLanguageSchema).default([]),
+    references: z.array(CandidateReferenceSchema).default([]),
+    achievements: z.array(CandidateAchievementSchema).default([]),
+  }),
+})

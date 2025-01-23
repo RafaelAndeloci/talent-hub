@@ -1,102 +1,80 @@
-import ApiError from '../../types/api-error';
-import hasher from '../../services/hasher';
-import UserBusiness from './types/user-business';
-import userRepository from './user-repository';
-import * as uuid from 'uuid';
-import fileStorageService from '../../services/file-storage-service';
-import jwtService from '../../services/jwt-service';
-import UserModel from './types/user-model';
-import User from './types/user';
+import { Op } from 'sequelize'
+import * as uuid from 'uuid'
+import _ from 'lodash'
 
-const removeSensitiveData = (user: UserModel): User => {
-  const {
+import { User } from './types/entities/user'
+import { Role } from './types/enums/role'
+import { CreateUserDto } from './types/dtos/create-user-dto'
+import { userRepository } from './user-repository'
+import { ApiError } from '../../shared/types/api-error'
+import { hasher } from '../../shared/services/hasher'
+import { UserDto } from './types/dtos/user-dto'
+import { AuthArgsDto } from './types/dtos/./auth-args-dto'
+import { jwtService } from '../../shared/services/jwt-service'
+
+const toDto = (user: User): UserDto => {
+  return _.omit(user, [
+    'hashedPassword',
+    'passwordReset',
+    'deletedAt',
+    'updatedAt',
+    'createdAt',
+  ]) as UserDto
+}
+
+const isActive = (user: User) => user.deletedAt === null
+
+const canCreateCandidate = (user: User) =>
+  user.role === Role.SysAdmin || user.role === Role.Candidate
+
+const create = async (user: CreateUserDto) => {
+  if (
+    await userRepository.exists({
+      [Op.or]: [{ email: user.email }, { username: user.username }],
+    })
+  ) {
+    ApiError.throwConflict('User already exists')
+  }
+
+  const hashedPassword = await hasher.hash(user.password)
+
+  const newUser: User = {
+    ...user,
+    id: uuid.v4(),
+    profilePictureUrl: null,
     hashedPassword,
-    createdAt,
-    updatedAt,
-    deletedAt,
-    passwordResetToken,
-    passwordResetTokenExpires,
-    ...rest
-  } = user;
-  return rest;
-};
+    passwordReset: null,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    deletedAt: null,
+  }
 
-const userBusiness: UserBusiness = {
-  async create({ email, password, role }) {
-    const existingUser = await userRepository.findOne({ email });
-    if (existingUser) {
-      ApiError.throwUnprocessableEntity('invalid operation');
-    }
+  await userRepository.create(newUser)
+  return toDto(newUser)
+}
 
-    const hashedPassword = await hasher.hash(password);
+const auth = async ({ username, email, password }: AuthArgsDto) => {
+  const user = await userRepository.findUnique({
+    [Op.or]: [
+      ...(username ? [{ username }] : []),
+      ...(email ? [{ email }] : []),
+    ],
+  })
+  if (!user) {
+    ApiError.throwNotFound('User not found')
+  }
 
-    const user: UserModel = {
-      id: uuid.v4(),
-      email,
-      role,
-      hashedPassword,
-      passwordResetToken: null,
-      passwordResetTokenExpires: null,
-      profilePictureUrl: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      deletedAt: null,
-    };
+  const hashedPassword = await hasher.hash(password)
+  if (hashedPassword !== user!.hashedPassword) {
+    ApiError.throwUnauthorized('Invalid credentials')
+  }
+  const dto = toDto(user!)
+  return jwtService.generateToken(dto)
+}
 
-    const created = await userRepository.create(user);
-
-    return removeSensitiveData(created);
-  },
-
-  async updateProfilePicture({ userId, file, contentType }) {
-    const user = await userRepository.findById(userId);
-    if (!user) {
-      ApiError.throwNotFound('user not found');
-    }
-
-    const url = await fileStorageService.upload({
-      key: `USER-${userId}-PROFILE-PICTURE.${contentType.split('/')[1]}`,
-      file: file,
-      contentType: contentType,
-    });
-
-    const updated = await userRepository.update({
-      ...user,
-      updatedAt: new Date(),
-      profilePictureUrl: url,
-    });
-
-    return removeSensitiveData(updated);
-  },
-
-  async auth({ email, password }) {
-    const user = await userRepository.findOne({ email });
-
-    if (!user) {
-      ApiError.throwUnauthorized('invalid email or password');
-    }
-
-    if (!(await hasher.compare(password, user.hashedPassword))) {
-      ApiError.throwUnauthorized('invalid email or password');
-    }
-
-    const accessToken = jwtService.generateToken(user);
-    return accessToken;
-  },
-
-  async findById(id) {
-    const user = await userRepository.findById(id);
-    if (!user) {
-      ApiError.throwNotFound('Usuário não encontrado.');
-    }
-
-    return removeSensitiveData(user);
-  },
-
-  async findAll(props) {
-    const pagedListOfUsers = await userRepository.findAll(props);
-    return pagedListOfUsers.parse(removeSensitiveData);
-  },
-};
-
-export default userBusiness;
+export const userBusiness = Object.freeze({
+  create,
+  auth,
+  isActive,
+  canCreateCandidate,
+})

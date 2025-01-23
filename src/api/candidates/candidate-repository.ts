@@ -1,180 +1,146 @@
-import repositoryFactory from '../../services/repository-factory';
-import * as uuid from 'uuid';
-import CandidateModel from './types/candidate-model';
+import * as uuid from 'uuid'
 
-const candidateRepository = repositoryFactory.buildFor<CandidateModel>({
-  modelName: 'Candidate',
-  inclusions: {
-    academicExperiences: {
-      include: {
-        projects: true,
-      },
+import { CandidateModel, CandidateModelAttributes } from './candidate-model'
+import { makeRepository } from '../../shared/services/repository'
+import { Candidate } from './types/entities/candidate'
+
+export const candidateRepository = makeRepository<
+  Candidate,
+  CandidateModelAttributes,
+  CandidateModel
+>({
+  model: CandidateModel,
+  toDatabase: (candidate) => ({
+    ...candidate,
+    id: candidate.id || uuid.v4(),
+    contactEmail: candidate.contact.email,
+    contactPhone: candidate.contact.phone,
+    workplaceTypePreference: candidate.preferences.workplaceType,
+    positionLevelPreference: candidate.preferences.positionLevel,
+    salaryPreference: candidate.preferences.salary,
+    contractTypePreference: candidate.preferences.contractType,
+    employmentTypePreference: candidate.preferences.employmentType,
+    benefitsPreference: candidate.preferences.benefits,
+    professionalExperiences: candidate.experiences.professional.map((a) => ({
+      ...a,
+      id: a.id || uuid.v4(),
+      candidateId: candidate.id,
+      startMonth: a.period.start.month,
+      startYear: a.period.start.year,
+      endMonth: a.period.end?.month ?? null,
+      endYear: a.period.end?.year ?? null,
+    })),
+    educationalExperiences: candidate.experiences.education.map((a) => ({
+      ...a,
+      id: a.id || uuid.v4(),
+      candidateId: candidate.id,
+      expectedGraduationYear: a.expectedGraduation?.year ?? null,
+      expectedGraduationMonth: a.expectedGraduation?.month ?? null,
+      startMonth: a.period.start.month,
+      startYear: a.period.start.year,
+      endMonth: a.period.end?.month ?? null,
+      endYear: a.period.end?.year ?? null,
+    })),
+    languages: candidate.languages.map((a) => ({
+      ...a,
+      id: a.id || uuid.v4(),
+      candidateId: candidate.id,
+    })),
+    references: candidate.references.map((a) => ({
+      ...a,
+      id: a.id || uuid.v4(),
+      candidateId: candidate.id,
+    })),
+    achievements: candidate.achievements.map((a) => ({
+      ...a,
+      id: a.id || uuid.v4(),
+      candidateId: candidate.id,
+      issueYear: a.issueDate.year,
+      issueMonth: a.issueDate.month,
+      expirationMonth: a.expirationDate?.month ?? null,
+      expirationYear: a.expirationDate?.year ?? null,
+    })),
+    ...candidate.social,
+  }),
+  fromDatabase: ({ address, ...model }) => ({
+    ...model,
+    contact: {
+      email: model.contactEmail,
+      phone: model.contactPhone,
     },
-    professionalExperiences: true,
-    skills: true,
-    languages: true,
-    achievements: true,
-    references: true,
-  },
-  toUpdateTransform: data => ({
-    ...data,
-    academicExperiences: {
-      deleteMany: {
-        id: {
-          notIn: data.academicExperiences.map((a: any) => a.id),
-        },
-      },
-      upsert: data.academicExperiences.map((a: any) => {
-        delete a.candidateId;
-        return {
-          where: { id: a.id || uuid.v4() },
-          create: {
-            ...a,
-            projects: {
-              create: a.projects,
-            },
+    address: {
+      ...address,
+    },
+    preferences: {
+      salary: model.salaryPreference,
+      contractType: model.contractTypePreference,
+      employmentType: model.employmentTypePreference,
+      workplaceType: model.workplaceTypePreference,
+      positionLevel: model.positionLevelPreference,
+      benefits: model.benefitsPreference,
+    },
+    experiences: {
+      professional: model.professionalExperiences.map((a) => ({
+        ...a,
+        period: {
+          start: {
+            year: a.startYear,
+            month: a.startMonth,
           },
-          update: {
-            ...a,
-            projects: {
-              deleteMany: {
-                id: {
-                  notIn: a.projects.map((p: any) => p.id),
-                },
-              },
-              upsert: a.projects.map((p: any) => {
-                delete p.academicExperienceId;
-                return {
-                  where: { id: p.id || uuid.v4() },
-                  create: p,
-                  update: p,
-                };
-              }),
-            },
+          end:
+            a.endMonth && a.endYear
+              ? { year: a.endYear, month: a.endMonth }
+              : null,
+        },
+      })),
+      education: model.educationalExperiences.map((a) => ({
+        ...a,
+        period: {
+          start: {
+            year: a.startYear,
+            month: a.startMonth,
           },
-        };
-      }),
-    },
-    references: {
-      deleteMany: {
-        id: {
-          notIn: data.references.map((r: any) => r.id),
+          end:
+            a.endMonth && a.endYear
+              ? { year: a.endYear, month: a.endMonth }
+              : null,
         },
-      },
-      upsert: data.references.map((r: any) => {
-        delete r.candidateId;
-        return {
-          where: { id: r.id || uuid.v4() },
-          create: r,
-          update: r,
-        };
-      }),
+        expectedGraduation:
+          a.expectedGraduationMonth && a.expectedGraduationYear
+            ? {
+                year: a.expectedGraduationYear,
+                month: a.expectedGraduationMonth,
+              }
+            : null,
+      })),
     },
-    professionalExperiences: {
-      deleteMany: {
-        id: {
-          notIn: data.professionalExperiences.map((p: any) => p.id),
-        },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    languages: model.languages.map(({ candidateId, ...rest }) => ({ ...rest })),
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    references: model.references.map(({ candidateId, ...rest }) => ({
+      ...rest,
+    })),
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    achievements: model.achievements.map(({ candidateId, ...rest }) => ({
+      ...rest,
+      issueDate: {
+        year: rest.issueYear,
+        month: rest.issueMonth,
       },
-      upsert: data.professionalExperiences.map((p: any) => {
-        delete p.candidateId;
-        p.id = p.id || uuid.v4();
-        return {
-          where: { id: p.id },
-          create: p,
-          update: p,
-        };
-      }),
-    },
-    skills: {
-      deleteMany: {
-        id: {
-          notIn: data.skills.map((s: any) => s.id),
-        },
-      },
-      upsert: data.skills.map((s: any) => {
-        delete s.candidateId;
-        return {
-          where: { id: s.id || uuid.v4() },
-          create: s,
-          update: s,
-        };
-      }),
-    },
-    languages: {
-      deleteMany: {
-        id: {
-          notIn: data.languages.map((l: any) => l.id),
-        },
-      },
-      upsert: data.languages.map((l: any) => {
-        delete l.candidateId;
-        return {
-          where: { id: l.id || uuid.v4() },
-          create: l,
-          update: l,
-        };
-      }),
-    },
-    achievements: {
-      deleteMany: {
-        id: {
-          notIn: data.achievements.map((a: any) => a.id),
-        },
-      },
-      upsert: data.achievements.map((a: any) => {
-        delete a.candidateId;
-        return {
-          where: { id: a.id || uuid.v4() },
-          create: a,
-          update: a,
-        };
-      }),
+      expirationDate:
+        rest.expirationMonth && rest.expirationYear
+          ? { year: rest.expirationYear, month: rest.expirationMonth }
+          : null,
+    })),
+    social: {
+      linkedin: model.linkedin,
+      github: model.github,
+      twitter: model.twitter,
+      facebook: model.facebook,
+      instagram: model.instagram,
+      youtube: model.youtube,
+      medium: model.medium,
+      website: model.website,
     },
   }),
-  toCreateTransform: data => ({
-    ...data,
-    id: uuid.v4(),
-    academicExperiences: {
-      create: data.academicExperiences.map((a: any) => ({
-        ...a,
-        id: uuid.v4(),
-        projects: {
-          create: a.projects,
-        },
-      })),
-    },
-    references: {
-      create: data.references.map((r: any) => ({
-        ...r,
-        id: uuid.v4(),
-      })),
-    },
-    professionalExperiences: {
-      create: data.professionalExperiences.map((p: any) => ({
-        ...p,
-        id: uuid.v4(),
-      })),
-    },
-    skills: {
-      create: data.skills.map((s: any) => ({
-        ...s,
-        id: uuid.v4(),
-      })),
-    },
-    languages: {
-      create: data.languages.map((l: any) => ({
-        ...l,
-        id: uuid.v4(),
-      })),
-    },
-    achievements: {
-      create: data.achievements.map((a: any) => ({
-        ...a,
-        id: uuid.v4(),
-      })),
-    },
-  }),
-});
-
-export default candidateRepository;
+})
