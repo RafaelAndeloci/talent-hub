@@ -23,7 +23,7 @@ const auth: AuthRequestHandler = async (req, res, next) => {
   }
 }
 
-export const userController = Object.freeze({
+export const userController = {
   create,
   auth,
-})
+}

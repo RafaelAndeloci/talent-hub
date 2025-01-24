@@ -9,7 +9,7 @@ const compare = async (password: string, hash: string) => {
   return await bcrypt.compare(password, hash)
 }
 
-export const hasher = Object.freeze({
+export const hasher = {
   hash,
   compare,
-})
+}

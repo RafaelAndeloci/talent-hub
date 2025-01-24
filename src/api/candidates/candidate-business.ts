@@ -39,6 +39,6 @@ const create = async ({ userId, payload }: CreateCandidateArgs) => {
   return newCandidate as CandidateDto
 }
 
-export const candidateBusiness = Object.freeze({
+export const candidateBusiness = {
   create,
-})
+}

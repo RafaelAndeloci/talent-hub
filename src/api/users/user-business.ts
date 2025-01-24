@@ -72,9 +72,9 @@ const auth = async ({ username, email, password }: AuthArgsDto) => {
   return jwtService.generateToken(dto)
 }
 
-export const userBusiness = Object.freeze({
+export const userBusiness = {
   create,
   auth,
   isActive,
   canCreateCandidate,
-})
+}

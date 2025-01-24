@@ -45,7 +45,7 @@ const generateToken = (user: UserDto) => {
   return authToken
 }
 
-export const jwtService = Object.freeze({
+export const jwtService = {
   authenticateToken,
   generateToken,
-})
+}

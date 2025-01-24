@@ -107,8 +107,8 @@ const getFileStream = async ({ key, bucket }: GetFileStreamArgs) => {
   return { contentType: ContentType || '', stream }
 }
 
-export const fileStorageService = Object.freeze({
+export const fileStorageService = {
   upload,
   deleteFile,
   getFileStream,
-})
+}

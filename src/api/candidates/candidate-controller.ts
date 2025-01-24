@@ -16,6 +16,6 @@ const create: CreateCandidateRequestHandler = async (req, res, next) => {
   }
 }
 
-export const candidateController = Object.freeze({
+export const candidateController = {
   create,
-})
+}
