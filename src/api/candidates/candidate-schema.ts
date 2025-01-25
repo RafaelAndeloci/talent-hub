@@ -1,4 +1,7 @@
+import moment from 'moment'
 import { z } from 'zod'
+import _ from 'lodash'
+
 import { AddressSchema } from '../../shared/schemas/address-schema'
 import { Language } from '../../shared/enums/language'
 import { LanguageProficiency } from './types/enums/language-proficiency'
@@ -14,10 +17,8 @@ import { ContractType } from './types/enums/contract-type'
 import { Benefit } from './types/enums/benefit'
 import { ContactSchema } from '../../shared/schemas/contact-schema'
 import { RelatedWebsiteSchema } from '../../shared/schemas/related-websites-schema'
-import { buildDateSchema } from '../../shared/utils/schema-builder'
 
 const CandidateLanguageSchema = z.object({
-  id: z.string().uuid(),
   language: z.nativeEnum(Language),
   writtenLevel: z.nativeEnum(LanguageProficiency),
   spokenLevel: z.nativeEnum(LanguageProficiency),
@@ -26,7 +27,6 @@ const CandidateLanguageSchema = z.object({
 })
 
 const CandidateReferenceSchema = z.object({
-  id: z.string().uuid(),
   name: z.string(),
   position: z.string(),
   company: z.string().nullable(),
@@ -36,7 +36,6 @@ const CandidateReferenceSchema = z.object({
 })
 
 const CandidateAchievementSchema = z.object({
-  id: z.string().uuid(),
   name: z.string(),
   type: z.nativeEnum(AchievementType),
   issuer: z.string(),
@@ -48,7 +47,6 @@ const CandidateAchievementSchema = z.object({
 })
 
 const CandidateProfessionalExperienceSchema = z.object({
-  id: z.string().uuid(),
   title: z.string(),
   description: z.string().nullable(),
   company: z.string(),
@@ -58,7 +56,9 @@ const CandidateProfessionalExperienceSchema = z.object({
   isCurrent: z.boolean(),
   period: PeriodSchema,
   location: z.object({}),
-  relatedSkills: z.array(z.string().max(100)),
+  relatedSkills: z
+    .array(z.string().max(100))
+    .refine((skills) => _.uniq(skills).length === skills.length),
 })
 
 const CandidateEducationalExperienceSchema = z.object({
@@ -83,31 +83,69 @@ const CandidatePreferencesSchema = z.object({
   contractType: z.nativeEnum(ContractType).nullable(),
   employmentType: z.nativeEnum(EmploymentType).nullable(),
   workplaceType: z.nativeEnum(WorkplaceType).nullable(),
-  benefits: z.array(z.nativeEnum(Benefit)),
+  benefits: z
+    .array(z.nativeEnum(Benefit))
+    .refine((benefits) => _.uniq(benefits).length === benefits.length),
   positionLevel: z.nativeEnum(PositionLevel).nullable(),
 })
 
 const CandidateExperiencesSchema = z.object({
-  education: z.array(CandidateEducationalExperienceSchema).default([]),
+  education: z
+    .array(CandidateEducationalExperienceSchema)
+    .default([])
+    .refine(
+      (educs) =>
+        _.uniqBy(educs, (educ) => `${educ.degree}${educ.institution}`)
+          .length === educs.length,
+    ),
   professional: z.array(CandidateProfessionalExperienceSchema).default([]),
 })
 
 export const CreateCandidateSchema = z.object({
   body: z.object({
     fullName: z.string().min(3).max(100),
-    birthDate: buildDateSchema(),
+    birthDate: z.string().refine((value) => {
+      const date = moment(value, 'YYYY-MM-DD', true)
+      return (
+        date.isValid() &&
+        date.isBefore(moment()) &&
+        date.isAfter(moment().subtract(100, 'years'))
+      )
+    }),
+    professionalHeadline: z.string().max(100).nullable().default(null),
     contact: ContactSchema,
     address: AddressSchema,
     about: z.string().max(500).nullable(),
-    professionalHeadline: z.string().max(100).nullable().default(null),
     hobbies: z.array(z.string().max(100)),
     social: RelatedWebsiteSchema,
     isAvailableForWork: z.boolean(),
     allowThirdPartyApplications: z.boolean(),
     preferences: CandidatePreferencesSchema,
     experiences: CandidateExperiencesSchema,
-    languages: z.array(CandidateLanguageSchema).default([]),
-    references: z.array(CandidateReferenceSchema).default([]),
-    achievements: z.array(CandidateAchievementSchema).default([]),
+    languages: z
+      .array(CandidateLanguageSchema)
+      .default([])
+      .refine((langs) => _.uniqBy(langs, 'language').length === langs.length),
+    references: z
+      .array(CandidateReferenceSchema)
+      .default([])
+      .refine((refs) => _.uniqBy(refs, 'name').length === refs.length),
+    achievements: z
+      .array(CandidateAchievementSchema)
+      .default([])
+      .refine((achievs) => _.uniqBy(achievs, 'name').length === achievs.length),
+  }),
+})
+
+export const UpdateCandidateSchema = z.object({
+  params: z.object({
+    id: z.string().uuid(),
+  }),
+  body: CreateCandidateSchema.shape.body.partial(),
+})
+
+export const FindCandidateByIdSchema = z.object({
+  params: z.object({
+    id: z.string().uuid(),
   }),
 })

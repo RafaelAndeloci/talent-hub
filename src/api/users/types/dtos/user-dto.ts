@@ -1,6 +1,3 @@
-import { User } from "../entities/user";
+import { User } from '../entities/user'
 
-export type UserDto = Omit<
-  User,
-  'hashedPassword' | 'passwordReset' | 'deletedAt' | 'createdAt' | 'updatedAt'
->
+export type UserDto = Omit<User, 'hashedPassword' | 'passwordReset'>

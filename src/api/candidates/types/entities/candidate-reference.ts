@@ -1,6 +1,4 @@
-import { Entity } from "../../../../shared/types/base-types/entity"
-
-export interface CandidateReference extends Entity {
+export interface CandidateReference {
   name: string
   position: string
   phone: string

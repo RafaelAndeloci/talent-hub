@@ -1,6 +1,4 @@
 import { Op } from 'sequelize'
-import * as uuid from 'uuid'
-import _ from 'lodash'
 
 import { User } from './types/entities/user'
 import { Role } from './types/enums/role'
@@ -8,49 +6,27 @@ import { CreateUserDto } from './types/dtos/create-user-dto'
 import { userRepository } from './user-repository'
 import { ApiError } from '../../shared/types/api-error'
 import { hasher } from '../../shared/services/hasher'
-import { UserDto } from './types/dtos/user-dto'
 import { AuthArgsDto } from './types/dtos/./auth-args-dto'
 import { jwtService } from '../../shared/services/jwt-service'
-
-const toDto = (user: User): UserDto => {
-  return _.omit(user, [
-    'hashedPassword',
-    'passwordReset',
-    'deletedAt',
-    'updatedAt',
-    'createdAt',
-  ]) as UserDto
-}
-
-const isActive = (user: User) => user.deletedAt === null
+import { newInstance, toDto } from './user-parser'
 
 const canCreateCandidate = (user: User) =>
   user.role === Role.SysAdmin || user.role === Role.Candidate
 
-const create = async (user: CreateUserDto) => {
+const create = async (payload: CreateUserDto) => {
   if (
     await userRepository.exists({
-      [Op.or]: [{ email: user.email }, { username: user.username }],
+      [Op.or]: [{ email: payload.email }, { username: payload.username }],
     })
   ) {
     ApiError.throwConflict('User already exists')
   }
 
-  const hashedPassword = await hasher.hash(user.password)
+  const hashedPassword = await hasher.hash(payload.password)
+  const user: User = newInstance({ payload, hashedPassword })
 
-  const newUser: User = {
-    ...user,
-    id: uuid.v4(),
-    profilePictureUrl: null,
-    hashedPassword,
-    passwordReset: null,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    deletedAt: null,
-  }
-
-  await userRepository.create(newUser)
-  return toDto(newUser)
+  await userRepository.create(user)
+  return toDto(user)
 }
 
 const auth = async ({ username, email, password }: AuthArgsDto) => {
@@ -68,13 +44,11 @@ const auth = async ({ username, email, password }: AuthArgsDto) => {
   if (hashedPassword !== user!.hashedPassword) {
     ApiError.throwUnauthorized('Invalid credentials')
   }
-  const dto = toDto(user!)
-  return jwtService.generateToken(dto)
+  return jwtService.generateToken(toDto(user!))
 }
 
 export const userBusiness = {
   create,
   auth,
-  isActive,
   canCreateCandidate,
 }

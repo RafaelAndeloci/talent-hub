@@ -16,6 +16,15 @@ export const database = new Sequelize(name, user, password, {
   port,
   dialect: 'postgres',
   logging: logEnabled ? logQuery : false,
+  timezone: '-03:00',
+  hooks: {
+    beforeUpdate(_, opt) {
+      opt.returning = true
+    },
+    beforeCreate(_, opt) {
+      opt.returning = true
+    },
+  },
 })
 
 export const urlColumn = {
@@ -38,5 +47,8 @@ export const initDatabase = async () => {
     logger.info('database up!')
   } catch (error) {
     logger.error('database down!', error)
+
+    logger.error('Exiting application...')
+    process.exit(1)
   }
 }

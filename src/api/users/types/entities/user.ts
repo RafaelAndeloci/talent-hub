@@ -1,11 +1,11 @@
-import { AuditableEntity } from '../../../../shared/types/base-types/auditable-entity'
+import { Entity } from '../../../../shared/types/entity'
 
 export type PasswordReset = {
   token: string
   expiration: number
 }
 
-export interface User extends AuditableEntity {
+export interface User extends Entity {
   username: string
   email: string
   hashedPassword: string

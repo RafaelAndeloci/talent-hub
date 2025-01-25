@@ -1,4 +1,3 @@
-import { UserEntity } from '../../../../shared/types/base-types/user-entity'
 import { Contact } from '../../../../shared/types/contact'
 import { Address } from '../../../../shared/types/address'
 import { RelatedWebsites } from '../../../../shared/types/related-websites'
@@ -7,15 +6,16 @@ import { CandidateExperiences } from './candidate-experiences'
 import { CandidateLanguage } from './candidate-language'
 import { CandidateReference } from './candidate-reference'
 import { CandidateAchievement } from './candidate-achievement'
+import { Entity } from '../../../../shared/types/entity'
 
-export interface Candidate extends UserEntity {
+export interface Candidate extends Entity {
   fullName: string
-  birthDate: Date
+  birthDate: string
+  professionalHeadline: string | null
   contact: Contact
   address: Address
   cvUrl: string | null
   about: string | null
-  professionalHeadline: string | null
   bannerUrl: string | null
   hobbies: string[]
   social: RelatedWebsites

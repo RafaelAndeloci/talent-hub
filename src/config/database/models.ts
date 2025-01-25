@@ -1,2 +1,2 @@
-export * from '../../api/candidates/candidate-model'
+export * from '../../api/candidates/models'
 export * from '../../api/users/user-model'

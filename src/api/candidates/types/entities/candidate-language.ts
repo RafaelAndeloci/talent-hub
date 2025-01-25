@@ -1,6 +1,4 @@
-import { Entity } from '../../../../shared/types/base-types/entity'
-
-export interface CandidateLanguage extends Entity {
+export interface CandidateLanguage {
   language: string
   writtenLevel: string
   spokenLevel: string

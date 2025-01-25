@@ -1,7 +1,6 @@
-import { Entity } from '../../../../shared/types/base-types/entity'
 import { Period } from '../../../../shared/types/period'
 
-export interface CandidateProfessionalExperience extends Entity {
+export interface CandidateProfessionalExperience {
   title: string
   description: string | null
   company: string

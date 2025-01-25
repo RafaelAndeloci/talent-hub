@@ -1,44 +1,66 @@
-import * as uuid from 'uuid'
 import { CreateCandidateDto } from './types/dtos/create-candidate-dto'
 import { userRepository } from '../users/user-repository'
 import { ApiError } from '../../shared/types/api-error'
 import { candidateRepository } from './candidate-repository'
-import { CandidateDto } from './types/dtos/candidate-dto'
 import { userBusiness } from '../users/user-business'
-import { Candidate } from './types/entities/candidate'
+import { UpdateCandidateDto } from './types/dtos/update-candidate-dto'
+import { merge, newInstance } from './candidate-parser'
 
-type CreateCandidateArgs = {
+const create = async ({
+  userId,
+  payload,
+}: {
   userId: string
   payload: CreateCandidateDto
-}
-
-const create = async ({ userId, payload }: CreateCandidateArgs) => {
+}) => {
   const user = await userRepository.findById(userId)
   if (!user) {
     ApiError.throwNotFound('User not found')
-  }
-
-  if (!userBusiness.isActive(user!)) {
-    ApiError.throwForbidden('User is not active')
   }
 
   if (!userBusiness.canCreateCandidate(user!)) {
     ApiError.throwForbidden('User cannot create candidate')
   }
 
-  const newCandidate: Candidate = {
-    ...payload,
+  const candidate = newInstance(payload)
+
+  await candidateRepository.create({
+    ...candidate,
     userId,
-    id: uuid.v4(),
-    cvUrl: null,
-    bannerUrl: null,
+  })
+
+  return candidate
+}
+
+const update = async ({
+  candidateId,
+  payload,
+}: {
+  candidateId: string
+  payload: UpdateCandidateDto
+}) => {
+  const candidate = await candidateRepository.findById(candidateId)
+  if (!candidate) {
+    ApiError.throwNotFound('Candidate not found')
   }
 
-  await candidateRepository.create(newCandidate)
+  const updated = merge(candidate!, payload)
+  await candidateRepository.update(updated)
 
-  return newCandidate as CandidateDto
+  return updated
+}
+
+const findById = async (id: string) => {
+  const candidate = await candidateRepository.findById(id)
+  if (!candidate) {
+    ApiError.throwNotFound('Candidate not found')
+  }
+
+  return candidate!
 }
 
 export const candidateBusiness = {
   create,
+  update,
+  findById,
 }

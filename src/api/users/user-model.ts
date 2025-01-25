@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Model, DataTypes } from 'sequelize'
+
 import { Role } from './types/enums/role'
 import { database, primaryColumn } from '../../config/database/database'
 
-export interface UserModelAttributes {
+export interface UserModelAttr {
   id: string
   username: string
   email: string
@@ -11,13 +13,12 @@ export interface UserModelAttributes {
   profilePictureUrl: string | null
   passwordResetToken: string | null
   passwordResetExpiration: number | null
-  createdAt: Date
-  updatedAt: Date
-  deletedAt: Date | null
+  createdAt?: Date
+  updatedAt?: Date
+  deletedAt?: Date | null
 }
 
-export class UserModel extends Model<UserModelAttributes> {}
-
+export class UserModel extends Model<UserModelAttr> {}
 UserModel.init(
   {
     id: primaryColumn,
@@ -75,3 +76,15 @@ UserModel.init(
     modelName: 'User',
   },
 )
+
+UserModel.addHook('beforeCreate', (_, opt) => {
+  opt.include = []
+})
+
+UserModel.addHook('beforeFind', (opt) => {
+  opt.include = []
+})
+
+UserModel.addHook('beforeFindAfterExpandIncludeAll', (opt) => {
+  opt.include = []
+})

@@ -1,8 +1,7 @@
-import { Entity } from '../../../../shared/types/base-types/entity'
 import { Period } from '../../../../shared/types/period'
 import { YearMonth } from '../../../../shared/types/year-month'
 
-export interface CandidateEducationalExperience extends Entity {
+export interface CandidateEducationalExperience {
   degree: string
   fieldOfStudy: string
   type: string
