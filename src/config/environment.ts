@@ -28,14 +28,15 @@ export const config = {
     expiresIn: parseFloat(process.env.JWT_EXPIRES_IN || '1'),
     passwordSalt: process.env.PASSWORD_SALT || 'salt',
   },
-  fileStorage: {},
-  allowedMimeTypes: {
-    images: ['image/jpeg', 'image/png'],
-    documents: [
-      'application/pdf',
-      'application/msword',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    ],
+  fileStorage: {
+    cv: {
+      allowedTypes: process.env.ALLOWED_CV_TYPES!.split(','),
+      maxSize: parseInt(process.env.MAX_CV_SIZE!),
+    },
+    images: {
+      allowedTypes: process.env.ALLOWED_IMAGE_TYPES!.split(','),
+      maxSize: parseInt(process.env.MAX_IMAGE_SIZE!),
+    },
   },
   sysAdmin: {
     id: process.env.SYS_ADMIN_ID,

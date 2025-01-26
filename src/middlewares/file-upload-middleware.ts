@@ -5,4 +5,5 @@ export const upload = multer({
   limits: { fileSize: 10 * 1024 * 1024 },
 })
 
-export const singleFileUpload = upload.single('file')
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const singleFileUpload = upload.single('file') as any

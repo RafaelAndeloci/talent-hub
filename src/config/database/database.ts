@@ -30,9 +30,6 @@ export const database = new Sequelize(name, user, password, {
 export const urlColumn = {
   type: DataTypes.STRING(255),
   allowNull: true,
-  validate: {
-    isUrl: true,
-  },
 }
 
 export const primaryColumn = {

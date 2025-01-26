@@ -19,6 +19,9 @@ import { ContactSchema } from '../../shared/schemas/contact-schema'
 import { RelatedWebsiteSchema } from '../../shared/schemas/related-websites-schema'
 import { buildQuerySchema } from '../../shared/utils/schema-builder'
 import { Candidate } from './types/entities/candidate'
+import { config } from '../../config/environment'
+
+const { fileStorage } = config
 
 const CandidateLanguageSchema = z.object({
   language: z.nativeEnum(Language),
@@ -277,5 +280,49 @@ export const FindAllCandidatesSchema = z.object({
       'allowThirdPartyApplications',
       'isAvailableForWork',
     ],
+  }),
+})
+
+export const UpdateCandidateCvSchema = z.object({
+  params: z.object({
+    id: z.string().uuid(),
+  }),
+  file: z.object({
+    mimetype: z
+      .string()
+      .refine((value) => fileStorage.cv.allowedTypes.includes(value), {
+        message: `Invalid file type. Allowed types: ${fileStorage.cv.allowedTypes.join(', ')}`,
+      }),
+    buffer: z.any().refine(
+      (value) => {
+        const buffer: Buffer = value
+
+        return buffer.length > 0 && buffer.length <= fileStorage.cv.maxSize
+      },
+      { message: `File size must be less than ${fileStorage.cv.maxSize}MB` },
+    ),
+  }),
+})
+
+export const UpdateCandidateBannerSchema = z.object({
+  params: z.object({
+    id: z.string().uuid(),
+  }),
+  file: z.object({
+    mimetype: z
+      .string()
+      .refine((value) => fileStorage.images.allowedTypes.includes(value), {
+        message: `Invalid file type. Allowed types: ${fileStorage.images.allowedTypes.join(', ')}`,
+      }),
+    buffer: z.any().refine(
+      (value) => {
+        const buffer: Buffer = value
+
+        return buffer.length > 0 && buffer.length <= fileStorage.images.maxSize
+      },
+      {
+        message: `File size must be less than ${fileStorage.images.maxSize}MB`,
+      },
+    ),
   }),
 })

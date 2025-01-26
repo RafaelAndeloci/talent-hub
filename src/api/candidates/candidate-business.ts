@@ -7,6 +7,7 @@ import { UpdateCandidateDto } from './types/dtos/update-candidate-dto'
 import { merge, newInstance } from './candidate-parser'
 import { FindAllArgs } from '../../shared/types/find-all-args'
 import { Candidate } from './types/entities/candidate'
+import { fileStorageService } from '../../shared/services/file-storage-service'
 
 const create = async ({
   userId,
@@ -75,10 +76,69 @@ const remove = async (id: string) => {
   await candidateRepository.deleteById(id)
 }
 
+const updateCv = async ({
+  candidateId,
+  file,
+}: {
+  candidateId: string
+  file: { content: Buffer; contentType: string }
+}) => {
+  const candidate = await candidateRepository.findById(candidateId)
+  if (!candidate) {
+    ApiError.throwNotFound(`candidate with id ${candidateId} not found`)
+  }
+
+  const key = `candidate-${candidateId}-cv.${file.contentType.split('/')[1]}`
+
+  const url = await fileStorageService.upload({
+    file: file.content,
+    contentType: file.contentType,
+    key,
+  })
+  if (!url) {
+    ApiError.throwInternalServerError('error uploading cv file')
+  }
+  candidate!.cvUrl = url
+
+  await candidateRepository.update(candidate!)
+  return candidate
+}
+
+const updateBanner = async ({
+  candidateId,
+  file,
+}: {
+  candidateId: string
+  file: { content: Buffer; contentType: string }
+}) => {
+  const candidate = await candidateRepository.findById(candidateId)
+  if (!candidate) {
+    ApiError.throwNotFound(`Candidate with id ${candidateId} not found`)
+  }
+
+  const key = `candidate-${candidateId}-banner.${file.contentType.split('/')[1]}`
+  const url = await fileStorageService.upload({
+    file: file.content,
+    contentType: file.contentType,
+    key,
+  })
+
+  if (!url) {
+    ApiError.throwInternalServerError('Error uploading banner file')
+  }
+
+  candidate!.bannerUrl = url
+
+  await candidateRepository.update(candidate!)
+  return candidate
+}
+
 export const candidateBusiness = {
   create,
   update,
   findById,
   remove,
   findAll,
+  updateCv,
+  updateBanner,
 }

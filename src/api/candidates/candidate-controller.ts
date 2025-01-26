@@ -6,6 +6,8 @@ import { FindCandidateByIdRequestHandler } from './types/requests/find-by-id'
 import { UpdateCandidateRequestHandler } from './types/requests/update-candidate'
 import { DeleteCandidateRequestHandler } from './types/requests/delete-candidate'
 import { FindAllCandidatesRequestHandler } from './types/requests/find-all-candidates'
+import { UpdateCandidateFileRequestHandler } from './types/requests/update-candidate-file'
+import { ApiError } from '../../shared/types/api-error'
 
 const create: CreateCandidateRequestHandler = async (req, res, next) => {
   try {
@@ -64,10 +66,64 @@ const remove: DeleteCandidateRequestHandler = async (req, res, next) => {
   }
 }
 
+const updateCv: UpdateCandidateFileRequestHandler = async (req, res, next) => {
+  try {
+    const {
+      params: { id: candidateId },
+      file: { mimetype, buffer } = {},
+    } = req
+    if (!mimetype || !buffer) {
+      ApiError.throwBadRequest('file is required')
+    }
+
+    const candidate = await candidateBusiness.updateCv({
+      candidateId,
+      file: {
+        content: buffer!,
+        contentType: mimetype!,
+      },
+    })
+
+    res.status(HTTPStatus.OK).json(candidate!)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const updateBanner: UpdateCandidateFileRequestHandler = async (
+  req,
+  res,
+  next,
+) => {
+  try {
+    const {
+      params: { id: candidateId },
+      file: { mimetype, buffer } = {},
+    } = req
+    if (!mimetype || !buffer) {
+      ApiError.throwBadRequest('file is required')
+    }
+
+    const candidate = await candidateBusiness.updateBanner({
+      candidateId,
+      file: {
+        content: buffer!,
+        contentType: mimetype!,
+      },
+    })
+
+    res.status(HTTPStatus.OK).json(candidate!)
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const candidateController = {
   create,
   update,
   findById,
   findAll,
   remove,
+  updateCv,
+  updateBanner,
 }
