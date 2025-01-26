@@ -76,15 +76,3 @@ UserModel.init(
     modelName: 'User',
   },
 )
-
-UserModel.addHook('beforeCreate', (_, opt) => {
-  opt.include = []
-})
-
-UserModel.addHook('beforeFind', (opt) => {
-  opt.include = []
-})
-
-UserModel.addHook('beforeFindAfterExpandIncludeAll', (opt) => {
-  opt.include = []
-})

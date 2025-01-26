@@ -1,4 +1,5 @@
 import { DataTypes, Includeable, Model } from 'sequelize'
+import _ from 'lodash'
 
 import {
   database,
@@ -270,16 +271,15 @@ const inclusions: Includeable[] = [
 
 CandidateModel.addHook('beforeFind', (opt) => {
   opt.include = inclusions
-  opt.attributes = {
-    exclude: ['userId'],
-  }
 })
+
+CandidateModel.prototype.toJSON = function () {
+  const values = Object.assign({}, this.get())
+  return _.omit(values, 'userId')
+}
 
 CandidateModel.addHook('beforeFindAfterExpandIncludeAll', (opt) => {
   opt.include = inclusions
-  opt.attributes = {
-    exclude: ['userId'],
-  }
 })
 
 CandidateModel.addHook('beforeCreate', (_, opt) => {

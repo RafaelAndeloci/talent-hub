@@ -48,4 +48,3 @@ CandidateLanguageModel.init(
     modelName: 'CandidateLanguage',
   },
 )
-
