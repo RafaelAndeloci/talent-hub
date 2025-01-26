@@ -1,12 +1,12 @@
 import _ from 'lodash'
 import { z } from 'zod'
-import { Filter } from '../types/find-all-args'
 import { Entity } from '../types/entity'
 import {
   FilterOperator,
   FilterOperatorType,
   FilterOperatorValues,
 } from '../enums/filter-operator'
+import { ApiError } from '../types/api-error'
 
 export const buildAddressSchema = () => {
   return z.object({
@@ -35,6 +35,9 @@ export const buildQuerySchema = <TResource extends Entity>({
   searchFields: {
     field: keyof TResource
     operators: FilterOperatorType[]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    transform?: (value: string) => any
+    validation?: (value: string) => string | null
   }[]
 }) => {
   return z.object({
@@ -88,22 +91,42 @@ export const buildQuerySchema = <TResource extends Entity>({
           const match = f.match(/(.+)\[(.+)\]:(.+)/)
 
           if (!match) {
-            return {} as Filter<TResource>
+            ApiError.throwBadRequest(
+              'filter must be in the format "field[operator]:value"',
+            )
           }
 
           const [, field, operator, value] = match!
 
+          const { transform, validation } =
+            searchFields.find(
+              (sf) => sf.field === (field as keyof TResource),
+            ) ?? {}
+
+          if (validation) {
+            const errorMessage = validation(value)
+            if (errorMessage) {
+              ApiError.throwBadRequest(errorMessage)
+            }
+          }
+
           const filter = {
             field: field as string,
             operator: operator as FilterOperatorType,
-            value: value as string | string[],
+            value,
           }
 
           if (
             filter.operator === FilterOperator.in ||
             filter.operator === FilterOperator.notIn
           ) {
-            filter.value = _.uniq(value.split(','))
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ;(filter as any).value = _.uniq(value.split(',')).map((v) =>
+              transform ? transform(v) : v,
+            )
+          } else {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ;(filter as any).value = transform ? transform(value) : value
           }
 
           return filter

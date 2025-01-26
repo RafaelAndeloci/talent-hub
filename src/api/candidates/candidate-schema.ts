@@ -158,8 +158,19 @@ export const FindCandidateByIdSchema = z.object({
   }),
 })
 
+type CandidateQuery = Candidate & {
+  contactEmail: string
+  contactPhone: string
+  ['address.zipCode']: string
+  salaryPreference: number
+  contractTypePreference: string
+  employmentTypePreference: string
+  workplaceTypePreference: string
+  positionLevelPreference: string
+}
+
 export const FindAllCandidatesSchema = z.object({
-  query: buildQuerySchema<Candidate>({
+  query: buildQuerySchema<CandidateQuery>({
     searchFields: [
       {
         field: 'fullName',
@@ -179,10 +190,85 @@ export const FindAllCandidatesSchema = z.object({
       {
         field: 'allowThirdPartyApplications',
         operators: ['eq'],
+        transform: (value) => value === 'true',
       },
       {
         field: 'isAvailableForWork',
         operators: ['eq'],
+        transform: (value) => value === 'true',
+      },
+      {
+        field: 'contactEmail',
+        operators: [
+          'eq',
+          'like',
+          'iLike',
+          'endsWith',
+          'startsWith',
+          'substring',
+        ],
+      },
+      {
+        field: 'contactPhone',
+        operators: [
+          'eq',
+          'like',
+          'iLike',
+          'endsWith',
+          'startsWith',
+          'substring',
+        ],
+      },
+      {
+        field: 'birthDate',
+        operators: ['eq', 'gt', 'lt'],
+      },
+      {
+        field: 'salaryPreference',
+        operators: ['eq', 'gt', 'lt'],
+        transform: (value) => Number(value),
+        validation: (value) =>
+          !Number.isNaN(value) && Number(value) >= 0
+            ? null
+            : 'salaryPreference must be a positive number',
+      },
+      {
+        field: 'contractTypePreference',
+        operators: ['eq'],
+        validation: (value) =>
+          Object.values(ContractType).includes(value)
+            ? null
+            : 'Invalid contract type',
+      },
+      {
+        field: 'employmentTypePreference',
+        operators: ['eq'],
+        validation: (value) =>
+          Object.values(EmploymentType).includes(value)
+            ? null
+            : 'Invalid employment type',
+      },
+      {
+        field: 'workplaceTypePreference',
+        operators: ['eq'],
+        validation: (value) =>
+          Object.values(WorkplaceType).includes(value)
+            ? null
+            : 'Invalid workplace type',
+      },
+      {
+        field: 'positionLevelPreference',
+        operators: ['eq'],
+        validation: (value) =>
+          Object.values(PositionLevel).includes(value)
+            ? null
+            : 'Invalid position level',
+      },
+      {
+        field: 'address.zipCode',
+        operators: ['eq'],
+        validation: (value) =>
+          value.trim().length === 8 ? null : 'zipCode must have 8 characters',
       },
     ],
     sortFields: [
