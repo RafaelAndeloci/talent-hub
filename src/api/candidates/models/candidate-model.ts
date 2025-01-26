@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { DataTypes, Includeable, Model } from 'sequelize'
 
 import {
@@ -37,8 +35,7 @@ export interface CandidateModelAttr {
   about: string | null
   contactPhone: string
   contactEmail: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  address: any
+  address: Address
   professionalHeadline: string | null
   bannerUrl: string | null
   hobbies: string[]
@@ -81,6 +78,16 @@ CandidateModel.init(
     fullName: {
       type: DataTypes.STRING(100),
       allowNull: false,
+    },
+    userId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      references: {
+        model: UserModel,
+        key: 'id',
+      },
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
     },
     birthDate: {
       type: DataTypes.DATEONLY,
@@ -154,21 +161,12 @@ CandidateModel.init(
       type: DataTypes.JSONB,
       allowNull: true,
       validate: {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        isAddress(value: any) {
-          const address: Address = {
-            street: value.street,
-            number: value.number,
-            complement: value.complement,
-            neighborhood: value.neighborhood,
-            city: value.city,
-            zipCode: value.zipCode,
-            uf: value.uf,
-          }
-
-          if (Object.values(address).some((v) => !v)) {
-            throw new Error('Invalid address')
-          }
+        isAddress(value: Address) {
+          Object.values(value).forEach((v) => {
+            if (!v) {
+              throw new Error('Invalid address')
+            }
+          })
         },
       },
     },
@@ -204,16 +202,6 @@ const hasManyBaseOptions = {
   onUpdate: 'CASCADE',
   hooks: true,
 }
-
-UserModel.hasOne(CandidateModel, {
-  onDelete: 'CASCADE',
-  onUpdate: 'CASCADE',
-})
-
-CandidateModel.belongsTo(UserModel, {
-  foreignKey: 'userId',
-  targetKey: 'id',
-})
 
 CandidateModel.hasMany(CandidateProfessionalExperienceModel, {
   as: 'professionalExperiences',
@@ -282,10 +270,16 @@ const inclusions: Includeable[] = [
 
 CandidateModel.addHook('beforeFind', (opt) => {
   opt.include = inclusions
+  opt.attributes = {
+    exclude: ['userId'],
+  }
 })
 
 CandidateModel.addHook('beforeFindAfterExpandIncludeAll', (opt) => {
   opt.include = inclusions
+  opt.attributes = {
+    exclude: ['userId'],
+  }
 })
 
 CandidateModel.addHook('beforeCreate', (_, opt) => {

@@ -11,7 +11,7 @@ import { jwtService } from '../../shared/services/jwt-service'
 import { newInstance, toDto } from './user-parser'
 
 const canCreateCandidate = (user: User) =>
-  user.role === Role.SysAdmin || user.role === Role.Candidate
+  user.role === Role.sysAdmin || user.role === Role.candidate
 
 const create = async (payload: CreateUserDto) => {
   if (

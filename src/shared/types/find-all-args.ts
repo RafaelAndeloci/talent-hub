@@ -1,17 +1,19 @@
-export type Filter = {
-  field: string
-  value: string | string[] | object
-  operator: string
+import { FilterOperatorType } from '../enums/filter-operator'
+
+export type Filter<T> = {
+  field: keyof T
+  value: T[keyof T]
+  operator: FilterOperatorType
 }
 
-export type Sort = {
-  field: string
+export type Sort<T> = {
+  field: keyof T
   order: 'asc' | 'desc'
 }
 
-export interface FindAllArgs {
+export interface FindAllArgs<T> {
   limit?: number
   offset?: number
-  sort: Sort[]
-  filter: Filter[]
+  sort: Sort<T>[]
+  filter: Filter<T>[]
 }

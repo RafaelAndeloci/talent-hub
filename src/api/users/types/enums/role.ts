@@ -1,6 +1,6 @@
 export const Role = {
-  SysAdmin: 'sys_admin',
-  CompanyRecruiter: 'company_recruiter',
-  Candidate: 'candidate',
-  CompanyAdmin: 'company_admin',
+  sysAdmin: 'sys_admin',
+  companyRecruiter: 'company_recruiter',
+  candidate: 'candidate',
+  companyAdmin: 'company_admin',
 }

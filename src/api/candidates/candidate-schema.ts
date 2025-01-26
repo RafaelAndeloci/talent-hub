@@ -17,6 +17,8 @@ import { ContractType } from './types/enums/contract-type'
 import { Benefit } from './types/enums/benefit'
 import { ContactSchema } from '../../shared/schemas/contact-schema'
 import { RelatedWebsiteSchema } from '../../shared/schemas/related-websites-schema'
+import { buildQuerySchema } from '../../shared/utils/schema-builder'
+import { Candidate } from './types/entities/candidate'
 
 const CandidateLanguageSchema = z.object({
   language: z.nativeEnum(Language),
@@ -144,8 +146,53 @@ export const UpdateCandidateSchema = z.object({
   body: CreateCandidateSchema.shape.body.partial(),
 })
 
+export const DeleteCandidateSchema = z.object({
+  params: z.object({
+    id: z.string().uuid(),
+  }),
+})
+
 export const FindCandidateByIdSchema = z.object({
   params: z.object({
     id: z.string().uuid(),
+  }),
+})
+
+export const FindAllCandidatesSchema = z.object({
+  query: buildQuerySchema<Candidate>({
+    searchFields: [
+      {
+        field: 'fullName',
+        operators: [
+          'eq',
+          'like',
+          'iLike',
+          'endsWith',
+          'startsWith',
+          'substring',
+        ],
+      },
+      {
+        field: 'id',
+        operators: ['eq'],
+      },
+      {
+        field: 'allowThirdPartyApplications',
+        operators: ['eq'],
+      },
+      {
+        field: 'isAvailableForWork',
+        operators: ['eq'],
+      },
+      {
+        field: 
+      }
+    ],
+    sortFields: [
+      'fullName',
+      'id',
+      'allowThirdPartyApplications',
+      'isAvailableForWork',
+    ],
   }),
 })

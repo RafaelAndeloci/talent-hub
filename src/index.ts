@@ -2,8 +2,13 @@ import { initDatabase } from './config/database/database'
 import { logger } from './shared/services/logging-service'
 
 const runApplication = async () => {
-  await initDatabase()
-  await import('./server')
+  try {
+    await initDatabase()
+    await import('./server')
+  } catch (e) {
+    logger.error('Error while starting the application', e)
+    process.exit(1)
+  }
 }
 
 runApplication()

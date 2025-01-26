@@ -201,8 +201,11 @@ export const fromDatabase = (model: CandidateModelAttr): Candidate => ({
   })),
 })
 
-export const toDatabase = (candidate: Candidate): CandidateModelAttr => ({
+export const toDatabase = (
+  candidate: Candidate & { userId: string },
+): CandidateModelAttr => ({
   id: candidate.id,
+  userId: candidate.userId,
   fullName: candidate.fullName,
   birthDate: candidate.birthDate,
   professionalHeadline: candidate.professionalHeadline,

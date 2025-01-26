@@ -1,11 +1,11 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import { z } from 'zod'
-import { authenticate } from '../middlewares/auth-middleware'
 import { candidatesRouter } from '../api/candidates/candidate-routes'
 import { logger } from '../shared/services/logging-service'
 import { validate } from '../middlewares/validation-middleware'
 import { fileStorageService } from '../shared/services/file-storage-service'
 import { userRouter } from '../api/users/user-router'
+import { authenticate } from '../middlewares/authentication-middleware'
 
 export const apiRoutes = Router()
 

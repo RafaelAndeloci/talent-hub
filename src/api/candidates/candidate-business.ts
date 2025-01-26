@@ -5,6 +5,8 @@ import { candidateRepository } from './candidate-repository'
 import { userBusiness } from '../users/user-business'
 import { UpdateCandidateDto } from './types/dtos/update-candidate-dto'
 import { merge, newInstance } from './candidate-parser'
+import { FindAllArgs } from '../../shared/types/find-all-args'
+import { Candidate } from './types/entities/candidate'
 
 const create = async ({
   userId,
@@ -59,8 +61,24 @@ const findById = async (id: string) => {
   return candidate!
 }
 
+const findAll = async (query: FindAllArgs<Candidate>) => {
+  const candidates = await candidateRepository.findAll(query)
+  return candidates
+}
+
+const remove = async (id: string) => {
+  const candidate = await candidateRepository.findById(id)
+  if (!candidate) {
+    ApiError.throwNotFound(`candidate with id ${id} not found`)
+  }
+
+  await candidateRepository.deleteById(id)
+}
+
 export const candidateBusiness = {
   create,
   update,
   findById,
+  remove,
+  findAll,
 }

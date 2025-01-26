@@ -9,6 +9,7 @@ import { CandidateAchievement } from './candidate-achievement'
 import { Entity } from '../../../../shared/types/entity'
 
 export interface Candidate extends Entity {
+  userId: string
   fullName: string
   birthDate: string
   professionalHeadline: string | null

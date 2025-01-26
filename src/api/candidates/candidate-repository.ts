@@ -4,11 +4,11 @@ import { Candidate } from './types/entities/candidate'
 import { fromDatabase, toDatabase } from './candidate-parser'
 
 export const candidateRepository = makeRepository<
-  Candidate & { userId?: string },
+  Candidate,
   CandidateModelAttr,
   CandidateModel
 >({
   model: CandidateModel,
-  toDatabase,
   fromDatabase,
+  toDatabase,
 })

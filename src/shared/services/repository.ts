@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Attributes, Model, ModelStatic, Order, WhereOptions } from 'sequelize'
 import { Entity } from '../types/entity'
-import { FindAllArgs, Sort } from '../types/find-all-args'
+import { FindAllArgs } from '../types/find-all-args'
 import { PagedList } from '../types/paged-list'
 import { ApiError } from '../types/api-error'
+import { toSequelizeSymbol } from '../enums/filter-operator'
 
 export const makeRepository = <
   TEntity extends Entity,
@@ -24,23 +25,23 @@ export const makeRepository = <
     sort,
     filter,
     where,
-  }: FindAllArgs &
+  }: FindAllArgs<TEntity> &
     Partial<{ where: WhereOptions<Attributes<TModel>> }>): Promise<
     PagedList<TEntity>
   > => {
-    limit = limit || 10
-    offset = offset || 0
+    limit = limit ?? 10
+    offset = offset ?? 0
     sort = sort || [{ field: 'id', order: 'asc' }]
     filter = filter || []
     where = where || {}
 
     filter.forEach(({ field, value, operator }) => {
       ;(where as any)[field] = {
-        [operator]: value,
+        [toSequelizeSymbol(operator)]: value,
       }
     })
 
-    const order = sort.map((s: Sort) => [s.field, s.order]) as Order
+    const order = sort.map((s) => [s.field, s.order.toUpperCase()]) as Order
 
     const models = await model.findAll({
       limit,
@@ -56,9 +57,7 @@ export const makeRepository = <
   }
 
   const findById = async (id: string): Promise<TEntity | null> => {
-    const modelInstance = await model.findByPk(id as any, {
-      include: [{ all: true }],
-    })
+    const modelInstance = await model.findByPk(id as any)
     if (!modelInstance) {
       return null
     }
@@ -72,7 +71,6 @@ export const makeRepository = <
   ): Promise<TEntity | null> => {
     const modelInstance = await model.findOne({
       where,
-      include: [{ all: true }],
     })
     if (!modelInstance) {
       return null
@@ -85,13 +83,12 @@ export const makeRepository = <
   const exists = async (
     where: WhereOptions<Attributes<TModel>>,
   ): Promise<boolean> => {
-    const models = await model.findAll({ where, include: [{ all: true }] })
+    const models = await model.findAll({ where })
     return models.length > 0
   }
 
   const create = async (entity: Required<TEntity>): Promise<void> => {
     await model.create(toDatabase(entity) as any, {
-      include: [{ all: true }],
       returning: true,
     })
   }

@@ -1,7 +1,12 @@
 import _ from 'lodash'
 import { z } from 'zod'
 import { Filter } from '../types/find-all-args'
-import { FilterOperator } from '../enums/filter-operator'
+import { Entity } from '../types/entity'
+import {
+  FilterOperator,
+  FilterOperatorType,
+  FilterOperatorValues,
+} from '../enums/filter-operator'
 
 export const buildAddressSchema = () => {
   return z.object({
@@ -22,29 +27,33 @@ export const buildDateSchema = (validation = null) => {
   return validation ? dateSchema.refine(validation) : dateSchema
 }
 
-type BuildQueryArgs = {
-  sortingFields: string[]
-  searchFields: string[]
-}
-
-export const buildQuerySchema = ({
-  sortingFields = ['id'],
-  searchFields = ['id'],
-}: BuildQueryArgs) => {
+export const buildQuerySchema = <TResource extends Entity>({
+  sortFields = ['id'],
+  searchFields = [{ field: 'id', operators: [FilterOperator.eq] }],
+}: {
+  sortFields: (keyof TResource)[]
+  searchFields: {
+    field: keyof TResource
+    operators: FilterOperatorType[]
+  }[]
+}) => {
   return z.object({
     limit: z
       .string()
       .transform((value) => parseInt(value))
-      .refine((value) => value >= 0)
+      .refine((value) => value > 0, 'limit must be greater than 0')
       .default('10')
       .optional(),
     offset: z
       .string()
       .transform((value) => parseInt(value))
-      .refine((value) => value >= 0)
+      .refine(
+        (value) => value >= 0,
+        'offset must be greater than or equal to 0',
+      )
       .default('0')
       .optional(),
-    sortings: z
+    sort: z
       .string()
       .transform((value) =>
         value.split(';').map((sort) => {
@@ -55,17 +64,18 @@ export const buildQuerySchema = ({
           }
         }),
       )
-      .refine((value) => {
-        return value.every(({ field, order }) => {
-          return (
-            sortingFields?.includes(field) &&
-            (order === 'asc' || order === 'desc')
-          )
-        })
-      })
+      .refine(
+        (value) =>
+          value.every(
+            ({ field, order }) =>
+              sortFields.includes(field as keyof TResource) &&
+              (order === 'asc' || order === 'desc'),
+          ),
+        `sort must be in the format 'field:order'. Allowed: ${sortFields.join(', ')}`,
+      )
       .optional()
       .default('id:asc'),
-    filters: z
+    filter: z
       .string()
       .transform((value) => {
         const filters = value.split(';').map((f) => f.trim())
@@ -78,14 +88,14 @@ export const buildQuerySchema = ({
           const match = f.match(/(.+)\[(.+)\]:(.+)/)
 
           if (!match) {
-            return {} as Filter
+            return {} as Filter<TResource>
           }
 
           const [, field, operator, value] = match!
 
           const filter = {
             field: field as string,
-            operator: operator as unknown as string,
+            operator: operator as FilterOperatorType,
             value: value as string | string[],
           }
 
@@ -104,9 +114,12 @@ export const buildQuerySchema = ({
           _.isArray(filters) &&
           filters.every(
             ({ field, operator }) =>
-              Object.values(FilterOperator).includes(operator) &&
-              searchFields?.includes(field),
+              FilterOperatorValues.includes(operator) &&
+              searchFields.some(
+                (sf) => sf.field === field && sf.operators.includes(operator),
+              ),
           ),
+        `filter must be in the format 'field[operator]:value'. Allowed: ${searchFields.map(({ field, operators }) => `${field as string}[${operators.join(', ')}]`).join(', ')}`,
       )
       .optional()
       .default(''),
