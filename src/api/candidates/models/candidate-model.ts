@@ -28,7 +28,7 @@ import { UserModel } from '../../users/user-model'
 
 export interface CandidateModelAttr {
   id: string
-  userId?: string
+  userId: string
   fullName: string
   birthDate: string
   cvUrl: string | null

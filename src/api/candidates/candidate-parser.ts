@@ -55,6 +55,7 @@ export const merge = (
 
 export const newInstance = (payload: CreateCandidateDto): Candidate => ({
   id: uuid.v4(),
+  userId: payload.userId,
   fullName: payload.fullName,
   birthDate: payload.birthDate,
   professionalHeadline: payload.about,
@@ -76,6 +77,7 @@ export const newInstance = (payload: CreateCandidateDto): Candidate => ({
 
 export const fromDatabase = (model: CandidateModelAttr): Candidate => ({
   id: model.id,
+  userId: model.userId,
   fullName: model.fullName,
   birthDate: moment(model.birthDate.toString(), true).format('YYYY-MM-DD'),
   contact: {

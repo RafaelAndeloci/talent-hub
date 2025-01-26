@@ -184,9 +184,6 @@ export const FindAllCandidatesSchema = z.object({
         field: 'isAvailableForWork',
         operators: ['eq'],
       },
-      {
-        field: 
-      }
     ],
     sortFields: [
       'fullName',
