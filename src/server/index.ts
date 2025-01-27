@@ -12,7 +12,11 @@ const {
 } = config
 
 const app = express()
-useSwagger(app)
+
+if (config.api.docEnabled) {
+  useSwagger(app)
+}
+
 app.use(logging)
 app.use(express.json())
 app.use(

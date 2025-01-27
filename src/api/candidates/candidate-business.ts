@@ -15,6 +15,13 @@ const create = async ({
   userId: string
   payload: Omit<Candidate, 'id' | 'userId'>
 }) => {
+  /**
+   * Create a new candidate.
+   * @param {string} userId - The ID of the user.
+   * @param {Omit<Candidate, 'id' | 'userId'>} payload - The candidate payload.
+   * @returns {Promise<Candidate>} The created candidate.
+   * @throws {ApiError} If the user is not found or if the user cannot create a candidate.
+   */
   const user = await userRepository.findById(userId)
   if (!user) {
     ApiError.throwNotFound('User not found')
@@ -41,6 +48,13 @@ const update = async ({
   candidateId: string
   payload: Partial<Candidate>
 }) => {
+  /**
+   * Update a candidate.
+   * @param {string} candidateId - The ID of the candidate.
+   * @param {Partial<Candidate>} payload - The candidate payload.
+   * @returns {Promise<Candidate>} The updated candidate.
+   * @throws {ApiError} If the candidate is not found.
+   */
   const candidate = await candidateRepository.findById(candidateId)
   if (!candidate) {
     ApiError.throwNotFound('Candidate not found')
@@ -53,6 +67,12 @@ const update = async ({
 }
 
 const findById = async (id: string) => {
+  /**
+   * Find a candidate by ID.
+   * @param {string} id - The ID of the candidate.
+   * @returns {Promise<Candidate>} The candidate.
+   * @throws {ApiError} If the candidate is not found.
+   */
   const candidate = await candidateRepository.findById(id)
   if (!candidate) {
     ApiError.throwNotFound('Candidate not found')
@@ -62,11 +82,22 @@ const findById = async (id: string) => {
 }
 
 const findAll = async (query: FindAllArgs<Candidate>) => {
+  /**
+   * Find all candidates.
+   * @param {FindAllArgs<Candidate>} query - The query arguments.
+   * @returns {Promise<PagedList<Candidate>>} The list of candidates.
+   */
   const candidates = await candidateRepository.findAll(query)
   return candidates
 }
 
 const remove = async (id: string) => {
+  /**
+   * Remove a candidate.
+   * @param {string} id - The ID of the candidate.
+   * @returns {Promise<void>}
+   * @throws {ApiError} If the candidate is not found.
+   */
   const candidate = await candidateRepository.findById(id)
   if (!candidate) {
     ApiError.throwNotFound(`candidate with id ${id} not found`)
@@ -82,6 +113,13 @@ const updateCv = async ({
   candidateId: string
   file: { content: Buffer; contentType: string }
 }) => {
+  /**
+   * Update the CV of a candidate.
+   * @param {string} candidateId - The ID of the candidate.
+   * @param {Object} file - The file object containing content and contentType.
+   * @returns {Promise<Candidate>} The updated candidate.
+   * @throws {ApiError} If the candidate is not found or if there is an error uploading the file.
+   */
   const candidate = await candidateRepository.findById(candidateId)
   if (!candidate) {
     ApiError.throwNotFound(`candidate with id ${candidateId} not found`)
@@ -110,6 +148,13 @@ const updateBanner = async ({
   candidateId: string
   file: { content: Buffer; contentType: string }
 }) => {
+  /**
+   * Update the banner of a candidate.
+   * @param {string} candidateId - The ID of the candidate.
+   * @param {Object} file - The file object containing content and contentType.
+   * @returns {Promise<Candidate>} The updated candidate.
+   * @throws {ApiError} If the candidate is not found or if there is an error uploading the file.
+   */
   const candidate = await candidateRepository.findById(candidateId)
   if (!candidate) {
     ApiError.throwNotFound(`Candidate with id ${candidateId} not found`)
@@ -133,6 +178,13 @@ const updateBanner = async ({
 }
 
 const validateForApplication = async (candidateId: string, userRole: Role) => {
+  /**
+   * Validate a candidate for a job application.
+   * @param {string} candidateId - The ID of the candidate.
+   * @param {Role} userRole - The role of the user.
+   * @returns {Promise<Candidate>} The validated candidate.
+   * @throws {ApiError} If the candidate is not found or if validation fails.
+   */
   const candidate = await candidateRepository.findById(candidateId)
   if (!candidate) {
     ApiError.throwNotFound(`candidate with id ${candidateId} not found`)

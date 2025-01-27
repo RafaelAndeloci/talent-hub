@@ -5,6 +5,23 @@ import { buildQuerySchema } from '../../shared/utils/schema-builder'
 import { JobApplication } from './types/entities/job-application'
 import { FilterOperator } from '../../shared/enums/filter-operator'
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     CreateJobApplication:
+ *       type: object
+ *       properties:
+ *         candidateId:
+ *           type: string
+ *           format: uuid
+ *         coverLetter:
+ *           type: string
+ *           nullable: true
+ *         jobOpeningId:
+ *           type: string
+ *           format: uuid
+ */
 export const CreateJobApplicationSchema = z.object({
   body: z.object({
     candidateId: z.string().uuid(),
@@ -13,6 +30,30 @@ export const CreateJobApplicationSchema = z.object({
   }),
 })
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     UpdateJobApplication:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: string
+ *           enum: [applied, inProgress, rejected, hired]
+ *         stage:
+ *           type: string
+ *           enum: [screening, interview, offer, hired]
+ *         rejection:
+ *           type: object
+ *           properties:
+ *             rejectedBy:
+ *               type: string
+ *               format: uuid
+ *             reason:
+ *               type: string
+ *         coverLetter:
+ *           type: string
+ */
 export const UpdateJobApplicationSchema = z.object({
   body: z.object({
     status: z
@@ -44,12 +85,39 @@ export const UpdateJobApplicationSchema = z.object({
   }),
 })
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     FindJobApplicationById:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           format: uuid
+ */
 export const FindJobApplicationByIdSchema = z.object({
   params: z.object({
     id: z.string().uuid(),
   }),
 })
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     FindAllJobApplications:
+ *       type: object
+ *       properties:
+ *         filter:
+ *           type: string
+ *         sort:
+ *           type: string
+ *         page:
+ *           type: number
+ *         limit:
+ *           type: number
+ */
 export const FindAllJobApplicationsSchema = z.object({
   query: buildQuerySchema<JobApplication>({
     searchFields: [
@@ -85,6 +153,17 @@ export const FindAllJobApplicationsSchema = z.object({
   }),
 })
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     DeleteJobApplication:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           format: uuid
+ */
 export const DeleteJobApplicationSchema = z.object({
   params: z.object({
     id: z.string().uuid(),

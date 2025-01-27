@@ -11,12 +11,42 @@ import { Benefit } from '../candidates/types/enums/benefit'
 import moment from 'moment'
 import _ from 'lodash'
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     FindJobOpeningById:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           format: uuid
+ */
 export const FindJobOpeningByIdSchema = z.object({
   params: z.object({
     id: z.string(),
   }),
 })
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     FindJobOpenings:
+ *       type: object
+ *       properties:
+ *         query:
+ *           type: object
+ *           properties:
+ *             filter:
+ *               type: string
+ *             sort:
+ *               type: string
+ *             page:
+ *               type: number
+ *             limit:
+ *               type: number
+ */
 export const FindJobOpeningsSchema = z.object({
   query: buildQuerySchema<JobOpening>({
     sortFields: [
@@ -72,6 +102,63 @@ export const FindJobOpeningsSchema = z.object({
   }),
 })
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     CreateJobOpening:
+ *       type: object
+ *       properties:
+ *         title:
+ *           type: string
+ *           minLength: 3
+ *           maxLength: 100
+ *         description:
+ *           type: string
+ *           minLength: 3
+ *           maxLength: 1000
+ *         status:
+ *           type: string
+ *           enum: [draft, open, closed, filled]
+ *         companyId:
+ *           type: string
+ *           format: uuid
+ *         positionLevel:
+ *           type: string
+ *           enum: [junior, mid, senior, lead]
+ *         workplaceType:
+ *           type: string
+ *           enum: [remote, onsite, hybrid]
+ *         employmentType:
+ *           type: string
+ *           enum: [fullTime, partTime, contract]
+ *         salary:
+ *           type: number
+ *           nullable: true
+ *         contractType:
+ *           type: string
+ *           enum: [permanent, temporary, internship]
+ *         benefits:
+ *           type: array
+ *           items:
+ *             type: string
+ *             enum: [healthcare, pension, bonus, stockOptions]
+ *         deadline:
+ *           type: string
+ *           format: date
+ *         responsibilities:
+ *           type: array
+ *           items:
+ *             type: string
+ *             minLength: 3
+ *             maxLength: 1000
+ *         requirements:
+ *           type: array
+ *           items:
+ *             type: string
+ *             minLength: 3
+ *             maxLength: 1000
+ */
 export const CreateJobOpeningSchema = z.object({
   body: z.object({
     title: z.string().min(3).max(100),
@@ -114,7 +201,7 @@ export const CreateJobOpeningSchema = z.object({
         ).join(', ')}`,
       ),
     salary: z.number().min(0).nullable(),
-    contractTyp: z
+    contractType: z
       .string()
       .refine(
         (value) => Object.values(ContractType).includes(value as ContractType),
@@ -149,6 +236,60 @@ export const CreateJobOpeningSchema = z.object({
   }),
 })
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     UpdateJobOpening:
+ *       type: object
+ *       properties:
+ *         title:
+ *           type: string
+ *           minLength: 3
+ *           maxLength: 100
+ *         description:
+ *           type: string
+ *           minLength: 3
+ *           maxLength: 1000
+ *         status:
+ *           type: string
+ *           enum: [draft, open, closed, filled]
+ *         positionLevel:
+ *           type: string
+ *           enum: [junior, mid, senior, lead]
+ *         workplaceType:
+ *           type: string
+ *           enum: [remote, onsite, hybrid]
+ *         employmentType:
+ *           type: string
+ *           enum: [fullTime, partTime, contract]
+ *         salary:
+ *           type: number
+ *           nullable: true
+ *         contractType:
+ *           type: string
+ *           enum: [permanent, temporary, internship]
+ *         benefits:
+ *           type: array
+ *           items:
+ *             type: string
+ *             enum: [healthcare, pension, bonus, stockOptions]
+ *         deadline:
+ *           type: string
+ *           format: date
+ *         responsibilities:
+ *           type: array
+ *           items:
+ *             type: string
+ *             minLength: 3
+ *             maxLength: 1000
+ *         requirements:
+ *           type: array
+ *           items:
+ *             type: string
+ *             minLength: 3
+ *             maxLength: 1000
+ */
 export const UpdateJobOpeningSchema = z.object({
   params: z.object({
     id: z.string().uuid(),
@@ -156,18 +297,54 @@ export const UpdateJobOpeningSchema = z.object({
   body: CreateJobOpeningSchema.shape.body.omit({ companyId: true }).partial(),
 })
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     DeleteJobOpening:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           format: uuid
+ */
 export const DeleteJobOpeningSchema = z.object({
   params: z.object({
     id: z.string().uuid(),
   }),
 })
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     UpdateJobOpeningStatus:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           format: uuid
+ */
 export const UpdateJobOpeningStatusSchema = z.object({
   params: z.object({
     id: z.string().uuid(),
   }),
 })
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     FillJobOpening:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           format: uuid
+ *         selectedApplicationId:
+ *           type: string
+ *           format: uuid
+ */
 export const FillJobOpeningSchema = z.object({
   params: z.object({
     id: z.string().uuid(),

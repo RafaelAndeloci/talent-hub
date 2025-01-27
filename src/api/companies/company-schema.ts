@@ -7,12 +7,85 @@ import { AddressSchema } from '../../shared/schemas/address-schema'
 import { buildQuerySchema } from '../../shared/utils/schema-builder'
 import { Company } from './types/entities/company'
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     FindCompanyById:
+ *       type: object
+ *       properties:
+ *         params:
+ *           type: object
+ *           properties:
+ *             id:
+ *               type: string
+ */
 export const FindCompanyByIdSchema = z.object({
   params: z.object({
     id: z.string(),
   }),
 })
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     CreateCompany:
+ *       type: object
+ *       properties:
+ *         tradeName:
+ *           type: string
+ *           minLength: 1
+ *           maxLength: 150
+ *         legalName:
+ *           type: string
+ *           minLength: 1
+ *           maxLength: 200
+ *         cnpj:
+ *           type: string
+ *           length: 14
+ *         employeesQuantity:
+ *           type: integer
+ *           minimum: 1
+ *         foundationYear:
+ *           type: integer
+ *           minimum: 1900
+ *         social:
+ *           $ref: '#/components/schemas/RelatedWebsite'
+ *         about:
+ *           type: string
+ *           maxLength: 500
+ *           nullable: true
+ *         contact:
+ *           $ref: '#/components/schemas/Contact'
+ *         address:
+ *           $ref: '#/components/schemas/Address'
+ *         bannerUrl:
+ *           type: string
+ *           format: url
+ *           nullable: true
+ *         logoUrl:
+ *           type: string
+ *           format: url
+ *           nullable: true
+ *         mission:
+ *           type: string
+ *           maxLength: 500
+ *           nullable: true
+ *         vision:
+ *           type: string
+ *           maxLength: 500
+ *           nullable: true
+ *         values:
+ *           type: array
+ *           items:
+ *             type: string
+ *           maxItems: 10
+ *           nullable: true
+ *         industry:
+ *           type: string
+ *           maxLength: 100
+ */
 export const CreateCompanySchema = z.object({
   tradeName: z.string().min(1).max(150),
   legalName: z.string().min(1).max(200),
@@ -34,6 +107,21 @@ export const CreateCompanySchema = z.object({
   industry: z.string().max(100),
 })
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     UpdateCompany:
+ *       type: object
+ *       properties:
+ *         params:
+ *           type: object
+ *           properties:
+ *             id:
+ *               type: string
+ *         body:
+ *           $ref: '#/components/schemas/CreateCompany'
+ */
 export const UpdateCompanySchema = z.object({
   params: z.object({
     id: z.string(),
@@ -41,12 +129,55 @@ export const UpdateCompanySchema = z.object({
   body: CreateCompanySchema.partial(),
 })
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     DeleteCompany:
+ *       type: object
+ *       properties:
+ *         params:
+ *           type: object
+ *           properties:
+ *             id:
+ *               type: string
+ */
 export const DeleteCompanySchema = z.object({
   params: z.object({
     id: z.string(),
   }),
 })
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     FindAllCompanies:
+ *       type: object
+ *       properties:
+ *         query:
+ *           type: object
+ *           properties:
+ *             searchFields:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   field:
+ *                     type: string
+ *                   operators:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *                   validation:
+ *                     type: string
+ *                   transform:
+ *                     type: string
+ *             sortFields:
+ *               type: array
+ *               items:
+ *                 type: string
+ */
 export const FindAllCompaniesSchema = z.object({
   query: buildQuerySchema<Company & { hasOpenPositions: boolean }>({
     searchFields: [

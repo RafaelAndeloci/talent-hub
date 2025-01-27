@@ -13,6 +13,12 @@ import { UpdateJobApplicationDto } from './types/dtos/update-job-application-dto
 import { CreateJobApplicationDto } from './types/dtos/create-job-application-dto'
 
 export const jobApplicationBusiness = {
+  /**
+   * Find a job application by ID.
+   * @param {string} id - The ID of the job application.
+   * @returns {Promise<JobApplication>} The job application.
+   * @throws {ApiError} If the job application is not found.
+   */
   async findById(id: string) {
     const jobApplication = await jobApplicationRepository.findById(id)
     if (!jobApplication) {
@@ -22,10 +28,23 @@ export const jobApplicationBusiness = {
     return jobApplication
   },
 
+  /**
+   * Find all job applications.
+   * @param {FindAllArgs<JobApplication>} args - The arguments for finding job applications.
+   * @returns {Promise<PagedList<JobApplication>>} The list of job applications.
+   */
   findAll(args: FindAllArgs<JobApplication>) {
     return jobApplicationRepository.findAll(args)
   },
 
+  /**
+   * Create a new job application.
+   * @param {Object} params - The parameters.
+   * @param {CreateJobApplicationDto} params.payload - The job application payload.
+   * @param {UserDto} params.user - The user creating the job application.
+   * @returns {Promise<JobApplication>} The created job application.
+   * @throws {ApiError} If the job application already exists or if validation fails.
+   */
   async create({
     payload,
     user,
@@ -62,6 +81,14 @@ export const jobApplicationBusiness = {
     return jobApplication
   },
 
+  /**
+   * Update a job application.
+   * @param {Object} params - The parameters.
+   * @param {string} params.id - The ID of the job application.
+   * @param {UpdateJobApplicationDto} params.payload - The job application payload.
+   * @returns {Promise<JobApplication>} The updated job application.
+   * @throws {ApiError} If the job application is not found or if validation fails.
+   */
   async update({
     id,
     payload,
@@ -100,6 +127,12 @@ export const jobApplicationBusiness = {
     return updated
   },
 
+  /**
+   * Remove a job application.
+   * @param {string} id - The ID of the job application.
+   * @returns {Promise<void>}
+   * @throws {ApiError} If the job application is not found.
+   */
   async remove(id: string) {
     const jobApplication = await jobApplicationRepository.findById(id)
     if (!jobApplication) {

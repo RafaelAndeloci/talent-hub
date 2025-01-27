@@ -11,6 +11,7 @@ export const config = {
   api: {
     port: parseInt(process.env.PORT || '3000'),
     host: process.env.HOST || 'localhost',
+    docEnabled: process.env.API_DOC_ENABLED === 'true',
   },
   database: {
     host: process.env.DB_HOST || 'localhost',

@@ -15,6 +15,13 @@ import { jobApplicationRepository } from '../job-applications/job-application-re
 import { JobApplicationStatus } from '../job-applications/types/enums/job-application-status'
 
 export const jobOpeningBusiness = {
+  /**
+   * Find a job opening by ID.
+   * @param {string} id - The ID of the job opening.
+   * @param {Role} userRole - The role of the user.
+   * @returns {Promise<JobOpeningDto>} The job opening.
+   * @throws {ApiError} If the job opening is not found.
+   */
   async findById(id: string, userRole: Role): Promise<JobOpeningDto> {
     const jobOpening = await jobOpeningRepository.findById(id)
     if (!jobOpening) throw new Error(`job opening with id ${id} not found`)
@@ -22,6 +29,12 @@ export const jobOpeningBusiness = {
     return toDto(jobOpening, userRole)
   },
 
+  /**
+   * Find all job openings.
+   * @param {FindAllArgs<JobOpening>} query - The query arguments.
+   * @param {UserDto} user - The user.
+   * @returns {Promise<PagedList<JobOpeningDto>>} The list of job openings.
+   */
   async findAll(
     query: FindAllArgs<JobOpening>,
     user: UserDto,
@@ -31,6 +44,12 @@ export const jobOpeningBusiness = {
     return jobOpenings.parse((jobOpening) => toDto(jobOpening, user.role))
   },
 
+  /**
+   * Create a new job opening.
+   * @param {Omit<JobOpening, 'hiredCandidateId' | 'id'>} payload - The job opening payload.
+   * @returns {Promise<JobOpeningDto>} The created job opening.
+   * @throws {ApiError} If the job opening cannot be created with the given status or if validation fails.
+   */
   async create(
     payload: Omit<JobOpening, 'hiredCandidateId' | 'id'>,
   ): Promise<JobOpeningDto> {
@@ -65,6 +84,13 @@ export const jobOpeningBusiness = {
     return toDto(jobOpening, Role.companyAdmin)
   },
 
+  /**
+   * Update a job opening.
+   * @param {string} id - The ID of the job opening.
+   * @param {Partial<Omit<JobOpening, 'hiredCandidateId' | 'id' | 'status'>>} payload - The job opening payload.
+   * @returns {Promise<JobOpeningDto>} The updated job opening.
+   * @throws {ApiError} If the job opening is not found or if validation fails.
+   */
   async update(
     id: string,
     payload: Partial<Omit<JobOpening, 'hiredCandidateId' | 'id' | 'status'>>,
@@ -97,6 +123,12 @@ export const jobOpeningBusiness = {
     return toDto(updatedJobOpening, Role.companyAdmin)
   },
 
+  /**
+   * Close a job opening.
+   * @param {string} id - The ID of the job opening.
+   * @returns {Promise<JobOpeningDto>} The closed job opening.
+   * @throws {ApiError} If the job opening is not found or cannot be closed.
+   */
   async close(id: string): Promise<JobOpeningDto> {
     const jobOpening = await jobOpeningRepository.findById(id)
     if (!jobOpening)
@@ -119,6 +151,12 @@ export const jobOpeningBusiness = {
     return toDto(jobOpening!, Role.companyAdmin)
   },
 
+  /**
+   * Open a job opening.
+   * @param {string} id - The ID of the job opening.
+   * @returns {Promise<JobOpeningDto>} The opened job opening.
+   * @throws {ApiError} If the job opening is not found or cannot be opened.
+   */
   async open(id: string): Promise<JobOpeningDto> {
     const jobOpening = await jobOpeningRepository.findById(id)
     if (!jobOpening)
@@ -141,6 +179,14 @@ export const jobOpeningBusiness = {
     return toDto(jobOpening!, Role.companyAdmin)
   },
 
+  /**
+   * Fill a job opening.
+   * @param {Object} params - The parameters.
+   * @param {string} params.id - The ID of the job opening.
+   * @param {string} params.selectedApplicationId - The ID of the selected application.
+   * @returns {Promise<JobOpeningDto>} The filled job opening.
+   * @throws {ApiError} If the job opening is not found or cannot be filled.
+   */
   async fill({
     id,
     selectedApplicationId,
@@ -171,6 +217,12 @@ export const jobOpeningBusiness = {
     return toDto(jobOpening!, Role.companyAdmin)
   },
 
+  /**
+   * Set a job opening to draft.
+   * @param {string} id - The ID of the job opening.
+   * @returns {Promise<JobOpeningDto>} The job opening set to draft.
+   * @throws {ApiError} If the job opening is not found or cannot be set to draft.
+   */
   async toDraft(id: string): Promise<JobOpeningDto> {
     const jobOpening = await jobOpeningRepository.findById(id)
     if (!jobOpening)
@@ -195,6 +247,12 @@ export const jobOpeningBusiness = {
     return toDto(jobOpening!, Role.companyAdmin)
   },
 
+  /**
+   * Remove a job opening.
+   * @param {string} id - The ID of the job opening.
+   * @returns {Promise<void>}
+   * @throws {ApiError} If the job opening is not found.
+   */
   async remove(id: string): Promise<void> {
     const jobOpening = await jobOpeningRepository.findById(id)
     if (!jobOpening)
@@ -210,6 +268,12 @@ export const jobOpeningBusiness = {
     await jobOpeningRepository.deleteById(id)
   },
 
+  /**
+   * Validate a job opening for a job application.
+   * @param {string} jobOpeningId - The ID of the job opening.
+   * @returns {Promise<JobOpening>} The validated job opening.
+   * @throws {ApiError} If the job opening is not found or if validation fails.
+   */
   async validateForApplication(jobOpeningId: string) {
     const jobOpening = await jobOpeningRepository.findById(jobOpeningId)
     if (!jobOpening) {
@@ -226,6 +290,11 @@ export const jobOpeningBusiness = {
     return jobOpening
   },
 
+  /**
+   * Check if a job opening can be closed.
+   * @param {JobOpening} jobOpening - The job opening.
+   * @returns {boolean} True if the job opening can be closed, false otherwise.
+   */
   canBeClosed(jobOpening: JobOpening): boolean {
     const closableStatuses: JobOpeningStatus[] = [
       JobOpeningStatus.open,
@@ -234,6 +303,11 @@ export const jobOpeningBusiness = {
     return closableStatuses.includes(jobOpening.status)
   },
 
+  /**
+   * Check if a job opening can be created with the given status.
+   * @param {JobOpeningStatus} status - The status.
+   * @returns {boolean} True if the job opening can be created with the given status, false otherwise.
+   */
   canBeCreateWithStatus(status: JobOpeningStatus): boolean {
     const allowedStatuses: JobOpeningStatus[] = [
       JobOpeningStatus.draft,
