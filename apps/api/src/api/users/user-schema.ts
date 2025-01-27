@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { Role } from './types/enums/role'
 import { buildQuerySchema } from '../../shared/utils/schema-builder'
 import { User } from './types/entities/user'
+import { config } from '../../config/environment'
 
 const passwordRule = z.string().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,20}$/)
 
@@ -99,12 +100,24 @@ export const UpdateProfilePictureSchema = z.object({
   params: z.object({
     id: z.string(),
   }),
-  body: z.object({
-    userId: z.string(),
-    file: z.object({
-      content: z.string(),
-      contentType: z.string(),
-    }),
+  file: z.object({
+    buffer: z
+      .any()
+      .refine(
+        (value) =>
+          Buffer.isBuffer(value) &&
+          value.length > 0 &&
+          config.fileStorage.images.maxSize >= value.length,
+        {
+          message: `File size must be less than ${config.fileStorage.images.maxSize}MB`,
+        },
+      ),
+    mimetype: z
+      .string()
+      .refine(
+        (value) => config.fileStorage.images.allowedTypes.includes(value),
+        `Invalid file type. Allowed types: ${config.fileStorage.images.allowedTypes.join(', ')}`,
+      ),
   }),
 })
 
