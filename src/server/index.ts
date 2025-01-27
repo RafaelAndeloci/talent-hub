@@ -5,13 +5,14 @@ import { logging } from '../middlewares/logging-middleware'
 import { logger } from '../shared/services/logging-service'
 import { apiRoutes, staticRoutes } from './routes'
 import { config } from '../config/environment'
+import { useSwagger } from './docs'
 
 const {
   api: { host, port },
 } = config
 
 const app = express()
-
+useSwagger(app)
 app.use(logging)
 app.use(express.json())
 app.use(

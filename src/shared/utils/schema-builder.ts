@@ -1,11 +1,7 @@
 import _ from 'lodash'
 import { z } from 'zod'
 import { Entity } from '../types/entity'
-import {
-  FilterOperator,
-  FilterOperatorType,
-  FilterOperatorValues,
-} from '../enums/filter-operator'
+import { FilterOperator, FilterOperatorValues } from '../enums/filter-operator'
 import { ApiError } from '../types/api-error'
 
 export const buildAddressSchema = () => {
@@ -34,12 +30,23 @@ export const buildQuerySchema = <TResource extends Entity>({
   sortFields: (keyof TResource)[]
   searchFields: {
     field: keyof TResource
-    operators: FilterOperatorType[]
+    operators: FilterOperator[]
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     transform?: (value: string) => any
     validation?: (value: string) => string | null
   }[]
 }) => {
+  if (!sortFields.includes('id')) {
+    sortFields.push('id')
+  }
+
+  if (!searchFields.some(({ field }) => field === 'id')) {
+    searchFields.push({
+      field: 'id',
+      operators: [FilterOperator.eq],
+    })
+  }
+
   return z.object({
     limit: z
       .string()
@@ -112,7 +119,7 @@ export const buildQuerySchema = <TResource extends Entity>({
 
           const filter = {
             field: field as string,
-            operator: operator as FilterOperatorType,
+            operator: operator as FilterOperator,
             value,
           }
 

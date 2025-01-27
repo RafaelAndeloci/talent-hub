@@ -3,12 +3,13 @@ import { Action } from './action'
 import { Resource } from './resource'
 
 type Permission = {
-  role: keyof typeof Role
+  role: Role
   actionsPerResource: {
     resource: keyof typeof Resource
-    actions: (keyof typeof Action)[]
+    actions: Action[]
   }[]
 }
+
 export const Permissions = Object.freeze([
   {
     role: Role.candidate,

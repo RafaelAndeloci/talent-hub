@@ -1,4 +1,4 @@
-export const AcademicDegreeType = {
+export const AcademicDegreeType = Object.freeze({
   ElementarySchool: 'elementary_school',
   HighSchool: 'high_school',
   Technical: 'technical',
@@ -9,4 +9,7 @@ export const AcademicDegreeType = {
   Licentiate: 'licentiate',
   Specialization: 'specialization',
   Other: 'other',
-}
+})
+
+export type AcademicDegreeType =
+  (typeof AcademicDegreeType)[keyof typeof AcademicDegreeType]

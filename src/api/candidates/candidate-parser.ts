@@ -1,9 +1,9 @@
 import * as uuid from 'uuid'
+import moment from 'moment'
 
 import { Candidate } from './types/entities/candidate'
 import { CreateCandidateDto } from './types/dtos/create-candidate-dto'
 import { CandidateModelAttr } from './models'
-import moment from 'moment'
 
 export const merge = (
   candidate: Candidate,

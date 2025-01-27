@@ -1,4 +1,4 @@
-export const PositionLevel = {
+export const PositionLevel = Object.freeze({
   Intern: 'intern',
   Junior: 'junior',
   MidLevel: 'mid_level',
@@ -10,4 +10,6 @@ export const PositionLevel = {
   Manager: 'manager',
   Director: 'director',
   Ceo: 'ceo',
-}
+})
+
+export type PositionLevel = (typeof PositionLevel)[keyof typeof PositionLevel]

@@ -1,4 +1,4 @@
-export const Uf = {
+export const Uf = Object.freeze({
   AC: 'AC',
   AL: 'AL',
   AP: 'AP',
@@ -26,4 +26,6 @@ export const Uf = {
   SP: 'SP',
   SE: 'SE',
   TO: 'TO',
-}
+})
+
+export type Uf = (typeof Uf)[keyof typeof Uf]

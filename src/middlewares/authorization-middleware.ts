@@ -7,24 +7,15 @@ import { Permissions } from '../shared/enums/permissions'
 import { Resource } from '../shared/enums/resource'
 
 export const authorize =
-  ({
-    resource,
-    action,
-  }: {
-    resource: keyof typeof Resource
-    action: keyof typeof Action
-  }): any =>
+  ({ resource, action }: { resource: Resource; action: Action }): any =>
   (
     _req: Request,
     res: Response<any, AuthContext | Record<string, any>>,
     next: NextFunction,
   ): any => {
     const { user } = res.locals as AuthContext
-    const routeWithoutAuthentication = !user
-
-    if (routeWithoutAuthentication) {
-      next()
-      return
+    if (!user) {
+      ApiError.throwUnauthorized('user is not authenticated')
     }
 
     const userPermissions = Permissions.find((p) => p.role === user.role)

@@ -1,4 +1,6 @@
-import { DataTypes, Includeable, Model } from 'sequelize'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { DataTypes, Model } from 'sequelize'
 import _ from 'lodash'
 
 import {
@@ -24,8 +26,6 @@ import {
   CandidateReferenceModel,
   CandidateReferenceModelAttr,
 } from '.'
-import moment from 'moment'
-import { UserModel } from '../../users/user-model'
 
 export interface CandidateModelAttr {
   id: string
@@ -36,7 +36,7 @@ export interface CandidateModelAttr {
   about: string | null
   contactPhone: string
   contactEmail: string
-  address: Address
+  address: any
   professionalHeadline: string | null
   bannerUrl: string | null
   hobbies: string[]
@@ -51,11 +51,11 @@ export interface CandidateModelAttr {
   isAvailableForWork: boolean
   allowThirdPartyApplications: boolean
   salaryPreference: number | null
-  contractTypePreference: string | null
-  employmentTypePreference: string | null
-  workplaceTypePreference: string | null
-  benefitsPreference: string[]
-  positionLevelPreference: string | null
+  contractTypePreference: ContractType | null
+  employmentTypePreference: EmploymentType | null
+  workplaceTypePreference: WorkplaceType | null
+  benefitsPreference: Benefit[]
+  positionLevelPreference: PositionLevel | null
   professionalExperiences: CandidateProfessionalExperienceModelAttr[]
   educationalExperiences: CandidateEducationalExperienceModelAttr[]
   languages: CandidateLanguageModelAttr[]
@@ -83,23 +83,11 @@ CandidateModel.init(
     userId: {
       type: DataTypes.UUID,
       allowNull: false,
-      references: {
-        model: UserModel,
-        key: 'id',
-      },
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
+      unique: true,
     },
     birthDate: {
-      type: DataTypes.DATEONLY,
+      type: DataTypes.DATE,
       allowNull: false,
-      stringify: (value, opt) => {
-        console.log(opt)
-        return moment(value as Date | string).format('YYYY-MM-DD')
-      },
-      toString(value) {
-        return moment(value as Date | string).format('YYYY-MM-DD')
-      },
     },
     cvUrl: urlColumn,
     about: {
@@ -162,12 +150,21 @@ CandidateModel.init(
       type: DataTypes.JSONB,
       allowNull: true,
       validate: {
-        isAddress(value: Address) {
-          Object.values(value).forEach((v) => {
-            if (!v) {
-              throw new Error('Invalid address')
-            }
-          })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        isAddress(value: any) {
+          const address: Address = {
+            street: value.street,
+            number: value.number,
+            complement: value.complement,
+            neighborhood: value.neighborhood,
+            city: value.city,
+            zipCode: value.zipCode,
+            uf: value.uf,
+          }
+
+          if (Object.values(address).some((v) => !v)) {
+            throw new Error('Invalid address')
+          }
         },
       },
     },
@@ -195,95 +192,98 @@ CandidateModel.init(
   },
 )
 
-// ********* RELATIONS *********
-
-const hasManyBaseOptions = {
-  foreignKey: 'candidateId',
-  onDelete: 'CASCADE',
-  onUpdate: 'CASCADE',
-  hooks: true,
-}
-
-CandidateModel.hasMany(CandidateProfessionalExperienceModel, {
-  as: 'professionalExperiences',
-  ...hasManyBaseOptions,
-})
-
-CandidateModel.hasMany(CandidateEducationalExperienceModel, {
-  as: 'educationalExperiences',
-  ...hasManyBaseOptions,
-})
-
-CandidateModel.hasMany(CandidateLanguageModel, {
-  as: 'languages',
-  ...hasManyBaseOptions,
-})
-
-CandidateModel.hasMany(CandidateReferenceModel, {
-  as: 'references',
-  ...hasManyBaseOptions,
-})
-
-CandidateModel.hasMany(CandidateAchievementModel, {
-  as: 'achievements',
-  ...hasManyBaseOptions,
-})
-
-CandidateProfessionalExperienceModel.belongsTo(CandidateModel, {
-  foreignKey: 'candidateId',
-  targetKey: 'id',
-})
-
-CandidateEducationalExperienceModel.belongsTo(CandidateModel, {
-  foreignKey: 'candidateId',
-  targetKey: 'id',
-})
-
-CandidateLanguageModel.belongsTo(CandidateModel, {
-  foreignKey: 'candidateId',
-  targetKey: 'id',
-})
-
-CandidateReferenceModel.belongsTo(CandidateModel, {
-  foreignKey: 'candidateId',
-  targetKey: 'id',
-})
-
-CandidateAchievementModel.belongsTo(CandidateModel, {
-  foreignKey: 'candidateId',
-  targetKey: 'id',
-})
-
-// ********* RELATIONS *********
-
-// ********* HOOKS *********
-
-const inclusions: Includeable[] = [
-  { model: CandidateAchievementModel, as: 'achievements' },
-  { model: CandidateEducationalExperienceModel, as: 'educationalExperiences' },
+const inclusions = [
   {
     model: CandidateProfessionalExperienceModel,
     as: 'professionalExperiences',
   },
-  { model: CandidateReferenceModel, as: 'references' },
+  {
+    model: CandidateEducationalExperienceModel,
+    as: 'educationalExperiences',
+  },
   { model: CandidateLanguageModel, as: 'languages' },
+  { model: CandidateReferenceModel, as: 'references' },
+  { model: CandidateAchievementModel, as: 'achievements' },
 ]
 
-CandidateModel.addHook('beforeFind', (opt) => {
-  opt.include = inclusions
+CandidateModel.hasMany(CandidateProfessionalExperienceModel, {
+  as: 'professionalExperiences',
+  foreignKey: 'candidateId',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+})
+
+CandidateProfessionalExperienceModel.belongsTo(CandidateModel, {
+  foreignKey: 'candidateId',
+})
+
+CandidateModel.hasMany(CandidateEducationalExperienceModel, {
+  as: 'educationalExperiences',
+  foreignKey: 'candidateId',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+})
+
+CandidateEducationalExperienceModel.belongsTo(CandidateModel, {
+  foreignKey: 'candidateId',
+})
+
+CandidateModel.hasMany(CandidateLanguageModel, {
+  as: 'languages',
+  foreignKey: 'candidateId',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+})
+
+CandidateLanguageModel.belongsTo(CandidateModel, {
+  foreignKey: 'candidateId',
+})
+
+CandidateModel.hasMany(CandidateReferenceModel, {
+  as: 'references',
+  foreignKey: 'candidateId',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+})
+
+CandidateReferenceModel.belongsTo(CandidateModel, {
+  foreignKey: 'candidateId',
+})
+
+CandidateModel.hasMany(CandidateAchievementModel, {
+  as: 'achievements',
+  foreignKey: 'candidateId',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+})
+
+CandidateAchievementModel.belongsTo(CandidateModel, {
+  foreignKey: 'candidateId',
 })
 
 CandidateModel.prototype.toJSON = function () {
-  const values = Object.assign({}, this.get())
-  return _.omit(values, 'userId')
+  const candidate = this.get() as CandidateModelAttrInternal
+
+  return _.omit(candidate, ['createdAt', 'updatedAt', 'deletedAt', 'userId'])
 }
 
-CandidateModel.addHook('beforeFindAfterExpandIncludeAll', (opt) => {
-  opt.include = inclusions
+CandidateModel.beforeFind((options) => {
+  options.include = inclusions
 })
 
-CandidateModel.addHook('beforeCreate', (_, opt) => {
-  opt.include = inclusions
+CandidateModel.beforeFindAfterExpandIncludeAll((options) => {
+  options.include = inclusions
 })
 
-// ********* HOOKS *********
+CandidateModel.beforeFindAfterOptions((options) => {
+  options.include = inclusions
+})
+
+CandidateModel.beforeCreate((_, opt) => {
+  opt.include = inclusions
+  opt.returning = true
+})
+
+CandidateModel.beforeUpdate((_, opt) => {
+  opt.returning = true
+})

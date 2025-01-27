@@ -26,7 +26,11 @@ export const config = {
     audience: process.env.JWT_AUDIENCE || 'audience',
     issuer: process.env.JWT_ISSUER || 'issuer',
     expiresIn: parseFloat(process.env.JWT_EXPIRES_IN || '1'),
-    passwordSalt: process.env.PASSWORD_SALT || 'salt',
+    password: {
+      resetExpiration: parseInt(process.env.PASSWORD_RESET_EXPIRATION || '1'),
+      hashSalt: process.env.PASSWORD_HASH_SALT || 'salt',
+      resetPageUrl: process.env.PASSWORD_RESET_PAGE_URL || 'reset',
+    },
   },
   fileStorage: {
     cv: {
@@ -50,5 +54,19 @@ export const config = {
     serviceUrl: process.env.BUCKET_SERVICE_URL!,
     region: process.env.BUCKET_REGION!,
     exposeUrl: process.env.BUCKET_EXPOSE_URL!,
+  },
+  cache: {
+    host: process.env.CACHE_HOST || 'localhost',
+    port: parseInt(process.env.CACHE_PORT || '6379'),
+  },
+  email: {
+    user: process.env.EMAIL_USER!,
+    password: process.env.EMAIL_PASSWORD!,
+    from: process.env.EMAIL_FROM || 'talent_hub@noreply.com',
+  },
+  cloud: {
+    region: process.env.CLOUD_REGION || 'us-east-1',
+    accessKeyId: process.env.CLOUD_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.CLOUD_SECRET_ACCESS_KEY!,
   },
 }

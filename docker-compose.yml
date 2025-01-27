@@ -16,5 +16,11 @@ services:
     env_file:
       - .env
 
+  cache:
+    container_name: talent_hub_cache
+    image: redis:latest
+    ports:
+      - '${CACHE_PORT}:6379'
+
 volumes:
   database_data:

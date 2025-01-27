@@ -1,4 +1,4 @@
-export const Language = {
+export const Language = Object.freeze({
   English: 'english',
   Spanish: 'spanish',
   French: 'french',
@@ -9,4 +9,6 @@ export const Language = {
   Korean: 'korean',
   Russian: 'russian',
   Portuguese: 'portuguese',
-}
+})
+
+export type Language = (typeof Language)[keyof typeof Language]

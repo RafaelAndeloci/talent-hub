@@ -11,8 +11,8 @@ export interface CandidateEducationalExperienceModelAttr {
   id?: string
   degree: string
   fieldOfStudy: string
-  status: string
-  type: string
+  status: AcademicStatus
+  type: AcademicDegreeType
   institution: string
   institutionWebsite: string | null
   description: string | null

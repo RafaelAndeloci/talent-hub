@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response, NextFunction } from 'express'
+import { Request, Response, NextFunction, RequestHandler } from 'express'
 import { ApiError } from '../shared/types/api-error'
 import { jwtService } from '../shared/services/jwt-service'
 
-export const authenticate = (
+export const authenticate: RequestHandler = (
   req: Request,
   res: Response,
   next: NextFunction,

@@ -1,9 +1,9 @@
-import { FilterOperatorType } from '../enums/filter-operator'
+import { FilterOperator } from '../enums/filter-operator'
 
 export type Filter<T> = {
   field: keyof T
   value: T[keyof T]
-  operator: FilterOperatorType
+  operator: FilterOperator
 }
 
 export type Sort<T> = {

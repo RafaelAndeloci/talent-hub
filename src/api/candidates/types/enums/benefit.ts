@@ -1,4 +1,4 @@
-export const Benefit = {
+export const Benefit = Object.freeze({
   TransportationVoucher: 'transportation_voucher',
   MealVoucher: 'meal_voucher',
   FoodVoucher: 'food_voucher',
@@ -11,4 +11,6 @@ export const Benefit = {
   GymAssistance: 'gym_assistance',
   FuelVoucher: 'fuel_voucher',
   PsychologicalAssistance: 'psychological_assistance',
-}
+})
+
+export type Benefit = (typeof Benefit)[keyof typeof Benefit]

@@ -17,7 +17,8 @@ export const FilterOperator = Object.freeze({
   not: 'not',
 })
 
-export type FilterOperatorType = keyof typeof FilterOperator
+export type FilterOperator =
+  (typeof FilterOperator)[keyof typeof FilterOperator]
 
 export const FilterOperatorValues = Object.freeze(Object.values(FilterOperator))
 

@@ -9,9 +9,9 @@ export interface CandidateProfessionalExperienceModelAttr {
   title: string
   description: string | null
   company: string
-  employmentType: string
-  workplaceType: string
-  positionLevel: string
+  employmentType: EmploymentType
+  workplaceType: WorkplaceType
+  positionLevel: PositionLevel
   isCurrent: boolean
   startYear: number
   startMonth: number
