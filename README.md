@@ -1,130 +1,84 @@
-# Talent Hub Backend
+# Turborepo starter
 
-## Getting Started
+This Turborepo starter is maintained by the Turborepo core team.
 
-### Prerequisites
+## Using this example
 
-Make sure you have the following installed:
-- Node.js (v14 or higher)
-- npm (v6 or higher)
-- Docker
-- Docker Compose
+Run the following command:
 
-### Installation
-
-1. Clone the repository:
-    ```sh
-    git clone https://github.com/PedroNetto404/talent-hub.git
-    cd talent-hub
-    ```
-
-2. Install dependencies:
-    ```sh
-    npm install
-    ```
-
-3. Copy the `.env` file and configure your environment variables:
-    ```sh
-    cp .env.example .env
-    ```
-
-4. Update the `.env` file with your specific configuration:
-    ```dotenv
-    // ...existing code...
-    ```
-
-### Running the Application
-
-1. Start the Docker containers:
-    ```sh
-    make docker-up
-    ```
-
-2. Run database migrations:
-    ```sh
-    make database-migrate
-    ```
-
-3. Run the development server:
-    ```sh
-    make dev
-    ```
-
-### Additional Commands
-
-- To build the project:
-    ```sh
-    make build
-    ```
-
-- To drop the database:
-    ```sh
-    make database-drop
-    ```
-
-- To truncate the database:
-    ```sh
-    make database-truncate
-    ```
-
-- To lint the code:
-    ```sh
-    make lint
-    ```
-
-- To fix lint issues:
-    ```sh
-    make lint-fix
-    ```
-
-### Cleaning Up
-
-To clean up the project (remove `dist`, `node_modules`, and `logs` directories):
 ```sh
-npm run clean
+npx create-turbo@latest
 ```
 
-### License
+## What's inside?
 
-This project is licensed under the ISC License.
+This Turborepo includes the following packages/apps:
 
-## Required Environment Variables
+### Apps and Packages
 
-| Variable                     | Description                          |
-|------------------------------|--------------------------------------|
-| `DB_HOST`                    | Database host                        |
-| `DB_PORT`                    | Database port                        |
-| `DB_USER`                    | Database user                        |
-| `DB_PASSWORD`                | Database password                    |
-| `DB_NAME`                    | Database name                        |
-| `DB_LOG_ENABLED`             | Enable database logging              |
-| `DATABASE_URL`               | Database connection URL              |
-| `PORT`                       | API server port                      |
-| `HOST`                       | API server host                      |
-| `API_DOC_ENABLED`            | Enable API documentation             |
-| `JWT_ENABLED`                | Enable JWT authentication            |
-| `JWT_SECRET`                 | JWT secret key                       |
-| `JWT_EXPIRES_IN`             | JWT expiration time                  |
-| `JWT_AUDIENCE`               | JWT audience                         |
-| `JWT_ISSUER`                 | JWT issuer                           |
-| `PASSWORD_RESET_EXPIRATION`  | Password reset token expiration time |
-| `PASSWORD_HASH_SALT`         | Password hash salt                   |
-| `PASSWORD_RESET_PAGE_URL`    | Password reset page URL              |
-| `SYS_ADMIN_ID`               | System admin ID                      |
-| `SYS_ADMIN_EMAIL`            | System admin email                   |
-| `SYS_ADMIN_PASSWORD`         | System admin password                |
-| `BUCKET_ACCESS_KEY_ID`       | S3 bucket access key ID              |
-| `BUCKET_SECRET_ACCESS_KEY`   | S3 bucket secret access key          |
-| `BUCKET_DEFAULT`             | Default S3 bucket name               |
-| `BUCKET_SERVICE_URL`         | S3 bucket service URL                |
-| `BUCKET_REGION`              | S3 bucket region                     |
-| `BUCKET_EXPOSE_URL`          | S3 bucket expose URL                 |
-| `ALLOWED_IMAGE_TYPES`        | Allowed image types                  |
-| `MAX_IMAGE_SIZE`             | Maximum image size                   |
-| `ALLOWED_CV_TYPES`           | Allowed CV types                     |
-| `MAX_CV_SIZE`                | Maximum CV size                      |
-| `CACHE_HOST`                 | Cache host                           |
-| `CACHE_PORT`                 | Cache port                           |
-| `CLOUD_REGION`               | Cloud region                         |
-| `CLOUD_ACCESS_KEY_ID`        | Cloud access key ID                  |
-| `CLOUD_SECRET_ACCESS_KEY`    | Cloud secret access key              |
+- `docs`: a [Next.js](https://nextjs.org/) app
+- `web`: another [Next.js](https://nextjs.org/) app
+- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
+- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
+- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+
+Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+
+### Utilities
+
+This Turborepo has some additional tools already setup for you:
+
+- [TypeScript](https://www.typescriptlang.org/) for static type checking
+- [ESLint](https://eslint.org/) for code linting
+- [Prettier](https://prettier.io) for code formatting
+
+### Build
+
+To build all apps and packages, run the following command:
+
+```
+cd my-turborepo
+pnpm build
+```
+
+### Develop
+
+To develop all apps and packages, run the following command:
+
+```
+cd my-turborepo
+pnpm dev
+```
+
+### Remote Caching
+
+> [!TIP]
+> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+
+Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+
+By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+
+```
+cd my-turborepo
+npx turbo login
+```
+
+This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+
+Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+
+```
+npx turbo link
+```
+
+## Useful Links
+
+Learn more about the power of Turborepo:
+
+- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
+- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
+- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
+- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
+- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
+- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
