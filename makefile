@@ -40,3 +40,6 @@ lint-fix:
 	@echo "Fixing lint issues on project: $(PROJECT)"
 	npm run lint:fix
 
+clean:
+	@echo "Cleaning project: $(PROJECT)"	
+	npm run clean
