@@ -9,7 +9,10 @@ import { companyRepository } from '../companies/company-repository'
 import { ApiError } from '../../shared/types/api-error'
 import { JobOpeningStatus } from './types/enums/job-opening-status'
 import { Role } from '../users/types/enums/role'
-import { candidateRepository } from '../candidates/candidate-repository'
+import { jobQueueService } from '../../shared/services/job-service'
+import { AppEvent } from '../../shared/enums/app-event'
+import { jobApplicationRepository } from '../job-applications/job-application-repository'
+import { JobApplicationStatus } from '../job-applications/types/enums/job-application-status'
 
 export const jobOpeningBusiness = {
   async findById(id: string, userRole: Role): Promise<JobOpeningDto> {
@@ -52,6 +55,13 @@ export const jobOpeningBusiness = {
     const jobOpening = newInstance(payload)
     await jobOpeningRepository.create(jobOpening)
 
+    await jobQueueService.enqueue({
+      event: AppEvent.jobOpeningCreated,
+      payload: {
+        jobOpeningId: jobOpening.id,
+      },
+    })
+
     return toDto(jobOpening, Role.companyAdmin)
   },
 
@@ -77,6 +87,13 @@ export const jobOpeningBusiness = {
     const updatedJobOpening = merge(jobOpening!, payload)
     await jobOpeningRepository.update(updatedJobOpening)
 
+    await jobQueueService.enqueue({
+      event: AppEvent.jobOpeningUpdated,
+      payload: {
+        jobOpeningId: updatedJobOpening.id,
+      },
+    })
+
     return toDto(updatedJobOpening, Role.companyAdmin)
   },
 
@@ -92,6 +109,13 @@ export const jobOpeningBusiness = {
 
     await jobOpeningRepository.update(jobOpening!)
 
+    await jobQueueService.enqueue({
+      event: AppEvent.jobOpeningUpdated,
+      payload: {
+        jobOpeningId: jobOpening!.id,
+      },
+    })
+
     return toDto(jobOpening!, Role.companyAdmin)
   },
 
@@ -106,6 +130,13 @@ export const jobOpeningBusiness = {
     jobOpening!.status = JobOpeningStatus.open
 
     await jobOpeningRepository.update(jobOpening!)
+
+    await jobQueueService.enqueue({
+      event: AppEvent.jobOpeningUpdated,
+      payload: {
+        jobOpeningId: jobOpening!.id,
+      },
+    })
 
     return toDto(jobOpening!, Role.companyAdmin)
   },
@@ -125,12 +156,17 @@ export const jobOpeningBusiness = {
     if (jobOpening!.status !== JobOpeningStatus.open)
       ApiError.throwBadRequest('job opening cannot be filled')
 
-    //TODO: validat se o candidate vinculado a selectedApplicationId está disponível para a vaga
-
     jobOpening!.status = JobOpeningStatus.filled
     jobOpening!.selectedApplicationId = selectedApplicationId
 
     await jobOpeningRepository.update(jobOpening!)
+
+    await jobQueueService.enqueue({
+      event: AppEvent.jobOpeningUpdated,
+      payload: {
+        jobOpeningId: jobOpening!.id,
+      },
+    })
 
     return toDto(jobOpening!, Role.companyAdmin)
   },
@@ -142,6 +178,15 @@ export const jobOpeningBusiness = {
 
     if (jobOpening!.status !== JobOpeningStatus.open)
       ApiError.throwBadRequest('job opening cannot be set to draft')
+
+    const existsApplications = await jobApplicationRepository.exists({
+      jobOpeningId: jobOpening!.id,
+      status: JobApplicationStatus.applied,
+    })
+    if (existsApplications)
+      ApiError.throwBadRequest(
+        'job opening cannot be set to draft. There are pending applications. To set to draft, all applications must be reject all applications or delete them',
+      )
 
     jobOpening!.status = JobOpeningStatus.draft
 
@@ -155,7 +200,30 @@ export const jobOpeningBusiness = {
     if (!jobOpening)
       ApiError.throwNotFound(`job opening with id ${id} not found`)
 
+    await jobQueueService.enqueue({
+      event: AppEvent.jobOpeningRemoved,
+      payload: {
+        jobOpeningId: jobOpening!.id,
+      },
+    })
+
     await jobOpeningRepository.deleteById(id)
+  },
+
+  async validateForApplication(jobOpeningId: string) {
+    const jobOpening = await jobOpeningRepository.findById(jobOpeningId)
+    if (!jobOpening) {
+      ApiError.throwNotFound(`job opening with id ${jobOpeningId} not found`)
+    }
+
+    const acceptNewApplications = jobOpening!.status === JobOpeningStatus.open
+    if (!acceptNewApplications) {
+      ApiError.throwUnprocessableEntity(
+        `job opening ${jobOpeningId} is not accepting applications`,
+      )
+    }
+
+    return jobOpening
   },
 
   canBeClosed(jobOpening: JobOpening): boolean {

@@ -8,23 +8,27 @@ import { emailService } from '../../../shared/services/email-service'
 import { logger } from '../../../shared/services/logging-service'
 import { config } from '../../../config/environment'
 
-export const handleUserPasswordReset = async (userId: string) => {
+export const handleUserPasswordReset = async ({
+  userId,
+}: {
+  userId: string
+}) => {
   logger.info(
-    `processing event: ${AppEvent.UserResetPassword} for user ${userId}`,
+    `processing event: ${AppEvent.userPasswordReset} for user ${userId}`,
   )
 
   try {
     const user = await userRepository.findById(userId)
     if (!user) {
       logger.error(
-        `cannot process event: ${AppEvent.UserResetPassword} for user ${userId}`,
+        `cannot process event: ${AppEvent.userPasswordReset} for user ${userId}`,
       )
       return
     }
 
     if (!user!.passwordReset) {
       logger.error(
-        `cannot process event: ${AppEvent.UserResetPassword} for user ${userId} because password reset info is missing`,
+        `cannot process event: ${AppEvent.userPasswordReset} for user ${userId} because password reset info is missing`,
       )
       return
     }
@@ -34,7 +38,7 @@ export const handleUserPasswordReset = async (userId: string) => {
       .isBefore(moment())
     if (isExpired) {
       logger.error(
-        `cannot process event: ${AppEvent.UserResetPassword} for user ${userId} because password reset token is expired`,
+        `cannot process event: ${AppEvent.userPasswordReset} for user ${userId} because password reset token is expired`,
       )
       return
     }
@@ -61,6 +65,6 @@ export const handleUserPasswordReset = async (userId: string) => {
       bodyType: 'html',
     })
   } catch (error) {
-    logger.error(`error processing event: ${AppEvent.UserResetPassword}`, error)
+    logger.error(`error processing event: ${AppEvent.userPasswordReset}`, error)
   }
 }

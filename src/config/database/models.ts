@@ -1,2 +1,5 @@
 export * from '../../api/candidates/models'
 export * from '../../api/users/user-model'
+export * from '../../api/job-openings/job-opening-model'
+export * from '../../api/job-applications/job-application-model'
+export * from '../../api/companies/company-model'

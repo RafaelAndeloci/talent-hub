@@ -6,6 +6,7 @@ import { merge, newInstance } from './candidate-parser'
 import { FindAllArgs } from '../../shared/types/find-all-args'
 import { Candidate } from './types/entities/candidate'
 import { fileStorageService } from '../../shared/services/file-storage-service'
+import { Role } from '../users/types/enums/role'
 
 const create = async ({
   userId,
@@ -131,6 +132,27 @@ const updateBanner = async ({
   return candidate
 }
 
+const validateForApplication = async (candidateId: string, userRole: Role) => {
+  const candidate = await candidateRepository.findById(candidateId)
+  if (!candidate) {
+    ApiError.throwNotFound(`candidate with id ${candidateId} not found`)
+  }
+
+  if (!candidate!.isAvailableForWork) {
+    ApiError.throwUnprocessableEntity(
+      `candidate ${candidateId} is not available for work`,
+    )
+  }
+
+  if (userRole !== Role.candidate && !candidate!.allowThirdPartyApplications) {
+    ApiError.throwUnprocessableEntity(
+      `candidate ${candidateId} does not allow third party applications`,
+    )
+  }
+
+  return candidate
+}
+
 export const candidateBusiness = {
   create,
   update,
@@ -139,4 +161,5 @@ export const candidateBusiness = {
   findAll,
   updateCv,
   updateBanner,
+  validateForApplication,
 }

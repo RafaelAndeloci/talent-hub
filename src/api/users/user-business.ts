@@ -13,7 +13,7 @@ import { fileStorageService } from '../../shared/services/file-storage-service'
 import { FindAllArgs } from '../../shared/types/find-all-args'
 import { config } from '../../config/environment'
 import moment from 'moment'
-import { jobService } from '../../shared/services/job-service'
+import { jobQueueService } from '../../shared/services/job-service'
 import { AppEvent } from '../../shared/enums/app-event'
 
 const {
@@ -122,8 +122,8 @@ const sendResetPasswordToken = async ({
 
   await userRepository.update(user!)
 
-  await jobService.enqueue({
-    event: AppEvent.UserResetPassword,
+  await jobQueueService.enqueue({
+    event: AppEvent.userPasswordReset,
     payload: { userId: user!.id },
   })
 }

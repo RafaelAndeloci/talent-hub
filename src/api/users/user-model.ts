@@ -9,7 +9,7 @@ export interface UserModelAttr {
   username: string
   email: string
   hashedPassword: string
-  role: string
+  role: Role
   profilePictureUrl: string | null
   passwordResetToken: string | null
   passwordResetExpiration: number | null
