@@ -1,9 +1,7 @@
-import { CreateCandidateDto } from './types/dtos/create-candidate-dto'
 import { userRepository } from '../users/user-repository'
 import { ApiError } from '../../shared/types/api-error'
 import { candidateRepository } from './candidate-repository'
 import { userBusiness } from '../users/user-business'
-import { UpdateCandidateDto } from './types/dtos/update-candidate-dto'
 import { merge, newInstance } from './candidate-parser'
 import { FindAllArgs } from '../../shared/types/find-all-args'
 import { Candidate } from './types/entities/candidate'
@@ -14,7 +12,7 @@ const create = async ({
   payload,
 }: {
   userId: string
-  payload: CreateCandidateDto
+  payload: Omit<Candidate, 'id' | 'userId'>
 }) => {
   const user = await userRepository.findById(userId)
   if (!user) {
@@ -25,7 +23,7 @@ const create = async ({
     ApiError.throwForbidden('User cannot create candidate')
   }
 
-  const candidate = newInstance(payload)
+  const candidate = newInstance(userId, payload)
 
   await candidateRepository.create({
     ...candidate,
@@ -40,7 +38,7 @@ const update = async ({
   payload,
 }: {
   candidateId: string
-  payload: UpdateCandidateDto
+  payload: Partial<Candidate>
 }) => {
   const candidate = await candidateRepository.findById(candidateId)
   if (!candidate) {

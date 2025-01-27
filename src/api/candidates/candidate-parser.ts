@@ -2,7 +2,6 @@ import * as uuid from 'uuid'
 import moment from 'moment'
 
 import { Candidate } from './types/entities/candidate'
-import { CreateCandidateDto } from './types/dtos/create-candidate-dto'
 import { CandidateModelAttr } from './models'
 
 export const merge = (
@@ -53,9 +52,12 @@ export const merge = (
   })),
 })
 
-export const newInstance = (payload: CreateCandidateDto): Candidate => ({
+export const newInstance = (
+  userId: string,
+  payload: Omit<Candidate, 'id' | 'userId'>,
+): Candidate => ({
   id: uuid.v4(),
-  userId: payload.userId,
+  userId,
   fullName: payload.fullName,
   birthDate: payload.birthDate,
   professionalHeadline: payload.about,

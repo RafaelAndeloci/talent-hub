@@ -61,9 +61,6 @@ export const handleUserPasswordReset = async (userId: string) => {
       bodyType: 'html',
     })
   } catch (error) {
-    logger.error(
-      `error processing event: ${AppEvent.UserResetPassword}`,
-      error,
-    )
+    logger.error(`error processing event: ${AppEvent.UserResetPassword}`, error)
   }
 }

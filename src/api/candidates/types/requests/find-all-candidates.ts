@@ -8,6 +8,6 @@ export type FindAllCandidatesRequestHandler = RequestHandler<
   void,
   PagedList<Candidate>,
   void,
-  FindAllArgs,
+  FindAllArgs<Candidate>,
   AuthContext
 >

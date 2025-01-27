@@ -1,10 +1,11 @@
 import { RequestHandler } from 'express'
-import { CandidateDto } from '../dtos/candidate-dto'
+
 import { AuthContext } from '../../../users/types/dtos/auth-context'
+import { Candidate } from '../entities/candidate'
 
 export type FindCandidateByIdRequestHandler = RequestHandler<
   { id: string },
-  CandidateDto,
+  Candidate,
   void,
   void,
   AuthContext
