@@ -140,8 +140,4 @@ export const useSwagger = (app: Express) => {
   app.use('/static/swagger/custom.css', (_, res) => {
     res.sendFile(path.resolve(__dirname, '../../static/swagger.css'))
   })
-
-  app.use('/', (_, res) => {
-    res.redirect('/api-docs')
-  })
 }
