@@ -7,11 +7,13 @@ import { fileStorageService } from '../shared/services/file-storage-service'
 import { userRouter } from '../api/users/user-router'
 import { authenticate } from '../middlewares/authentication-middleware'
 import { companyRouter } from '../api/companies/company-routes'
+import { jobOpeningRouter } from '../api/job-openings/job-opening-routes'
 
 export const apiRoutes = Router()
 
 apiRoutes.use('/candidates', authenticate, candidateRouter)
 apiRoutes.use('/companies', authenticate, companyRouter)
+apiRoutes.use('/job-openings', authenticate, jobOpeningRouter)
 apiRoutes.use('/users', userRouter)
 
 export const staticRoutes = Router()

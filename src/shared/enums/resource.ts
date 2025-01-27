@@ -2,7 +2,7 @@ export const Resource = Object.freeze({
   candidates: 'candidates',
   users: 'users',
   companies: 'companies',
-  jobOpportunities: 'job_opportunities',
+  jobOpenings: 'job_openings',
   jobApplications: 'job_applications',
 })
 
