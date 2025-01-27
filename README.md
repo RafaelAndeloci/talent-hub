@@ -2,6 +2,8 @@
 
 This Turborepo starter is maintained by the Turborepo core team.
 
+[Api documentation](./apps/api/README.md)
+
 ## Using this example
 
 Run the following command:
