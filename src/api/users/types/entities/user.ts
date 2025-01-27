@@ -1,4 +1,5 @@
 import { Entity } from '../../../../shared/types/entity'
+import { Role } from '../enums/role'
 
 export type PasswordReset = {
   token: string
@@ -11,5 +12,5 @@ export interface User extends Entity {
   hashedPassword: string
   passwordReset: PasswordReset | null
   profilePictureUrl: string | null
-  role: string
+  role: Role
 }

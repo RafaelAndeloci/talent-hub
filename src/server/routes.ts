@@ -1,15 +1,17 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import { z } from 'zod'
-import { candidatesRouter } from '../api/candidates/candidate-routes'
+import { candidatesRouter as candidateRouter } from '../api/candidates/candidate-routes'
 import { logger } from '../shared/services/logging-service'
 import { validate } from '../middlewares/validation-middleware'
 import { fileStorageService } from '../shared/services/file-storage-service'
 import { userRouter } from '../api/users/user-router'
 import { authenticate } from '../middlewares/authentication-middleware'
+import { companyRouter } from '../api/companies/company-routes'
 
 export const apiRoutes = Router()
 
-apiRoutes.use('/candidates', authenticate, candidatesRouter)
+apiRoutes.use('/candidates', authenticate, candidateRouter)
+apiRoutes.use('/companies', authenticate, companyRouter)
 apiRoutes.use('/users', userRouter)
 
 export const staticRoutes = Router()
