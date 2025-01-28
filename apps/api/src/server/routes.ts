@@ -62,7 +62,6 @@ const staticFileHandler: (
 
 staticRoutes.get(
   '/:fileKey',
-  authenticate,
   validate(
     z.object({
       params: z.object({

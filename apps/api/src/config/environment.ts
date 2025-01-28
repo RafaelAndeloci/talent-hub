@@ -1,10 +1,24 @@
 import * as dotenv from 'dotenv'
 import path from 'path'
+import { logger } from '../shared/services/logging-service'
 
 const env = process.env.NODE_ENV || 'development'
-const envPath = path.resolve(__dirname, `../../.env`)
 
-dotenv.config({ path: envPath })
+try {
+  const envPath = path.resolve(__dirname, `../../../../.env.${env}`)
+
+  const { error } = dotenv.config({ path: envPath })
+
+  if (error) {
+    logger.error(`Error loading environment variables: ${error.message}`)
+    process.exit(1)
+  }
+} catch (error) {
+  logger.error(
+    `Error loading environment variables: ${(error as unknown as Error).message}`,
+  )
+  process.exit(1)
+}
 
 export const config = {
   env,
