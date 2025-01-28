@@ -5,7 +5,7 @@ import { logger } from '../shared/services/logging-service'
 const env = process.env.NODE_ENV || 'development'
 
 try {
-  const envPath = path.resolve(__dirname, `../../../../.env.${env}`)
+  const envPath = path.resolve(__dirname, `../../../../.env`)
 
   const { error } = dotenv.config({ path: envPath })
 
@@ -79,9 +79,13 @@ export const config = {
     password: process.env.EMAIL_PASSWORD!,
     from: process.env.EMAIL_FROM || 'talent_hub@noreply.com',
   },
-  cloud: {
-    region: process.env.CLOUD_REGION || 'us-east-1',
-    accessKeyId: process.env.CLOUD_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.CLOUD_SECRET_ACCESS_KEY!,
+  aws: {
+    region: process.env.AWS_REGION!,
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+    ses: {
+      from: process.env.AWS_SES_FROM!,
+    },
   },
+  emailConfirmationUrl: process.env.EMAIL_CONFIRMATION_URL!,
 }

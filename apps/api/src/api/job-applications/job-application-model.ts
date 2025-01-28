@@ -104,23 +104,3 @@ JobApplicationModel.init(
     ],
   },
 )
-
-JobApplicationModel.belongsTo(CandidateModel, {
-  foreignKey: 'candidateId',
-  as: 'candidate',
-})
-
-CandidateModel.hasMany(JobApplicationModel, {
-  foreignKey: 'candidateId',
-  as: 'jobApplications',
-})
-
-JobOpeningModel.hasMany(JobApplicationModel, {
-  foreignKey: 'jobOpeningId',
-  as: 'applications',
-})
-
-JobApplicationModel.belongsTo(JobOpeningModel, {
-  foreignKey: 'jobOpeningId',
-  as: 'jobOpening',
-})

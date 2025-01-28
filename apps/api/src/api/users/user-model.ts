@@ -13,6 +13,7 @@ export interface UserModelAttr {
   profilePictureUrl: string | null
   passwordResetToken: string | null
   passwordResetExpiration: number | null
+  emailConfirmationToken: string | null
   createdAt?: Date
   updatedAt?: Date
   deletedAt?: Date | null
@@ -52,6 +53,10 @@ UserModel.init(
     },
     passwordResetExpiration: {
       type: DataTypes.DATE,
+      allowNull: true,
+    },
+    emailConfirmationToken: {
+      type: DataTypes.STRING,
       allowNull: true,
     },
     updatedAt: {

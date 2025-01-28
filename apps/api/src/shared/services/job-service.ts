@@ -1,14 +1,15 @@
 import Queue from 'bull'
 import { config } from '../../config/environment'
 import { AppEvent } from '../enums/app-event'
-import { handleUserPasswordReset } from '../../api/users/event-handlers/user-password-reset-event-handler'
 import { logger } from './logging-service'
 import { handleJobApplicationCreated } from '../../api/job-applications/event-handlers/handle-job-application-created'
 import { handleJobApplicationRemoved } from '../../api/job-applications/event-handlers/handle-job-application-removed'
 import { handleJobOpeningCreated } from '../../api/job-openings/event-handlers/handle-job-opening-created'
 import { handleJobOpeningRemoved } from '../../api/job-openings/event-handlers/handle-job-opening-removed'
 import { handleJobOpeningUpdated } from '../../api/job-openings/event-handlers/handle-job-opening-updated'
-import { handleUserCreated } from '../../api/users/event-handlers/user-created-event-handler'
+import { handleUserCreated } from '../../api/users/event-handlers/handle-user-created'
+import { handleUserPasswordChanged } from '../../api/users/event-handlers/handle-user-password-changed'
+import { handleUserPasswordResetTokenRequested } from '../../api/users/event-handlers/handle-user-password-reset-token-requested'
 
 const { cache } = config
 
@@ -32,7 +33,9 @@ eventsQueue.on('error', (error) => {
 })
 
 const listenersMap = {
-  [AppEvent.userPasswordReset]: handleUserPasswordReset,
+  [AppEvent.userPasswordResetTokenRequested]:
+    handleUserPasswordResetTokenRequested,
+  [AppEvent.userPasswordChanged]: handleUserPasswordChanged,
   [AppEvent.userCreated]: handleUserCreated,
   [AppEvent.jobApplicationCreated]: handleJobApplicationCreated,
   [AppEvent.jobApplicationRemoved]: handleJobApplicationRemoved,

@@ -11,6 +11,7 @@ export interface User extends Entity {
   email: string
   hashedPassword: string
   passwordReset: PasswordReset | null
+  emailConfirmationToken: string | null
   profilePictureUrl: string | null
   role: Role
 }

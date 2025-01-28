@@ -1,26 +1,29 @@
-version: '3.7'
-
 services:
   database:
     container_name: talent_hub_database
     image: postgres:12
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_ROOT_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER:-root}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-talentHubPassword123}
+      POSTGRES_DB: ${DB_NAME:-talentHub}
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-talentHubRootPassword123}
     ports:
-      - '${DB_PORT}:5432'
+      - '${DB_PORT:-5432}:5432'
     volumes:
       - database_data:/var/lib/postgresql/data
     env_file:
-      - .env
+      - ../../.env 
+    restart: unless-stopped
 
   cache:
     container_name: talent_hub_cache
     image: redis:latest
     ports:
-      - '${CACHE_PORT}:6379'
+      - '${CACHE_PORT:-1293}:6379'
+    env_file:
+      - ../../.env
+    restart: unless-stopped
 
 volumes:
   database_data:

@@ -1,4 +1,4 @@
-import { Model, DataTypes } from 'sequelize'
+import { Model, DataTypes, Op } from 'sequelize'
 import moment from 'moment'
 
 import { database, primaryColumn } from '../../config/database/database'
@@ -41,7 +41,7 @@ JobOpeningModel.init(
       allowNull: false,
     },
     companyId: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       allowNull: false,
       references: {
         model: CompanyModel,
@@ -49,7 +49,7 @@ JobOpeningModel.init(
       },
     },
     selectedApplicationId: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       allowNull: true,
     },
     description: {
@@ -104,18 +104,20 @@ JobOpeningModel.init(
     paranoid: true,
     underscored: true,
     timestamps: true,
+    indexes: [
+      {
+        fields: ['company_id', 'title'],
+        unique: true,
+        where: {
+          status: {
+            [Op.in]: [
+              JobOpeningStatus.open,
+              JobOpeningStatus.paused,
+              JobOpeningStatus.draft,
+            ],
+          },
+        },
+      },
+    ],
   },
 )
-
-CompanyModel.hasMany(JobOpeningModel, {
-  as: 'jobOpenings',
-  foreignKey: 'companyId',
-  onDelete: 'CASCADE',
-  onUpdate: 'CASCADE',
-})
-
-JobOpeningModel.belongsTo(CompanyModel, {
-  foreignKey: 'companyId',
-})
-
-// TODO: add associations with applications

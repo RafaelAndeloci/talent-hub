@@ -123,21 +123,23 @@ swaggerSpec.security = [
 ]
 
 export const useSwagger = (app: Express) => {
+  const customPath = `${def.servers[0].url}/static/swagger/custom`
+
   app.use(
     '/api-docs',
     swaggerUi.serve,
     swaggerUi.setup(swaggerSpec, {
-      customJs: `${def.servers[0].url}/static/swagger/custom.js`,
-      customCss: `${def.servers[0].url}/static/swagger/custom.css`,
       customSiteTitle: 'TalentHub',
+      customCssUrl: `${customPath}.css`,
+      customJs: `${customPath}.js`,
     }),
   )
 
   app.use('/static/swagger/custom.js', (_, res) => {
-    res.sendFile(path.resolve(__dirname, '../../static/swagger.js'))
+    res.sendFile(path.resolve(__dirname, '../../static/swagger/script.js'))
   })
 
   app.use('/static/swagger/custom.css', (_, res) => {
-    res.sendFile(path.resolve(__dirname, '../../static/swagger.css'))
+    res.sendFile(path.resolve(__dirname, '../../static/swagger/style.css'))
   })
 }

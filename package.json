@@ -5,7 +5,15 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "backend:dev": "export NODE_ENV=development && cd apps/api && make dev",
+    "backend:deps:up": "export NODE_ENV=development && cd apps/api && make docker-up",
+    "backend:deps:down": "export NODE_ENV=development && cd apps/api && make docker-down",
+    "backend:deps:down-clean": "export NODE_ENV=development && cd apps/api && make docker-down-clean",
+    "backend:db:migrate": "cd apps/api && make database-migrate",
+    "backend:db:drop": "cd apps/api && make database-drop",
+    "backend:db:truncate": "cd apps/api && make database-truncate",
+    "backend:build": "cd apps/api && make build"
   },
   "devDependencies": {
     "prettier": "^3.4.2",

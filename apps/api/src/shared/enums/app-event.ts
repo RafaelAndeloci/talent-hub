@@ -1,7 +1,9 @@
 export const AppEvent = Object.freeze({
   // users
   userCreated: 'user_created',
-  userPasswordReset: 'user_reset_password',
+  userPasswordChanged: 'user_password_changed',
+  userPasswordResetTokenRequested: 'user_password_reset_token_requested',
+  userEmailConfirmed: 'user_email_confirmed',
 
   // job applications
   jobApplicationCreated: 'job_application_created',

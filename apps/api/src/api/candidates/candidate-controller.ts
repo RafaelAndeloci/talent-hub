@@ -1,15 +1,20 @@
 import HTTPStatus from 'http-status'
 
-import { CreateCandidateRequestHandler } from './types/requests/create-candidate'
 import { candidateBusiness } from './candidate-business'
-import { FindCandidateByIdRequestHandler } from './types/requests/find-by-id'
-import { UpdateCandidateRequestHandler } from './types/requests/update-candidate'
-import { DeleteCandidateRequestHandler } from './types/requests/delete-candidate'
-import { FindAllCandidatesRequestHandler } from './types/requests/find-all-candidates'
-import { UpdateCandidateFileRequestHandler } from './types/requests/update-candidate-file'
 import { ApiError } from '../../shared/types/api-error'
+import { RequestHandler } from 'express'
+import { FindAllArgs } from '../../shared/types/find-all-args'
+import { PagedList } from '../../shared/types/paged-list'
+import { AuthContext } from '../users/types/dtos/auth-context'
+import { Candidate } from './types/entities/candidate'
 
-const create: CreateCandidateRequestHandler = async (req, res, next) => {
+const create: RequestHandler<
+  void,
+  Candidate,
+  Candidate,
+  void,
+  AuthContext
+> = async (req, res, next) => {
   try {
     const candidate = await candidateBusiness.create({
       userId: res.locals.user.id,
@@ -24,7 +29,13 @@ const create: CreateCandidateRequestHandler = async (req, res, next) => {
   }
 }
 
-const update: UpdateCandidateRequestHandler = async (req, res, next) => {
+const update: RequestHandler<
+  { id: string },
+  Candidate,
+  Candidate,
+  void,
+  AuthContext
+> = async (req, res, next) => {
   try {
     const candidate = await candidateBusiness.update({
       candidateId: req.params.id,
@@ -37,7 +48,13 @@ const update: UpdateCandidateRequestHandler = async (req, res, next) => {
   }
 }
 
-const findById: FindCandidateByIdRequestHandler = async (req, res, next) => {
+const findById: RequestHandler<
+  { id: string },
+  Candidate,
+  void,
+  void,
+  AuthContext
+> = async (req, res, next) => {
   try {
     const candidate = await candidateBusiness.findById(req.params.id)
 
@@ -47,7 +64,13 @@ const findById: FindCandidateByIdRequestHandler = async (req, res, next) => {
   }
 }
 
-const findAll: FindAllCandidatesRequestHandler = async (req, res, next) => {
+const findAll: RequestHandler<
+  void,
+  PagedList<Candidate>,
+  void,
+  FindAllArgs<Candidate>,
+  AuthContext
+> = async (req, res, next) => {
   try {
     const candidates = await candidateBusiness.findAll(req.query)
 
@@ -57,7 +80,13 @@ const findAll: FindAllCandidatesRequestHandler = async (req, res, next) => {
   }
 }
 
-const remove: DeleteCandidateRequestHandler = async (req, res, next) => {
+const remove: RequestHandler<
+  { id: string },
+  void,
+  void,
+  void,
+  AuthContext
+> = async (req, res, next) => {
   try {
     await candidateBusiness.remove(req.params.id)
     res.sendStatus(HTTPStatus.NO_CONTENT)
@@ -66,7 +95,13 @@ const remove: DeleteCandidateRequestHandler = async (req, res, next) => {
   }
 }
 
-const updateCv: UpdateCandidateFileRequestHandler = async (req, res, next) => {
+const updateCv: RequestHandler<
+  { id: string },
+  Candidate,
+  Express.Multer.File,
+  void,
+  AuthContext
+> = async (req, res, next) => {
   try {
     const {
       params: { id: candidateId },
@@ -90,11 +125,13 @@ const updateCv: UpdateCandidateFileRequestHandler = async (req, res, next) => {
   }
 }
 
-const updateBanner: UpdateCandidateFileRequestHandler = async (
-  req,
-  res,
-  next,
-) => {
+const updateBanner: RequestHandler<
+  { id: string },
+  Candidate,
+  Express.Multer.File,
+  void,
+  AuthContext
+> = async (req, res, next) => {
   try {
     const {
       params: { id: candidateId },

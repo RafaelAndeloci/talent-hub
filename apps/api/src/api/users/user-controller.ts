@@ -1,17 +1,21 @@
 import HTTPStatus from 'http-status'
 
-import { CreateUserRequestHandler } from './types/requests/create-request-handler'
 import { userBusiness } from './user-business'
-import { AuthRequestHandler } from './types/requests/auth-request-handler'
 import { ApiError } from '../../shared/types/api-error'
-import { UpdateUserProfilePictureRequest } from './types/requests/update-user-profile-picture'
-import { FindAllUsersRequestHandler } from './types/requests/find-all-users'
-import { FindUserBuIdRequestHandler as FindUserByIdRequestHandler } from './types/requests/find-user-by-id'
-import { ResetUserPasswordRequestHandler } from './types/requests/reset-user-password'
-import { RemoveUserRequestHandler } from './types/requests/remove'
-import { ConfirmResetPasswordRequestHandler } from './types/requests/user-confirm-password-reset'
+import { RequestHandler } from 'express'
+import { AuthDto } from './types/dtos/auth-dto'
+import { AuthContext } from './types/dtos/auth-context'
+import { UserDto } from './types/dtos/user-dto'
+import { PagedList } from '../../shared/types/paged-list'
+import { FindAllArgs } from '../../shared/types/find-all-args'
+import { User } from './types/entities/user'
+import { CreateUserDto } from './types/dtos/create-user-dto'
 
-const create: CreateUserRequestHandler = async (req, res, next) => {
+const create: RequestHandler<void, UserDto, CreateUserDto, void> = async (
+  req,
+  res,
+  next,
+) => {
   try {
     const user = await userBusiness.create(req.body)
     res.status(HTTPStatus.CREATED).json(user)
@@ -20,25 +24,34 @@ const create: CreateUserRequestHandler = async (req, res, next) => {
   }
 }
 
-const auth: AuthRequestHandler = async (req, res, next) => {
+const auth: RequestHandler<
+  void,
+  AuthDto,
+  {
+    usernameOrEmail: string
+    password: string
+  },
+  void
+> = async (req, res, next) => {
   try {
-    const { username, email, password } = req.body
-    const user = await userBusiness.auth({ username, email, password })
+    const { usernameOrEmail, password } = req.body
+    const user = await userBusiness.auth({ usernameOrEmail, password })
     res.status(HTTPStatus.OK).json(user)
   } catch (error) {
     next(error)
   }
 }
 
-const sendResetPasswordToken: ResetUserPasswordRequestHandler = async (
-  req,
-  res,
-  next,
-) => {
+const sendResetPasswordToken: RequestHandler<
+  void,
+  void,
+  { usernameOrEmail: string },
+  void,
+  AuthContext
+> = async (req, res, next) => {
   try {
     await userBusiness.sendResetPasswordToken({
-      email: req.body.email,
-      username: req.body.username,
+      usernameOrEmail: req.body.usernameOrEmail,
     })
     res.sendStatus(HTTPStatus.NO_CONTENT)
   } catch (error) {
@@ -46,11 +59,11 @@ const sendResetPasswordToken: ResetUserPasswordRequestHandler = async (
   }
 }
 
-const confirmResetPassword: ConfirmResetPasswordRequestHandler = async (
-  req,
-  res,
-  next,
-) => {
+const confirmResetPassword: RequestHandler<
+  void,
+  void,
+  { userId: string; token: string; password: string }
+> = async (req, res, next) => {
   try {
     const { userId, token, password } = req.body
     await userBusiness.confirmResetPassword({ userId, token, password })
@@ -60,11 +73,13 @@ const confirmResetPassword: ConfirmResetPasswordRequestHandler = async (
   }
 }
 
-const updateProfilePicture: UpdateUserProfilePictureRequest = async (
-  req,
-  res,
-  next,
-) => {
+const updateProfilePicture: RequestHandler<
+  { id: string },
+  UserDto,
+  void,
+  void,
+  AuthContext
+> = async (req, res, next) => {
   try {
     const {
       params: { id: userId },
@@ -89,7 +104,13 @@ const updateProfilePicture: UpdateUserProfilePictureRequest = async (
   }
 }
 
-const findById: FindUserByIdRequestHandler = async (req, res, next) => {
+const findById: RequestHandler<
+  { id: string },
+  UserDto,
+  void,
+  void,
+  AuthContext
+> = async (req, res, next) => {
   try {
     const { id } = req.params
     const user = await userBusiness.findById(id)
@@ -99,7 +120,13 @@ const findById: FindUserByIdRequestHandler = async (req, res, next) => {
   }
 }
 
-const findAll: FindAllUsersRequestHandler = async (req, res, next) => {
+const findAll: RequestHandler<
+  void,
+  PagedList<UserDto>,
+  void,
+  FindAllArgs<User>,
+  AuthContext
+> = async (req, res, next) => {
   try {
     const users = await userBusiness.findAll(req.query)
     res.status(HTTPStatus.OK).json(users)
@@ -108,7 +135,13 @@ const findAll: FindAllUsersRequestHandler = async (req, res, next) => {
   }
 }
 
-const remove: RemoveUserRequestHandler = async (req, res, next) => {
+const remove: RequestHandler<
+  { id: string },
+  void,
+  void,
+  void,
+  AuthContext
+> = async (req, res, next) => {
   try {
     const { id } = req.params
     await userBusiness.remove(id)

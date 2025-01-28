@@ -1,0 +1,192 @@
+:root {
+  --primary-color: #121212;
+  --secondary-color: #1e1e1e;
+  --text-color: #e0e0e0;
+  --accent-color: #4caf50;
+  --border-color: #333;
+  --button-bg: #2d2d2d;
+  --button-text: #ffffff;
+  --delete-bg: #d32f2f;
+  --delete-text: #ffffff;
+  --get-bg: #1976d2;
+  --get-text: #ffffff;
+  --post-bg: #388e3c;
+  --post-text: #ffffff;
+  --put-bg: #f57c00;
+  --put-text: #ffffff;
+}
+
+body,
+.swagger-ui,
+.swagger-container,
+.topbar,
+.wrapper,
+.topbar-wrapper,
+.download-url-wrapper,
+.download-url-input,
+.download-url-button,
+.svg-assets,
+.information-container,
+.block,
+.col-12,
+.info,
+.main,
+.title,
+.version,
+.version-stamp,
+.description,
+.renderedMarkdown,
+.scheme-container,
+.schemes,
+.auth-wrapper,
+.block-desktop,
+.col-12-desktop,
+.opblock-tag-section,
+.opblock-tag,
+.nostyle,
+.expand-operation,
+.operation-tag-content,
+.opblock,
+.opblock-summary,
+.opblock-summary-control,
+.opblock-summary-path-description-wrapper,
+.opblock-summary-path,
+.opblock-summary-description,
+.models,
+.models-control,
+.model-container,
+.models-jump-to-path,
+.model-box,
+.model-box-control,
+.pointer,
+.model,
+.model-title,
+.model-toggle,
+.collapsed,
+.parameters,
+.request-body,
+.opblock-section,
+.opblock-description-wrapper,
+.response,
+.headers,
+.example-value,
+.example-value-wrapper {
+  background-color: var(--primary-color) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+.btn,
+.authorize,
+.unlocked,
+.opblock-summary-method,
+.opblock-summary-post,
+.opblock-summary-get,
+.opblock-summary-put,
+.opblock-summary-delete,
+.opblock-summary-patch,
+.opblock-control-arrow,
+.copy-to-clipboard,
+.authorization__btn,
+.models-jump-to-path {
+  background-color: var(--button-bg) !important;
+  color: var(--button-text) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+.btn:hover,
+.authorize:hover,
+.opblock-summary-method:hover,
+.opblock-summary-post:hover,
+.opblock-summary-get:hover,
+.opblock-summary-put:hover,
+.opblock-summary-delete:hover,
+.opblock-summary-patch:hover,
+.authorization__btn:hover {
+  background-color: var(--accent-color) !important;
+  color: var(--text-color) !important;
+}
+
+.opblock-post .opblock-summary-method {
+  background-color: var(--post-bg) !important;
+  color: var(--post-text) !important;
+}
+.opblock-get .opblock-summary-method {
+  background-color: var(--get-bg) !important;
+  color: var(--get-text) !important;
+}
+.opblock-put .opblock-summary-method {
+  background-color: var(--put-bg) !important;
+  color: var(--put-text) !important;
+}
+.opblock-delete .opblock-summary-method {
+  background-color: var(--delete-bg) !important;
+  color: var(--delete-text) !important;
+}
+
+/* Ajustando seções dentro de endpoints */
+.parameters,
+.request-body,
+.response {
+  background-color: var(--secondary-color) !important;
+  border: 1px solid var(--border-color) !important;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.example-value,
+.example-value-wrapper {
+  background-color: var(--secondary-color) !important;
+  color: var(--text-color) !important;
+  border: 1px solid var(--border-color) !important;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.swagger-ui .opblock .opblock-section-header {
+  background-color: var(--secondary-color) !important;
+  border: 1px solid var(--border-color) !important;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.markdown,
+.markdown p,
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4,
+.markdown h5,
+.markdown h6 {
+  color: var(--text-color) !important;
+}
+
+.response-col_status,
+.response-col_description {
+  background-color: var(--secondary-color) !important;
+  color: var(--text-color) !important;
+  border: 1px solid var(--border-color) !important;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.swagger-ui .opblock .opblock-summary-path-description-wrapper {
+  background-color: var(--secondary-color) !important;
+  border: 1px solid var(--border-color) !important;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.swagger-ui .opblock .opblock-summary-method {
+  color: var(--button-text) !important;
+  border: 1px solid var(--border-color) !important;
+  padding: 10px;
+  border-radius: 5px;
+}
