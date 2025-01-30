@@ -1,8 +1,10 @@
 {
-  "extends": "@repo/typescript-config/react-library.json",
+  "extends": "@talent-hub/typescript-config/nextjs.json",
   "compilerOptions": {
-    "outDir": "dist"
-  },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist"]
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
 }
