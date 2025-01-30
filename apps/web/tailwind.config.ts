@@ -10,5 +10,4 @@ export default {
     "./node_modules/@talent-hub/ui/dist/**/*.js",
     "../../packages/ui/src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  plugins: [require("tailwindcss-animate")],
 } satisfies Config;

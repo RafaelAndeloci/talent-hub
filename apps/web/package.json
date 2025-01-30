@@ -20,6 +20,7 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "prettier-plugin-tailwindcss": "^0.5.14",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

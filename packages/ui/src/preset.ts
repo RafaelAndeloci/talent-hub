@@ -1,5 +1,6 @@
 import type { Config } from "tailwindcss";
 import animatePlugin from "tailwindcss-animate";
+import plugin from "tailwindcss/plugin";
 
 export default {
   content: [],
@@ -107,7 +108,42 @@ export default {
       fontSize: {
         "2xs": "0.625rem",
       },
+      fontFamily: {
+        default: "var(--font-default)",
+        mono: "var(--font-mono)",
+      },
     },
   },
-  plugins: [animatePlugin],
+  plugins: [
+    animatePlugin,
+    plugin(function ({ addUtilities }) {
+      addUtilities({
+        ".custom-scrollbar": {
+          "&::-webkit-scrollbar": {
+            width: "8px",
+            height: "6px",
+          },
+          "&::-webkit-scrollbar-track": {
+            background: "transparent",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            "background-color": "#9ca3af",
+            "border-radius": " 999999px",
+          },
+        },
+        ".scrollbar-hide": {
+          /* IE and Edge */
+          "-ms-overflow-style": "none",
+
+          /* Firefox */
+          "scrollbar-width": "none",
+
+          /* Safari and Chrome */
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
+        },
+      });
+    }),
+  ],
 } satisfies Config;
