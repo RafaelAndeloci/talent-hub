@@ -1,29 +1,34 @@
-import { initDatabase } from './config/database/database'
-import { logger } from './shared/services/logging-service'
+import { logger } from './services/logging-service';
+import { initDatabase } from './config/database';
+import { config } from './config/environment';
 
-const runApplication = async () => {
-  try {
-    await initDatabase()
-    await import('./server')
-  } catch (e) {
-    logger.error('Error while starting the application', e)
-    process.exit(1)
-  }
-}
+const runApplication = async() => {
+    try {
+        await initDatabase({
+            sync: config.database.sync.enabled,
+            force: config.database.sync.force,
+            alter: config.database.sync.alter,
+        });
+        await import('./server');
+    } catch (e) {
+        logger.error('Error while starting the application', e);
+        process.exit(1);
+    }
+};
 
-runApplication()
+runApplication();
 
 process.on('unhandledRejection', (reason, promise) => {
-  logger.error(`Unhandled Rejection at: ${promise} reason: ${reason}`)
-  process.exit(1)
-})
+    logger.error(`Unhandled Rejection at: ${promise} reason: ${reason}`);
+    process.exit(1);
+});
 
-process.on('uncaughtException', (error) => {
-  logger.error(`Uncaught Exception thrown: ${error}`)
-  process.exit(1)
-})
+process.on('uncaughtException', error => {
+    logger.error(`Uncaught Exception thrown: ${error}`);
+    process.exit(1);
+});
 
 process.on('SIGINT', () => {
-  logger.info('SIGINT signal received.')
-  process.exit(0)
-})
+    logger.info('SIGINT signal received.');
+    process.exit(0);
+});

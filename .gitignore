@@ -40,3 +40,9 @@ yarn-error.log*
 .idea/
 .vscode/
 .env*
+
+*.log
+
+logs/
+**/*.log
+

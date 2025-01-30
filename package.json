@@ -2,8 +2,8 @@
   "name": "talent-hub",
   "private": true,
   "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev",
+    "fronnt:build": "turbo build",
+    "front:dev": "turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "backend:dev": "export NODE_ENV=development && cd apps/api && make dev",
@@ -13,6 +13,7 @@
     "backend:db:migrate": "cd apps/api && make database-migrate",
     "backend:db:drop": "cd apps/api && make database-drop",
     "backend:db:truncate": "cd apps/api && make database-truncate",
+    "backend:db:seed": "cd apps/api && make database-seed",
     "backend:build": "cd apps/api && make build"
   },
   "devDependencies": {

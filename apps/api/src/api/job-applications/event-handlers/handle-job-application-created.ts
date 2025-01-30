@@ -1,11 +1,9 @@
-import { logger } from '../../../shared/services/logging-service'
+import { logger } from '../../../services/logging-service';
 
-export const handleJobApplicationCreated = async ({
-  jobApplicationId,
+export const handleJobApplicationCreated = async({
+    jobApplicationId,
 }: {
-  jobApplicationId: string
+    jobApplicationId: string;
 }) => {
-  logger.info(
-    `Handling job application created event for job application ${jobApplicationId}`,
-  )
-}
+    logger.info(`Handling job application created event for job application ${jobApplicationId}`);
+};

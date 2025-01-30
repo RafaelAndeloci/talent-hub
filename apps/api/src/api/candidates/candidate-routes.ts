@@ -1,28 +1,27 @@
+import { Router } from 'express';
+
+import {
+    CreateCandidateSchema,
+    DeleteCandidateSchema,
+    FindAllCandidatesSchema,
+    FindCandidateByIdSchema,
+    UpdateCandidateCvSchema,
+    UpdateCandidateSchema,
+} from './candidate-schema';
+import { validate } from '../../middlewares/validation-middleware';
+import { candidateController } from './candidate-controller';
+import { authorize } from '../../middlewares/authorization-middleware';
+import { Resource } from '../../enums/resource';
+import { Action } from '../../enums/action';
+import { singleFileUpload } from '../../middlewares/file-upload-middleware';
+
 /**
  * @swagger
  * tags:
  *   name: Candidates
  *   description: API endpoints for managing candidates
  */
-
-import { Router } from 'express'
-
-import {
-  CreateCandidateSchema,
-  DeleteCandidateSchema,
-  FindAllCandidatesSchema,
-  FindCandidateByIdSchema,
-  UpdateCandidateCvSchema,
-  UpdateCandidateSchema,
-} from './candidate-schema'
-import { validate } from '../../middlewares/validation-middleware'
-import { candidateController } from './candidate-controller'
-import { authorize } from '../../middlewares/authorization-middleware'
-import { Resource } from '../../shared/enums/resource'
-import { Action } from '../../shared/enums/action'
-import { singleFileUpload } from '../../middlewares/file-upload-middleware'
-
-export const candidatesRouter = Router()
+export const candidatesRouter = Router();
 
 /**
  * @swagger
@@ -43,11 +42,11 @@ export const candidatesRouter = Router()
  *         description: Invalid input
  */
 candidatesRouter.post(
-  '/',
-  authorize({ resource: Resource.candidates, action: Action.create }),
-  validate(CreateCandidateSchema),
-  candidateController.create,
-)
+    '/',
+    authorize({ resource: Resource.candidates, action: Action.create }),
+    validate(CreateCandidateSchema),
+    candidateController.create,
+);
 
 /**
  * @swagger
@@ -77,11 +76,11 @@ candidatesRouter.post(
  *         description: Candidate not found
  */
 candidatesRouter.put(
-  '/:id',
-  authorize({ resource: Resource.candidates, action: Action.update }),
-  validate(UpdateCandidateSchema),
-  candidateController.update,
-)
+    '/:id',
+    authorize({ resource: Resource.candidates, action: Action.update }),
+    validate(UpdateCandidateSchema),
+    candidateController.update,
+);
 
 /**
  * @swagger
@@ -103,11 +102,11 @@ candidatesRouter.put(
  *         description: Candidate not found
  */
 candidatesRouter.delete(
-  '/:id',
-  authorize({ resource: Resource.candidates, action: Action.delete }),
-  validate(DeleteCandidateSchema),
-  candidateController.remove,
-)
+    '/:id',
+    authorize({ resource: Resource.candidates, action: Action.delete }),
+    validate(DeleteCandidateSchema),
+    candidateController.remove,
+);
 
 /**
  * @swagger
@@ -129,11 +128,11 @@ candidatesRouter.delete(
  *         description: Candidate not found
  */
 candidatesRouter.get(
-  '/:id',
-  authorize({ resource: Resource.candidates, action: Action.readById }),
-  validate(FindCandidateByIdSchema),
-  candidateController.findById,
-)
+    '/:id',
+    authorize({ resource: Resource.candidates, action: Action.readById }),
+    validate(FindCandidateByIdSchema),
+    candidateController.findById,
+);
 
 /**
  * @swagger
@@ -146,11 +145,11 @@ candidatesRouter.get(
  *         description: List of candidates retrieved successfully
  */
 candidatesRouter.get(
-  '/',
-  authorize({ resource: Resource.candidates, action: Action.readAll }),
-  validate(FindAllCandidatesSchema),
-  candidateController.findAll,
-)
+    '/',
+    authorize({ resource: Resource.candidates, action: Action.readAll }),
+    validate(FindAllCandidatesSchema),
+    candidateController.findAll,
+);
 
 /**
  * @swagger
@@ -182,15 +181,15 @@ candidatesRouter.get(
  *         description: Invalid input
  */
 candidatesRouter.put(
-  '/:id/cv',
-  authorize({
-    resource: Resource.candidates,
-    action: Action.updateCandidateCv,
-  }),
-  singleFileUpload,
-  validate(UpdateCandidateCvSchema),
-  candidateController.updateCv,
-)
+    '/:id/cv',
+    authorize({
+        resource: Resource.candidates,
+        action: Action.updateCandidateCv,
+    }),
+    singleFileUpload,
+    validate(UpdateCandidateCvSchema),
+    candidateController.updateCv,
+);
 
 /**
  * @swagger
@@ -222,12 +221,12 @@ candidatesRouter.put(
  *         description: Invalid input
  */
 candidatesRouter.put(
-  '/:id/banner',
-  authorize({
-    resource: Resource.candidates,
-    action: Action.updateCandidateBanner,
-  }),
-  singleFileUpload,
-  validate(UpdateCandidateSchema),
-  candidateController.updateBanner,
-)
+    '/:id/banner',
+    authorize({
+        resource: Resource.candidates,
+        action: Action.updateCandidateBanner,
+    }),
+    singleFileUpload,
+    validate(UpdateCandidateSchema),
+    candidateController.updateBanner,
+);

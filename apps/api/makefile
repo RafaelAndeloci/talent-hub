@@ -32,6 +32,10 @@ database-truncate:
 	@echo "Truncating database: $(PROJECT)"
 	npm run database:truncate
 
+database-seed:
+	@echo "Seeding database: $(PROJECT)"
+	npm run database:seed
+
 lint:
 	@echo "Linting project: $(PROJECT)"
 	npm run lint

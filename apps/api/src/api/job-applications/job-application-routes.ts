@@ -5,21 +5,21 @@
  *   description: API endpoints for managing job applications
  */
 
-import { Router } from 'express'
-import { authorize } from '../../middlewares/authorization-middleware'
-import { Resource } from '../../shared/enums/resource'
-import { Action } from '../../shared/enums/action'
-import { validate } from '../../middlewares/validation-middleware'
+import { Router } from 'express';
+import { authorize } from '../../middlewares/authorization-middleware';
+import { Resource } from '../../enums/resource';
+import { Action } from '../../enums/action';
+import { validate } from '../../middlewares/validation-middleware';
 import {
-  CreateJobApplicationSchema,
-  DeleteJobApplicationSchema,
-  FindAllJobApplicationsSchema,
-  FindJobApplicationByIdSchema,
-  UpdateJobApplicationSchema,
-} from './job-application-schema'
-import { jobApplicationController } from './job-application-controller'
+    CreateJobApplicationSchema,
+    DeleteJobApplicationSchema,
+    FindAllJobApplicationsSchema,
+    FindJobApplicationByIdSchema,
+    UpdateJobApplicationSchema,
+} from './job-application-schema';
+import { jobApplicationController } from './job-application-controller';
 
-export const jobApplicationRouter = Router()
+export const jobApplicationRouter = Router();
 
 /**
  * @swagger
@@ -42,14 +42,14 @@ export const jobApplicationRouter = Router()
  *               $ref: '#/components/schemas/JobApplication'
  */
 jobApplicationRouter.get(
-  '/',
-  authorize({
-    resource: Resource.jobApplications,
-    action: Action.readAll,
-  }),
-  validate(FindAllJobApplicationsSchema),
-  jobApplicationController.findAll,
-)
+    '/',
+    authorize({
+        resource: Resource.jobApplications,
+        action: Action.readAll,
+    }),
+    validate(FindAllJobApplicationsSchema),
+    jobApplicationController.findAll,
+);
 
 /**
  * @swagger
@@ -75,14 +75,14 @@ jobApplicationRouter.get(
  *         description: Job application not found
  */
 jobApplicationRouter.get(
-  '/:id',
-  authorize({
-    resource: Resource.jobApplications,
-    action: Action.readById,
-  }),
-  validate(FindJobApplicationByIdSchema),
-  jobApplicationController.findById,
-)
+    '/:id',
+    authorize({
+        resource: Resource.jobApplications,
+        action: Action.readById,
+    }),
+    validate(FindJobApplicationByIdSchema),
+    jobApplicationController.findById,
+);
 
 /**
  * @swagger
@@ -107,14 +107,14 @@ jobApplicationRouter.get(
  *         description: Bad request
  */
 jobApplicationRouter.post(
-  '/',
-  authorize({
-    resource: Resource.jobApplications,
-    action: Action.create,
-  }),
-  validate(CreateJobApplicationSchema),
-  jobApplicationController.create,
-)
+    '/',
+    authorize({
+        resource: Resource.jobApplications,
+        action: Action.create,
+    }),
+    validate(CreateJobApplicationSchema),
+    jobApplicationController.create,
+);
 
 /**
  * @swagger
@@ -148,14 +148,14 @@ jobApplicationRouter.post(
  *         description: Job application not found
  */
 jobApplicationRouter.put(
-  '/:id',
-  authorize({
-    resource: Resource.jobApplications,
-    action: Action.update,
-  }),
-  validate(UpdateJobApplicationSchema),
-  jobApplicationController.update,
-)
+    '/:id',
+    authorize({
+        resource: Resource.jobApplications,
+        action: Action.update,
+    }),
+    validate(UpdateJobApplicationSchema),
+    jobApplicationController.update,
+);
 
 /**
  * @swagger
@@ -177,11 +177,11 @@ jobApplicationRouter.put(
  *         description: Job application not found
  */
 jobApplicationRouter.delete(
-  '/:id',
-  authorize({
-    resource: Resource.jobApplications,
-    action: Action.delete,
-  }),
-  validate(DeleteJobApplicationSchema),
-  jobApplicationController.remove,
-)
+    '/:id',
+    authorize({
+        resource: Resource.jobApplications,
+        action: Action.delete,
+    }),
+    validate(DeleteJobApplicationSchema),
+    jobApplicationController.remove,
+);

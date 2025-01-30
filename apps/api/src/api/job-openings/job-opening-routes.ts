@@ -5,23 +5,23 @@
  *   description: API endpoints for managing job openings
  */
 
-import { Router } from 'express'
+import { Router } from 'express';
 
-import { authorize } from '../../middlewares/authorization-middleware'
-import { Resource } from '../../shared/enums/resource'
-import { Action } from '../../shared/enums/action'
+import { authorize } from '../../middlewares/authorization-middleware';
+import { Resource } from '../../enums/resource';
+import { Action } from '../../enums/action';
 import {
-  CreateJobOpeningSchema,
-  FillJobOpeningSchema,
-  FindJobOpeningByIdSchema,
-  FindJobOpeningsSchema,
-  UpdateJobOpeningSchema,
-  UpdateJobOpeningStatusSchema,
-} from './job-opening-schema'
-import { validate } from '../../middlewares/validation-middleware'
-import { jobOpeningController } from './job-opening-controller'
+    CreateJobOpeningSchema,
+    FillJobOpeningSchema,
+    FindJobOpeningByIdSchema,
+    FindJobOpeningsSchema,
+    UpdateJobOpeningSchema,
+    UpdateJobOpeningStatusSchema,
+} from './job-opening-schema';
+import { validate } from '../../middlewares/validation-middleware';
+import { jobOpeningController } from './job-opening-controller';
 
-export const jobOpeningRouter = Router()
+export const jobOpeningRouter = Router();
 
 /**
  * @swagger
@@ -44,14 +44,14 @@ export const jobOpeningRouter = Router()
  *               $ref: '#/components/schemas/JobOpening'
  */
 jobOpeningRouter.get(
-  '/',
-  authorize({
-    resource: Resource.jobOpenings,
-    action: Action.readAll,
-  }),
-  validate(FindJobOpeningsSchema),
-  jobOpeningController.findAll,
-)
+    '/',
+    authorize({
+        resource: Resource.jobOpenings,
+        action: Action.readAll,
+    }),
+    validate(FindJobOpeningsSchema),
+    jobOpeningController.findAll,
+);
 
 /**
  * @swagger
@@ -77,14 +77,14 @@ jobOpeningRouter.get(
  *         description: Job opening not found
  */
 jobOpeningRouter.get(
-  '/:id',
-  authorize({
-    resource: Resource.jobOpenings,
-    action: Action.readById,
-  }),
-  validate(FindJobOpeningByIdSchema),
-  jobOpeningController.findById,
-)
+    '/:id',
+    authorize({
+        resource: Resource.jobOpenings,
+        action: Action.readById,
+    }),
+    validate(FindJobOpeningByIdSchema),
+    jobOpeningController.findById,
+);
 
 /**
  * @swagger
@@ -109,14 +109,14 @@ jobOpeningRouter.get(
  *         description: Bad request
  */
 jobOpeningRouter.post(
-  '/',
-  authorize({
-    resource: Resource.jobOpenings,
-    action: Action.create,
-  }),
-  validate(CreateJobOpeningSchema),
-  jobOpeningController.create,
-)
+    '/',
+    authorize({
+        resource: Resource.jobOpenings,
+        action: Action.create,
+    }),
+    validate(CreateJobOpeningSchema),
+    jobOpeningController.create,
+);
 
 /**
  * @swagger
@@ -150,14 +150,14 @@ jobOpeningRouter.post(
  *         description: Job opening not found
  */
 jobOpeningRouter.put(
-  '/:id',
-  authorize({
-    resource: Resource.jobOpenings,
-    action: Action.update,
-  }),
-  validate(UpdateJobOpeningSchema),
-  jobOpeningController.update,
-)
+    '/:id',
+    authorize({
+        resource: Resource.jobOpenings,
+        action: Action.update,
+    }),
+    validate(UpdateJobOpeningSchema),
+    jobOpeningController.update,
+);
 
 /**
  * @swagger
@@ -191,14 +191,14 @@ jobOpeningRouter.put(
  *         description: Job opening not found
  */
 jobOpeningRouter.patch(
-  '/:id/open',
-  authorize({
-    resource: Resource.jobOpenings,
-    action: Action.update,
-  }),
-  validate(UpdateJobOpeningStatusSchema),
-  jobOpeningController.open,
-)
+    '/:id/open',
+    authorize({
+        resource: Resource.jobOpenings,
+        action: Action.update,
+    }),
+    validate(UpdateJobOpeningStatusSchema),
+    jobOpeningController.open,
+);
 
 /**
  * @swagger
@@ -232,14 +232,14 @@ jobOpeningRouter.patch(
  *         description: Job opening not found
  */
 jobOpeningRouter.patch(
-  '/:id/close',
-  authorize({
-    resource: Resource.jobOpenings,
-    action: Action.update,
-  }),
-  validate(UpdateJobOpeningStatusSchema),
-  jobOpeningController.close,
-)
+    '/:id/close',
+    authorize({
+        resource: Resource.jobOpenings,
+        action: Action.update,
+    }),
+    validate(UpdateJobOpeningStatusSchema),
+    jobOpeningController.close,
+);
 
 /**
  * @swagger
@@ -273,14 +273,14 @@ jobOpeningRouter.patch(
  *         description: Job opening not found
  */
 jobOpeningRouter.patch(
-  '/:id/draft',
-  authorize({
-    resource: Resource.jobOpenings,
-    action: Action.update,
-  }),
-  validate(UpdateJobOpeningStatusSchema),
-  jobOpeningController.toDraft,
-)
+    '/:id/draft',
+    authorize({
+        resource: Resource.jobOpenings,
+        action: Action.update,
+    }),
+    validate(UpdateJobOpeningStatusSchema),
+    jobOpeningController.toDraft,
+);
 
 /**
  * @swagger
@@ -314,14 +314,14 @@ jobOpeningRouter.patch(
  *         description: Job opening not found
  */
 jobOpeningRouter.patch(
-  '/:id/fill',
-  authorize({
-    resource: Resource.jobOpenings,
-    action: Action.update,
-  }),
-  validate(FillJobOpeningSchema),
-  jobOpeningController.fill,
-)
+    '/:id/fill',
+    authorize({
+        resource: Resource.jobOpenings,
+        action: Action.update,
+    }),
+    validate(FillJobOpeningSchema),
+    jobOpeningController.fill,
+);
 
 /**
  * @swagger
@@ -343,11 +343,11 @@ jobOpeningRouter.patch(
  *         description: Job opening not found
  */
 jobOpeningRouter.delete(
-  '/:id',
-  authorize({
-    resource: Resource.jobOpenings,
-    action: Action.delete,
-  }),
-  validate(FindJobOpeningByIdSchema),
-  jobOpeningController.remove,
-)
+    '/:id',
+    authorize({
+        resource: Resource.jobOpenings,
+        action: Action.delete,
+    }),
+    validate(FindJobOpeningByIdSchema),
+    jobOpeningController.remove,
+);

@@ -1,45 +1,45 @@
-import express from 'express'
-import methodOverride from 'method-override'
-import { errorHandler } from '../middlewares/error-handler-middleware'
-import { logging } from '../middlewares/logging-middleware'
-import { logger } from '../shared/services/logging-service'
-import { apiRoutes, staticRoutes } from './routes'
-import { config } from '../config/environment'
-import { useSwagger } from './docs'
+import express from 'express';
+import methodOverride from 'method-override';
+import { errorHandler } from '../middlewares/error-handler-middleware';
+import { logging } from '../middlewares/logging-middleware';
+import { logger } from '../services/logging-service';
+import { apiRoutes, staticRoutes } from './routes';
+import { config } from '../config/environment';
+import { useSwagger } from './docs';
 
 const {
-  api: { host, port },
-} = config
+    api: { host, port },
+} = config;
 
-const app = express()
+const app = express();
 
 if (config.api.docEnabled) {
-  useSwagger(app)
+    useSwagger(app);
 }
 
-app.use(logging)
-app.use(express.json())
+app.use(logging);
+app.use(express.json());
 app.use(
-  express.urlencoded({
-    extended: true,
-  }),
-)
-app.use(methodOverride())
-app.use('/api', apiRoutes)
-app.use('/static', staticRoutes)
-app.use(errorHandler)
+    express.urlencoded({
+        extended: true,
+    }),
+);
+app.use(methodOverride());
+app.use('/api', apiRoutes);
+app.use('/static', staticRoutes);
+app.use(errorHandler);
 
 app.listen(port, host, () => {
-  logger.info(`Server is running at http://${host}:${port}`)
-})
+    logger.info(`Server is running at http://${host}:${port}`);
+});
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 app.on('error', (error: any) => {
-  logger.error(error)
-})
+    logger.error(error);
+});
 
 app.on('close', () => {
-  logger.info('Server is closing')
-})
+    logger.info('Server is closing');
+});
 
-export default app
+export default app;

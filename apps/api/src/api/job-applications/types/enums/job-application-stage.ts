@@ -1,16 +1,15 @@
 export const JobApplicationStage = Object.freeze({
-  // triagem
-  screening: 'screening',
+    // triagem
+    screening: 'screening',
 
-  // processo pós-triagem
-  postScreening: 'post_screening',
+    // processo pós-triagem
+    postScreening: 'post_screening',
 
-  // entrevista
-  interview: 'interview',
+    // entrevista
+    interview: 'interview',
 
-  // entrega de documentos, fase burocrática
-  documentDelivery: 'document_delivery',
-})
+    // entrega de documentos, fase burocrática
+    documentDelivery: 'document_delivery',
+});
 
-export type JobApplicationStage =
-  (typeof JobApplicationStage)[keyof typeof JobApplicationStage]
+export type JobApplicationStage = (typeof JobApplicationStage)[keyof typeof JobApplicationStage];

@@ -1,163 +1,106 @@
-import HTTPStatus from 'http-status'
+import HTTPStatus from 'http-status';
+import { userBusiness } from './user-business';
+import { UserController } from './types/user-controller';
 
-import { userBusiness } from './user-business'
-import { ApiError } from '../../shared/types/api-error'
-import { RequestHandler } from 'express'
-import { AuthDto } from './types/dtos/auth-dto'
-import { AuthContext } from './types/dtos/auth-context'
-import { UserDto } from './types/dtos/user-dto'
-import { PagedList } from '../../shared/types/paged-list'
-import { FindAllArgs } from '../../shared/types/find-all-args'
-import { User } from './types/entities/user'
-import { CreateUserDto } from './types/dtos/create-user-dto'
+export const userController: UserController = {
+    findById: async (req, res, next) => {
+        try {
+            const userId = req.params.id;
 
-const create: RequestHandler<void, UserDto, CreateUserDto, void> = async (
-  req,
-  res,
-  next,
-) => {
-  try {
-    const user = await userBusiness.create(req.body)
-    res.status(HTTPStatus.CREATED).json(user)
-  } catch (error) {
-    next(error)
-  }
-}
+            const userDto = await userBusiness.findById({ userId });
 
-const auth: RequestHandler<
-  void,
-  AuthDto,
-  {
-    usernameOrEmail: string
-    password: string
-  },
-  void
-> = async (req, res, next) => {
-  try {
-    const { usernameOrEmail, password } = req.body
-    const user = await userBusiness.auth({ usernameOrEmail, password })
-    res.status(HTTPStatus.OK).json(user)
-  } catch (error) {
-    next(error)
-  }
-}
+            res.status(HTTPStatus.OK).json(userDto);
+        } catch (error) {
+            next(error);
+        }
+    },
 
-const sendResetPasswordToken: RequestHandler<
-  void,
-  void,
-  { usernameOrEmail: string },
-  void,
-  AuthContext
-> = async (req, res, next) => {
-  try {
-    await userBusiness.sendResetPasswordToken({
-      usernameOrEmail: req.body.usernameOrEmail,
-    })
-    res.sendStatus(HTTPStatus.NO_CONTENT)
-  } catch (error) {
-    next(error)
-  }
-}
+    findAll: async (req, res, next) => {
+        try {
+            const { query } = req;
 
-const confirmResetPassword: RequestHandler<
-  void,
-  void,
-  { userId: string; token: string; password: string }
-> = async (req, res, next) => {
-  try {
-    const { userId, token, password } = req.body
-    await userBusiness.confirmResetPassword({ userId, token, password })
-    res.sendStatus(HTTPStatus.NO_CONTENT)
-  } catch (error) {
-    next(error)
-  }
-}
+            const usersDto = await userBusiness.findAll({ query });
 
-const updateProfilePicture: RequestHandler<
-  { id: string },
-  UserDto,
-  void,
-  void,
-  AuthContext
-> = async (req, res, next) => {
-  try {
-    const {
-      params: { id: userId },
-      file: { buffer, mimetype } = {},
-    } = req
+            res.status(HTTPStatus.OK).json(usersDto);
+        } catch (error) {
+            next(error);
+        }
+    },
 
-    if (!buffer || !mimetype) {
-      ApiError.throwBadRequest('file and mimetype are required')
-    }
+    create: async (req, res, next) => {
+        try {
+            const payload = req.body;
 
-    const user = await userBusiness.updateProfilePicture({
-      userId,
-      file: {
-        content: buffer!,
-        contentType: mimetype!,
-      },
-    })
+            const userDto = await userBusiness.create({ payload });
 
-    res.status(HTTPStatus.OK).json(user)
-  } catch (error) {
-    next(error)
-  }
-}
+            res.status(HTTPStatus.CREATED).json(userDto);
+        } catch (error) {
+            next(error);
+        }
+    },
 
-const findById: RequestHandler<
-  { id: string },
-  UserDto,
-  void,
-  void,
-  AuthContext
-> = async (req, res, next) => {
-  try {
-    const { id } = req.params
-    const user = await userBusiness.findById(id)
-    res.status(HTTPStatus.OK).json(user)
-  } catch (error) {
-    next(error)
-  }
-}
+    auth: async (req, res, next) => {
+        try {
+            const payload = req.body;
 
-const findAll: RequestHandler<
-  void,
-  PagedList<UserDto>,
-  void,
-  FindAllArgs<User>,
-  AuthContext
-> = async (req, res, next) => {
-  try {
-    const users = await userBusiness.findAll(req.query)
-    res.status(HTTPStatus.OK).json(users)
-  } catch (error) {
-    next(error)
-  }
-}
+            const authDto = await userBusiness.auth({ payload });
 
-const remove: RequestHandler<
-  { id: string },
-  void,
-  void,
-  void,
-  AuthContext
-> = async (req, res, next) => {
-  try {
-    const { id } = req.params
-    await userBusiness.remove(id)
-    res.sendStatus(HTTPStatus.NO_CONTENT)
-  } catch (error) {
-    next(error)
-  }
-}
+            res.status(HTTPStatus.OK).json(authDto);
+        } catch (error) {
+            next(error);
+        }
+    },
 
-export const userController = {
-  create,
-  auth,
-  sendResetPasswordToken,
-  updateProfilePicture,
-  findById,
-  findAll,
-  remove,
-  confirmResetPassword,
-}
+    updateProfilePicture: async (req, res, next) => {
+        try {
+            const userId = req.params.id;
+            const { buffer, mimetype } = req.file!;
+
+            const userDto = await userBusiness.updateProfilePicture({
+                userId,
+                file: { content: buffer, mimetype },
+            });
+
+            res.status(HTTPStatus.OK).json(userDto);
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    remove: async (req, res, next) => {
+        try {
+            const userId = req.params.id;
+
+            await userBusiness.remove({ userId });
+
+            res.status(HTTPStatus.NO_CONTENT).end();
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    sendChangePasswordToken: async (req, res, next) => {
+        try {
+            const { identifier } = req.body;
+
+            await userBusiness.sendChangePasswordToken({ identifier });
+
+            res.status(HTTPStatus.OK).end();
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    confirmChangePassword: async (req, res, next) => {
+        try {
+            const userId = req.params.id;
+            const payload = req.body;
+
+            await userBusiness.confirmChangePassword({ userId, payload });
+
+            res.status(HTTPStatus.OK).end();
+        } catch (error) {
+            next(error);
+        }
+    },
+};

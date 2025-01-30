@@ -1,7 +1,7 @@
 export const Proficiency = Object.freeze({
-  Basic: 'basic',
-  Intermediate: 'intermediate',
-  Advanced: 'advanced',
-})
+    Basic: 'basic',
+    Intermediate: 'intermediate',
+    Advanced: 'advanced',
+});
 
-export type Proficiency = (typeof Proficiency)[keyof typeof Proficiency]
+export type Proficiency = (typeof Proficiency)[keyof typeof Proficiency];

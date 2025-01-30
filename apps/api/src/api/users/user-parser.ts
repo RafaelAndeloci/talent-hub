@@ -1,63 +1,55 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import * as uuid from 'uuid'
+import * as uuid from 'uuid';
+import _ from 'lodash';
 
-import { CreateUserDto } from './types/dtos/create-user-dto'
-import { User } from './types/entities/user'
-import { UserModelAttr } from './user-model'
-import { UserDto } from './types/dtos/user-dto'
-import _ from 'lodash'
+import { UserParser } from './types/user-parser';
 
-export const fromDatabase = (model: UserModelAttr): User => ({
-  id: model.id,
-  username: model.username,
-  email: model.email,
-  hashedPassword: model.hashedPassword,
-  passwordReset:
-    model.passwordResetExpiration && model.passwordResetToken
-      ? {
-          expiration: model.passwordResetExpiration,
-          token: model.passwordResetToken,
-        }
-      : null,
-  emailConfirmationToken: model.emailConfirmationToken,
-  profilePictureUrl: model.profilePictureUrl,
-  role: model.role,
-})
+export const userParser: UserParser = {
+    fromDatabase: (model) => ({
+        id: model.id,
+        username: model.username,
+        email: model.email,
+        hashedPassword: model.hashedPassword,
+        passwordReset:
+            model.passwordResetExpiration && model.passwordResetToken
+                ? {
+                    expiration: model.passwordResetExpiration,
+                    token: model.passwordResetToken,
+                }
+                : null,
+        emailConfirmationToken: model.emailConfirmationToken,
+        profilePictureUrl: model.profilePictureUrl,
+        role: model.role,
+        createdAt: model.createdAt,
+        updatedAt: model.updatedAt,
+    }),
 
-export const toDatabase = (user: User): UserModelAttr => ({
-  id: user.id,
-  username: user.username,
-  email: user.email,
-  hashedPassword: user.hashedPassword,
-  role: user.role,
-  profilePictureUrl: user.profilePictureUrl,
-  passwordResetExpiration: user.passwordReset?.expiration || null,
-  passwordResetToken: user.passwordReset?.token || null,
-  emailConfirmationToken: user.emailConfirmationToken,
-})
+    toDatabase: (user) => ({
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        hashedPassword: user.hashedPassword,
+        role: user.role,
+        profilePictureUrl: user.profilePictureUrl,
+        passwordResetExpiration: user.passwordReset?.expiration || null,
+        passwordResetToken: user.passwordReset?.token || null,
+        emailConfirmationToken: user.emailConfirmationToken,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+    }),
 
-export const newInstance = ({
-  payload,
-  hashedPassword,
-  emailConfirmationToken,
-}: {
-  payload: CreateUserDto
-  hashedPassword: string
-  emailConfirmationToken: string
-}): User => ({
-  id: uuid.v4(),
-  username: payload.username,
-  email: payload.email,
-  hashedPassword,
-  passwordReset: null,
-  profilePictureUrl: null,
-  role: payload.role,
-  emailConfirmationToken,
-})
+    newInstance: ({ username, role, email, hashedPassword, emailConfirmationToken }) => ({
+        id: uuid.v4(),
+        username,
+        email,
+        hashedPassword,
+        passwordReset: null,
+        profilePictureUrl: null,
+        role,
+        emailConfirmationToken,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+    }),
 
-export const toDto = (user: User): UserDto =>
-  _.omit(user, [
-    'hashedPassword',
-    'emailConfirmationToken',
-    'passwordReset',
-  ]) as UserDto
+    toDto: ({ user }) =>
+        _.omit(user, ['hashedPassword', 'emailConfirmationToken', 'passwordReset']),
+};

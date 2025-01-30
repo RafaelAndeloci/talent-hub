@@ -6,21 +6,21 @@
  */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Router } from 'express'
-import { authorize } from '../../middlewares/authorization-middleware'
-import { Resource } from '../../shared/enums/resource'
-import { Action } from '../../shared/enums/action'
+import { Router } from 'express';
+import { authorize } from '../../middlewares/authorization-middleware';
+import { Resource } from '../../enums/resource';
+import { Action } from '../../enums/action';
 import {
-  CreateCompanySchema,
-  DeleteCompanySchema,
-  FindAllCompaniesSchema,
-  FindCompanyByIdSchema,
-  UpdateCompanySchema,
-} from './company-schema'
-import { validate } from '../../middlewares/validation-middleware'
-import { companyController } from './company-controller'
+    CreateCompanySchema,
+    DeleteCompanySchema,
+    FindAllCompaniesSchema,
+    FindCompanyByIdSchema,
+    UpdateCompanySchema,
+} from './company-schema';
+import { validate } from '../../middlewares/validation-middleware';
+import { companyController } from './company-controller';
 
-export const companyRouter = Router()
+export const companyRouter = Router();
 
 /**
  * @swagger
@@ -38,11 +38,11 @@ export const companyRouter = Router()
  *         description: List of companies
  */
 companyRouter.get(
-  '',
-  authorize({ resource: Resource.companies, action: Action.readAll }),
-  validate(FindAllCompaniesSchema),
-  companyController.findAll as any,
-)
+    '',
+    authorize({ resource: Resource.companies, action: Action.readAll }),
+    validate(FindAllCompaniesSchema),
+    companyController.findAll as any,
+);
 
 /**
  * @swagger
@@ -61,11 +61,11 @@ companyRouter.get(
  *         description: Company details
  */
 companyRouter.get(
-  '/:id',
-  authorize({ resource: Resource.companies, action: Action.readById }),
-  validate(FindCompanyByIdSchema),
-  companyController.findById as any,
-)
+    '/:id',
+    authorize({ resource: Resource.companies, action: Action.readById }),
+    validate(FindCompanyByIdSchema),
+    companyController.findById as any,
+);
 
 /**
  * @swagger
@@ -84,11 +84,11 @@ companyRouter.get(
  *         description: Company created
  */
 companyRouter.post(
-  '',
-  authorize({ resource: Resource.companies, action: Action.create }),
-  validate(CreateCompanySchema),
-  companyController.create as any,
-)
+    '',
+    authorize({ resource: Resource.companies, action: Action.create }),
+    validate(CreateCompanySchema),
+    companyController.create as any,
+);
 
 /**
  * @swagger
@@ -113,11 +113,11 @@ companyRouter.post(
  *         description: Company updated
  */
 companyRouter.put(
-  '/:id',
-  authorize({ resource: Resource.companies, action: Action.update }),
-  validate(UpdateCompanySchema),
-  companyController.update as any,
-)
+    '/:id',
+    authorize({ resource: Resource.companies, action: Action.update }),
+    validate(UpdateCompanySchema),
+    companyController.update as any,
+);
 
 /**
  * @swagger
@@ -136,8 +136,8 @@ companyRouter.put(
  *         description: Company deleted
  */
 companyRouter.delete(
-  '/:id',
-  authorize({ resource: Resource.companies, action: Action.delete }),
-  validate(DeleteCompanySchema),
-  companyController.remove as any,
-)
+    '/:id',
+    authorize({ resource: Resource.companies, action: Action.delete }),
+    validate(DeleteCompanySchema),
+    companyController.remove as any,
+);

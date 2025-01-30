@@ -6,25 +6,25 @@
  *   description: API endpoints for managing users
  */
 
-import { Router } from 'express'
-import { validate } from '../../middlewares/validation-middleware'
-import { userController } from './user-controller'
+import { Router } from 'express';
+import { validate } from '../../middlewares/validation-middleware';
+import { userController } from './user-controller';
 import {
-  AuthSchema,
-  CreateUserSchema,
-  FindAllUsersSchema,
-  FindUserByIdSchema,
-  RemoveUserSchema,
-  SendResetPasswordTokenSchema,
-  UpdateProfilePictureSchema as UpdateUserProfilePictureSchema,
-} from './user-schema'
-import { authorize } from '../../middlewares/authorization-middleware'
-import { Resource } from '../../shared/enums/resource'
-import { Action } from '../../shared/enums/action'
-import { singleFileUpload } from '../../middlewares/file-upload-middleware'
-import { authenticate } from '../../middlewares/authentication-middleware'
+    AuthSchema,
+    CreateUserSchema,
+    FindAllUsersSchema,
+    FindUserByIdSchema,
+    RemoveUserSchema,
+    SendPasswordChangeTokenSchema,
+    UpdateProfilePictureSchema as UpdateUserProfilePictureSchema,
+} from './user-schema';
+import { authorize } from '../../middlewares/authorization-middleware';
+import { Resource } from '../../enums/resource';
+import { Action } from '../../enums/action';
+import { singleFileUpload } from '../../middlewares/file-upload-middleware';
+import { authenticate } from '../../middlewares/authentication-middleware';
 
-export const userRouter = Router()
+export const userRouter = Router();
 
 /**
  * @swagger
@@ -44,7 +44,7 @@ export const userRouter = Router()
  *       400:
  *         description: Invalid input
  */
-userRouter.post('/', validate(CreateUserSchema), userController.create)
+userRouter.post('/', validate(CreateUserSchema), userController.create);
 
 /**
  * @swagger
@@ -64,7 +64,7 @@ userRouter.post('/', validate(CreateUserSchema), userController.create)
  *       401:
  *         description: Invalid credentials
  */
-userRouter.post('/auth', validate(AuthSchema), userController.auth)
+userRouter.post('/auth', validate(AuthSchema), userController.auth);
 
 /**
  * @swagger
@@ -86,12 +86,12 @@ userRouter.post('/auth', validate(AuthSchema), userController.auth)
  *         description: User not found
  */
 userRouter.get(
-  '/:id',
-  authenticate,
-  authorize({ resource: Resource.users, action: Action.readById }),
-  validate(FindUserByIdSchema),
-  userController.findById as any,
-)
+    '/:id',
+    authenticate,
+    authorize({ resource: Resource.users, action: Action.readById }),
+    validate(FindUserByIdSchema),
+    userController.findById as any,
+);
 
 /**
  * @swagger
@@ -104,12 +104,12 @@ userRouter.get(
  *         description: List of users retrieved successfully
  */
 userRouter.get(
-  '/',
-  authenticate,
-  authorize({ resource: Resource.users, action: Action.readAll }),
-  validate(FindAllUsersSchema),
-  userController.findAll as any,
-)
+    '/',
+    authenticate,
+    authorize({ resource: Resource.users, action: Action.readAll }),
+    validate(FindAllUsersSchema),
+    userController.findAll as any,
+);
 
 /**
  * @swagger
@@ -131,12 +131,12 @@ userRouter.get(
  *         description: User not found
  */
 userRouter.delete(
-  '/:id',
-  authenticate,
-  authorize({ resource: Resource.users, action: Action.delete }),
-  validate(RemoveUserSchema),
-  userController.remove as any,
-)
+    '/:id',
+    authenticate,
+    authorize({ resource: Resource.users, action: Action.delete }),
+    validate(RemoveUserSchema),
+    userController.remove as any,
+);
 
 /**
  * @swagger
@@ -155,12 +155,20 @@ userRouter.delete(
  *         description: Reset password token sent
  */
 userRouter.post(
-  '/reset-password',
-  authenticate,
-  authorize({ resource: Resource.users, action: Action.resetUserPassword }),
-  validate(SendResetPasswordTokenSchema),
-  userController.sendResetPasswordToken as any,
-)
+    '/change-password',
+    authenticate,
+    authorize({ resource: Resource.users, action: Action.sendUserChangePasswordToken }),
+    validate(SendPasswordChangeTokenSchema),
+    userController.sendChangePasswordToken as any,
+);
+
+userRouter.post(
+    '/change-password/confirm',
+    authenticate,
+    authorize({ resource: Resource.users, action: Action.confirmUserChangePassword }),
+    validate(SendPasswordChangeTokenSchema),
+    userController.confirmChangePassword as any,
+);
 
 /**
  * @swagger
@@ -186,13 +194,13 @@ userRouter.post(
  *         description: Profile picture updated successfully
  */
 userRouter.put(
-  '/:id/profile-picture',
-  authenticate,
-  authorize({
-    resource: Resource.users,
-    action: Action.updateUserProfilePicture,
-  }),
-  singleFileUpload,
-  validate(UpdateUserProfilePictureSchema),
-  userController.updateProfilePicture as any,
-)
+    '/:id/profile-picture',
+    authenticate,
+    authorize({
+        resource: Resource.users,
+        action: Action.updateUserProfilePicture,
+    }),
+    singleFileUpload,
+    validate(UpdateUserProfilePictureSchema),
+    userController.updateProfilePicture as any,
+);

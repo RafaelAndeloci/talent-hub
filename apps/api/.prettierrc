@@ -1,8 +1,11 @@
 {
-  "printWidth": 80,
-  "eslintIntegration": true,
-  "stylelintIntegration": true,
-  "tabWidth": 2,
-  "singleQuote": true,
-  "semi": false
+    "arrowParens": "always",
+    "endOfLine": "lf",
+    "bracketSameLine": true,
+    "tabWidth": 4,
+    "parser": "typescript",
+    "printWidth": 100,
+    "singleQuote": true,
+    "bracketSpacing": true,
+    "trailingComma": "all"
 }

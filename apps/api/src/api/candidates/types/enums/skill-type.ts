@@ -1,6 +1,6 @@
 export const SkillType = Object.freeze({
-  Hard: 'hard',
-  Soft: 'soft',
-})
+    Hard: 'hard',
+    Soft: 'soft',
+});
 
-export type SkillType = (typeof SkillType)[keyof typeof SkillType]
+export type SkillType = (typeof SkillType)[keyof typeof SkillType];

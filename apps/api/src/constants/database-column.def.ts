@@ -1,0 +1,65 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { DataTypes, ModelAttributeColumnOptions } from 'sequelize';
+import { Uf } from '../enums/uf';
+import { ApiError } from '../types/api-error';
+import { Address } from '../types/address';
+
+export const urlColumn: ModelAttributeColumnOptions = {
+    type: DataTypes.STRING(255),
+    allowNull: true,
+};
+
+export const primaryColumn: ModelAttributeColumnOptions = {
+    type: DataTypes.UUID,
+    primaryKey: true,
+};
+
+export const addressColumn: ModelAttributeColumnOptions = {
+    type: DataTypes.JSONB,
+    allowNull: true,
+    validate: {
+        isAddress(value: any) {
+            const address: Address = {
+                street: value.street,
+                number: value.number,
+                complement: value.complement,
+                neighborhood: value.neighborhood,
+                city: value.city,
+                uf: value.uf,
+                zipCode: value.zipCode,
+            };
+
+            if (Object.values(address).some((v) => v === undefined)) {
+                ApiError.throwBadRequest('invalid address');
+            }
+
+            if (/^\d{8}$/.test(address.zipCode) === false) {
+                ApiError.throwBadRequest('invalid zip code, must be 8 digits');
+            }
+
+            if (!Object.values(Uf).includes(address.uf)) {
+                ApiError.throwBadRequest('invalid uf');
+            }
+        },
+    },
+};
+
+export const phoneColumn: ModelAttributeColumnOptions = {
+    type: DataTypes.STRING(11),
+    allowNull: true,
+    validate: {
+        isPhone(value: any) {
+            if (/^\d{11}$/.test(value) === false) {
+                ApiError.throwBadRequest('invalid phone number, must be 10 or 11 digits');
+            }
+        },
+    },
+};
+
+export const emailColumn: ModelAttributeColumnOptions = {
+    type: DataTypes.STRING(255),
+    allowNull: true,
+    validate: {
+        isEmail: true,
+    },
+};

@@ -1,24 +1,24 @@
-import { Op } from 'sequelize'
+import { Op } from 'sequelize';
 
-import { makeRepository } from '../../shared/services/repository'
-import { User } from './types/entities/user'
-import { UserModel, UserModelAttr } from './user-model'
-import { fromDatabase, toDatabase } from './user-parser'
+import { UserModel, UserModelAttr } from './user-model';
+import { makeRepository } from '../../services/repository';
+import { userParser } from './user-parser';
+import { User } from './types/user';
 
 const makedRepository = makeRepository<User, UserModelAttr, UserModel>({
-  model: UserModel,
-  toDatabase,
-  fromDatabase,
-})
+    model: UserModel,
+    toDatabase: userParser.toDatabase,
+    fromDatabase: userParser.fromDatabase,
+});
 
 export const userRepository = {
-  ...makedRepository,
-  findByEmailOrUserName(usernameOrEmail: string) {
-    return makedRepository.findUnique({
-      [Op.or]: {
-        email: usernameOrEmail,
-        username: usernameOrEmail,
-      },
-    })
-  },
-}
+    ...makedRepository,
+    findByEmailOrUserName(usernameOrEmail: string) {
+        return makedRepository.findUnique({
+            [Op.or]: {
+                email: usernameOrEmail,
+                username: usernameOrEmail,
+            },
+        });
+    },
+};
