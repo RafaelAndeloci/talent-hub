@@ -1,8 +1,8 @@
 import HTTPStatus from 'http-status';
 
 import { candidateBusiness } from './candidate-business';
-import { ApiError } from '../../types/api-error';
 import { CandidateController } from './types/candidate-controller';
+import { ApiError } from '../../types/api-error';
 
 export const candidateController: CandidateController = {
     create: async (req, res, next) => {

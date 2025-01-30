@@ -1,8 +1,8 @@
 import * as uuid from 'uuid';
 import moment from 'moment';
 
-import { YearMonth } from '../../types/year-month';
 import { CandidateParser } from './types/candidate-parse';
+import { YearMonth } from '../../types/year-month';
 
 export const candidateParser: CandidateParser = {
     toDatabase: (candidate) => ({

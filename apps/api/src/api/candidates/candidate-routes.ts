@@ -11,9 +11,9 @@ import {
 import { validate } from '../../middlewares/validation-middleware';
 import { candidateController } from './candidate-controller';
 import { authorize } from '../../middlewares/authorization-middleware';
+import { singleFileUpload } from '../../middlewares/file-upload-middleware';
 import { Resource } from '../../enums/resource';
 import { Action } from '../../enums/action';
-import { singleFileUpload } from '../../middlewares/file-upload-middleware';
 
 /**
  * @swagger

@@ -2,7 +2,6 @@ import { DataTypes, Model } from 'sequelize';
 import _ from 'lodash';
 
 import { database } from '../../../config/database';
-import { primaryColumn, urlColumn, addressColumn } from '../../../constants/database-column.def';
 import { EmploymentType } from '../types/enums/employment-type';
 import { WorkplaceType } from '../types/enums/workplace-type';
 import { PositionLevel } from '../types/enums/position-level';
@@ -17,6 +16,7 @@ import {
 } from '.';
 import { UserModel } from '../../users/user-model';
 import { CandidateModelAttr } from './types/candidate-model-attr';
+import { addressColumn, primaryColumn, urlColumn } from '../../../constants/database-column.def';
 
 type CandidateModelAttrInternal = Omit<
     CandidateModelAttr,

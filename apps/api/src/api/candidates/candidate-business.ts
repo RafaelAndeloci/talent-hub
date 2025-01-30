@@ -1,14 +1,14 @@
 import { userRepository } from '../users/user-repository';
-import { ApiError } from '../../types/api-error';
 import { candidateRepository } from './candidate-repository';
 import { userBusiness } from '../users/user-business';
-import { FindAllArgs } from '../../types/find-all-args';
 import { Candidate } from './types/candidate';
-import { fileStorageService } from '../../services/file-storage-service';
 import { Role } from '../users/types/enums/role';
 import { CandidateBusiness } from './types/candidate-business';
 import { candidateParser } from './candidate-parser';
 import _ from 'lodash';
+import { fileStorageService } from '../../services/file-storage-service';
+import { ApiError } from '../../types/api-error';
+import { FindAllArgs } from '../../types/find-all-args';
 
 export const candidateBusiness: CandidateBusiness = {
     create: async ({ userId, payload }) => {
@@ -18,7 +18,7 @@ export const candidateBusiness: CandidateBusiness = {
             return null!;
         }
 
-        if (!userBusiness.canCreateCandidate(user)) {
+        if (!userBusiness.canCreateCandidate({ user })) {
             ApiError.throwForbidden('User cannot create candidate');
             return null!;
         }

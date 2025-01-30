@@ -35,6 +35,8 @@ export const initDatabase = async ({
             email: config.sysAdmin.email,
             role: Role.sysAdmin,
             hashedPassword: await hasher.hash(config.sysAdmin.password),
+            updatedAt: new Date(),
+            createdAt: new Date(),
         });
 
         logger.info('database up!');

@@ -1,17 +1,17 @@
 import { Op } from 'sequelize';
 import moment from 'moment';
 
-import { ApiError } from '../../types/api-error';
 import { userRepository } from './user-repository';
-import { hasher } from '../../services/hasher';
-import { jwtService } from '../../services/jwt-service';
-import { fileStorageService } from '../../services/file-storage-service';
 import { config } from '../../config/environment';
-import { AppEvent } from '../../enums/app-event';
-import { jobQueueService } from '../../services/job-service';
 import { Role } from './types/enums/role';
 import { UserBusiness } from './types/user-business';
 import { userParser } from './user-parser';
+import { hasher } from '../../services/hasher';
+import { AppEvent } from '../../enums/app-event';
+import { fileStorageService } from '../../services/file-storage-service';
+import { jobQueueService } from '../../services/job-service';
+import { jwtService } from '../../services/jwt-service';
+import { ApiError } from '../../types/api-error';
 
 export const userBusiness: UserBusiness = {
     create: async ({ payload }) => {

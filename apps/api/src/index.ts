@@ -1,6 +1,6 @@
 import { logger } from './services/logging-service';
-import { initDatabase } from './config/database';
 import { config } from './config/environment';
+import { initDatabase } from './config/database/init';
 
 const runApplication = async() => {
     try {

@@ -2,26 +2,26 @@ import moment from 'moment';
 import { z } from 'zod';
 import _ from 'lodash';
 
-import { AddressSchema } from '../../schemas/address-schema';
-import { Language } from '../../enums/language';
 import { LanguageProficiency } from './types/enums/language-proficiency';
 import { AchievementType } from './types/enums/achievement-type';
-import { YearMonthSchema } from '../../schemas/year-month-schema';
 import { EmploymentType } from './types/enums/employment-type';
 import { WorkplaceType } from './types/enums/workplace-type';
 import { PositionLevel } from './types/enums/position-level';
-import { PeriodSchema } from '../../schemas/period-schema';
 import { AcademicDegreeType } from './types/enums/academic-degree-type';
 import { AcademicStatus } from './types/enums/academic-status';
 import { ContractType } from './types/enums/contract-type';
 import { Benefit } from './types/enums/benefit';
-import { ContactSchema } from '../../schemas/contact-schema';
-import { RelatedWebsiteSchema } from '../../schemas/related-websites-schema';
-import { buildFileSchema, buildQuerySchema } from '../../utils/schemas';
 import { Candidate } from './types/candidate';
 import { config } from '../../config/environment';
+import { Language } from '../../enums/language';
+import { AddressSchema } from '../../schemas/address-schema';
+import { ContactSchema } from '../../schemas/contact-schema';
 import { ParamsSchema } from '../../schemas/params-schema';
+import { PeriodSchema } from '../../schemas/period-schema';
+import { RelatedWebsiteSchema } from '../../schemas/related-websites-schema';
+import { YearMonthSchema } from '../../schemas/year-month-schema';
 import { validatePeriodsOverlap } from '../../utils/period-utils';
+import { buildQuerySchema, buildFileSchema } from '../../utils/schemas';
 
 const { fileStorage } = config;
 

@@ -1,5 +1,4 @@
 import { faker } from '@faker-js/faker';
-import { generate as genCNPJ } from 'cnpj';
 import moment from 'moment';
 
 import { PositionLevel } from '../../api/candidates/types/enums/position-level';
@@ -13,11 +12,11 @@ import { AcademicDegreeType } from '../../api/candidates/types/enums/academic-de
 import { Uf } from '../../enums/uf';
 import { Language } from '../../enums/language';
 import { LanguageProficiency } from '../../api/candidates/types/enums/language-proficiency';
-import { Company } from '../../api/companies/types/entities/company';
-import { User } from '../../api/users/types/entities/user';
 import { Role } from '../../api/users/types/enums/role';
 import { hasher } from '../../services/hasher';
 import { AchievementType } from '../../api/candidates/types/enums/achievement-type';
+import { Company } from '../../api/companies/types/company';
+import { User } from '../../api/users/types/user';
 
 const generateYearMonth = () => ({
     year: faker.number.int({ min: 2000, max: 2023 }) || 2023,
@@ -150,7 +149,7 @@ export const generateCompanies = (count: number): Company[] =>
         id: faker.string.uuid(),
         tradeName: faker.company.name(),
         legalName: faker.company.name(),
-        cnpj: genCNPJ().replace(/\D/g, ''),
+        cnpj: `${faker.number.int({ min: 5, max: 99 })}`.padEnd(14, '0'),
         employeesQuantity: faker.number.int({ min: 1, max: 1000 }),
         foundationYear: faker.number.int({ min: 1900, max: 2023 }),
         social: {
@@ -185,9 +184,9 @@ export const generateCompanies = (count: number): Company[] =>
         industry: faker.lorem.word(),
     }));
 
-export const generateUsers = async(count: number): Promise<User[]> =>
+export const generateUsers = async (count: number): Promise<User[]> =>
     await Promise.all(
-        Array.from({ length: count }).map(async() => ({
+        Array.from({ length: count }).map(async () => ({
             id: faker.string.uuid(),
             username: faker.internet.username(),
             email: faker.internet.email(),
@@ -196,5 +195,7 @@ export const generateUsers = async(count: number): Promise<User[]> =>
             passwordReset: null,
             emailConfirmationToken: null,
             profilePictureUrl: faker.image.avatar(),
+            createdAt: new Date(),
+            updatedAt: new Date(),
         })),
     );

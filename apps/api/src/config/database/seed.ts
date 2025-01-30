@@ -3,9 +3,9 @@ import { hasher } from '../../services/hasher';
 import { config } from '../environment';
 import { generateUsers, generateCandidates, generateCompanies } from './fake-data';
 
-export const seed = async() => {
-    const [{ UserModel }, { userRepository }, { candidateRepository }, { companyRepository }]
-        = await Promise.all([
+export const seed = async () => {
+    const [{ UserModel }, { userRepository }, { candidateRepository }, { companyRepository }] =
+        await Promise.all([
             import('../../api/users/user-model'),
             import('../../api/users/user-repository'),
             import('../../api/candidates/candidate-repository'),
@@ -18,14 +18,16 @@ export const seed = async() => {
         email: config.sysAdmin.email,
         role: Role.sysAdmin,
         hashedPassword: await hasher.hash(config.sysAdmin.password),
+        createdAt: new Date(),
+        updatedAt: new Date(),
     });
 
     const users = await generateUsers(100);
     await userRepository.bulkCreate(users);
 
     const candidates = users
-        .filter(u => u.role === Role.candidate || Role.sysAdmin)
-        .map(u => generateCandidates(1, u.id)[0]);
+        .filter((u) => u.role === Role.candidate || Role.sysAdmin)
+        .map((u) => generateCandidates(1, u.id)[0]);
 
     await candidateRepository.bulkCreate(candidates);
 

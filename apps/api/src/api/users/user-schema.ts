@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { Role } from './types/enums/role';
-import { buildQuerySchema } from '../../utils/schemas';
 import { config } from '../../config/environment';
 import { ParamsSchema } from '../../schemas/params-schema';
+import { buildQuerySchema } from '../../utils/schemas';
 import { User } from './types/user';
 
 const passwordRule = z.string().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,20}$/);

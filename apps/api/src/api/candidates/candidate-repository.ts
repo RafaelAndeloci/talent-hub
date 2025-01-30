@@ -4,7 +4,6 @@ import * as uuid from 'uuid';
 
 import { makeRepository } from '../../services/repository';
 import { Candidate } from './types/candidate';
-import { fromDatabase, toDatabase } from './candidate-parser';
 import { models } from '../../config/database/models';
 import { CandidateProfessionalExperienceModelAttr } from './models/types/candidate-professional-experience-model-attr';
 import { CandidateModel } from './models';
@@ -13,11 +12,12 @@ import { CandidateEducationalExperienceModelAttr } from './models/types/candidat
 import { CandidateLanguageModelAttr } from './models/types/candidate-language-model-attr';
 import { CandidateModelAttr } from './models/types/candidate-model-attr';
 import { CandidateReferenceModelAttr } from './models/types/candidate-reference-model-attr';
+import { candidateParser } from './candidate-parser';
 
 const baseRepo = makeRepository<Candidate, CandidateModelAttr, CandidateModel>({
     model: CandidateModel,
-    fromDatabase,
-    toDatabase,
+    fromDatabase: candidateParser.fromDatabase,
+    toDatabase: candidateParser.toDatabase,
 });
 
 const bulkCreateCandidateComposites = async(
@@ -48,7 +48,7 @@ const bulkCreateCandidateComposites = async(
 export const candidateRepository = {
     ...baseRepo,
     create: async(candidate: Candidate): Promise<void> => {
-        const attr = toDatabase(candidate);
+        const attr = candidateParser.toDatabase(candidate);
 
         const transaction = await models.database.transaction({
             autocommit: false,
@@ -82,7 +82,7 @@ export const candidateRepository = {
         });
 
         try {
-            const attrs = candidates.map(toDatabase);
+            const attrs = candidates.map(candidateParser.toDatabase);
 
             await CandidateModel.bulkCreate(attrs, {
                 transaction,
@@ -151,7 +151,7 @@ export const candidateRepository = {
     },
 
     update: async(candidate: Candidate): Promise<void> => {
-        const attr = toDatabase(candidate);
+        const attr = candidateParser.toDatabase(candidate);
         const {
             professionalExperiences,
             educationalExperiences,

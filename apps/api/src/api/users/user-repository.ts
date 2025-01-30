@@ -1,9 +1,9 @@
 import { Op } from 'sequelize';
 
 import { UserModel, UserModelAttr } from './user-model';
-import { makeRepository } from '../../services/repository';
 import { userParser } from './user-parser';
 import { User } from './types/user';
+import { makeRepository } from '../../services/repository';
 
 const makedRepository = makeRepository<User, UserModelAttr, UserModel>({
     model: UserModel,
