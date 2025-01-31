@@ -1,4 +1,4 @@
-import globals from 'globals';
+import pkg from 'globals';
 import pluginJs from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import eslintConfigPrettier from 'eslint-config-prettier';
@@ -9,8 +9,10 @@ export default [
     {
         languageOptions: {
             globals: {
-                ...globals.browser,
-                ...globals.node,
+                ...pkg.browser,
+                ...pkg.es2020,
+                ...pkg.node,
+                ...pkg.worker,
             },
         },
     },
@@ -23,7 +25,6 @@ export default [
             'no-debugger': 'error',
             'no-extra-semi': 'error',
             'no-unsafe-finally': 'error',
-
             curly: ['error', 'all'],
             eqeqeq: ['error', 'always'],
             'no-eval': 'error',
@@ -35,11 +36,9 @@ export default [
             'no-useless-concat': 'error',
             'no-useless-return': 'error',
             yoda: 'error',
-
             'no-undef': 'error',
             'no-unused-vars': ['error', { args: 'none', ignoreRestSiblings: true }],
             'no-use-before-define': ['error', { functions: false, classes: true, variables: true }],
-
             'array-bracket-spacing': ['error', 'never'],
             'block-spacing': ['error', 'always'],
             'brace-style': ['error', '1tbs', { allowSingleLine: true }],
@@ -50,7 +49,6 @@ export default [
             'computed-property-spacing': ['error', 'never'],
             'eol-last': ['error', 'always'],
             'func-call-spacing': ['error', 'never'],
-            indent: ['error', 4, { SwitchCase: 1 }],
             'key-spacing': ['error', { beforeColon: false, afterColon: true }],
             'keyword-spacing': ['error', { before: true, after: true }],
             'linebreak-style': ['error', 'unix'],
@@ -65,14 +63,12 @@ export default [
             'one-var': ['error', 'never'],
             'padded-blocks': ['error', 'never'],
             'quote-props': ['error', 'as-needed'],
-            quotes: ['error', 'single', { avoidEscape: true, allowTemplateLiterals: true }],
             semi: ['error', 'always'],
             'semi-spacing': ['error', { before: false, after: true }],
             'space-before-blocks': ['error', 'always'],
             'space-in-parens': ['error', 'never'],
             'space-infix-ops': 'error',
             'spaced-comment': ['error', 'always', { exceptions: ['-'] }],
-
             'arrow-body-style': ['error', 'as-needed'],
             'arrow-spacing': ['error', { before: true, after: true }],
             'no-duplicate-imports': 'error',
