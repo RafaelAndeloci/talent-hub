@@ -42,7 +42,7 @@ CandidateModel.init(
             unique: true,
         },
         birthDate: {
-            type: DataTypes.DATE,
+            type: DataTypes.DATEONLY,
             allowNull: false,
         },
         cvUrl: urlColumn,

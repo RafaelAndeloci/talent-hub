@@ -54,7 +54,7 @@ export const CreateUserSchema = z.object({
  */
 export const AuthSchema = z.object({
     body: z.object({
-        usernameOrEmail: z.string(),
+        identifier: z.string(),
         password: z.string().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,20}$/),
     }),
 });
