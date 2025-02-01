@@ -1,4 +1,3 @@
-/* eslint-disable arrow-body-style */
 import { Router } from 'express';
 import klawSync from 'klaw-sync';
 import path from 'path';

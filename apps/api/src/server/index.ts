@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import express from 'express';
 import methodOverride from 'method-override';
 import { logger } from '../services/logging-service';
