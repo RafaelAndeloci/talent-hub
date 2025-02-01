@@ -146,7 +146,7 @@ export const DeleteCompanySchema = ParamsSchema;
  */
 export const FindAllCompaniesSchema = z.object({
     query: buildQuerySchema<Company & { hasOpenPositions: boolean }>({
-        searchs: [
+        searches: [
             { field: 'id', operators: ['eq'] },
             {
                 field: 'tradeName',

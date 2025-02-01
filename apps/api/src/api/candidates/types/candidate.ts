@@ -13,6 +13,8 @@ import { Language } from '../../../enums/language';
 import { LanguageProficiency } from './enums/language-proficiency';
 import { Contact } from '../../../types/contact';
 import { Address } from '../../../types/address';
+import { AchievementType } from './enums/achievement-type';
+import { Location } from '../../../types/location';
 
 export interface CandidateReference {
     name: string;
@@ -32,8 +34,7 @@ export interface CandidateProfessionalExperience {
     positionLevel: PositionLevel;
     isCurrent: boolean;
     period: Period;
-    // TODO: Define Location type
-    location: object | null;
+    location: Location;
     relatedSkills: string[];
 }
 
@@ -47,10 +48,11 @@ export interface CandidateLanguage {
 
 export interface CandidateAchievement {
     name: string;
-    type: string;
+    type: AchievementType;
     issuer: string;
-    issueDate: YearMonth;
-    expirationDate: YearMonth | null;
+    workload: number | null;
+    issueDate: Date;
+    expirationDate: Date | null
     credentialId: string | null;
     credentialUrl: string | null;
     relatedSkills: string[];

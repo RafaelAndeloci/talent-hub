@@ -1,5 +1,4 @@
-import { ZodError } from 'zod';
-
+import HTTPStatus from 'http-status';
 export class ApiError extends Error {
     public readonly expose: boolean = true;
     public code: number;
@@ -14,96 +13,47 @@ export class ApiError extends Error {
         this.expose = expose;
     }
 
-    /**
-     * @param message message for bad request
-     * @throws {ApiError}
-     */
     static throwBadRequest(message: string) {
-        throw new ApiError(400, [message], 'Bad Request');
+        throw new ApiError(HTTPStatus.BAD_REQUEST, [message], HTTPStatus['400_NAME']);
     }
 
-    /**
-     * @param message message for unauthorized
-     * @throws {ApiError}
-     */
     static throwUnauthorized(message: string) {
-        throw new ApiError(401, [message], 'Unauthorized');
+        throw new ApiError(HTTPStatus.UNAUTHORIZED, [message], HTTPStatus['401_NAME']);
     }
 
-    /**
-     * @param message message for forbidden
-     * @throws {ApiError}
-     */
     static throwForbidden(message: string) {
-        throw new ApiError(403, [message], 'Forbidden');
+        throw new ApiError(HTTPStatus.FORBIDDEN, [message], HTTPStatus['403_NAME']);
     }
 
-    /**
-     * @param message message for resource not found
-     * @throws {ApiError}
-     */
     static throwNotFound(message: string) {
-        throw new ApiError(404, [message], 'Not Found');
+        throw new ApiError(HTTPStatus.NOT_FOUND, [message], HTTPStatus['404_NAME']);
     }
 
-    /**
-     * @param message cause of conflict
-     * @throws {ApiError}
-     */
     static throwConflict(message: string) {
-        throw new ApiError(409, [message], 'Conflict');
+        throw new ApiError(HTTPStatus.CONFLICT, [message], HTTPStatus['409_NAME']);
     }
 
-    /**
-     * @param message cause of unprocessable entity
-     * @throws {ApiError}
-     */
     static throwUnprocessableEntity(message: string) {
-        throw new ApiError(422, [message], 'Unprocessable Entity');
+        throw new ApiError(HTTPStatus.UNPROCESSABLE_ENTITY, [message], HTTPStatus['422_NAME']);
     }
 
-    /**
-     * @param message
-     * @throws {ApiError}
-     */
     static throwInternalServerError(message: string) {
-        throw new ApiError(500, [message], 'Internal Server Error');
+        throw new ApiError(HTTPStatus.INTERNAL_SERVER_ERROR, [message], HTTPStatus['500_NAME']);
     }
 
-    /**
-     * @param error
-     * @returns {ApiError}
-     */
     static fromError(error: Error): ApiError {
-        return new ApiError(500, [error.message], 'Internal Server Error');
-    }
-
-    /**
-     * @param error
-     * @returns {ApiError}
-     */
-    static fromZodError(error: ZodError): ApiError {
         return new ApiError(
-            400,
-            error.errors.map(error => error.message),
-            'Bad Request',
+            HTTPStatus.INTERNAL_SERVER_ERROR,
+            [error.message],
+            HTTPStatus['500_NAME'],
         );
     }
 
-    /**
-     * throws a ApiError with expose=false flag
-     * @param message error message
-     * @throws {ApiError}
-     */
     static throwWithoutExpose(message: string) {
         const error = new ApiError(500, [message], 'Internal Server Error', false);
         throw error;
     }
 
-    /**
-     *
-     * @returns { { code: number; status: string; errors: string[]}}
-     */
     public toJson(): { code: number; status: string; errors: string[] } {
         return {
             code: this.code,

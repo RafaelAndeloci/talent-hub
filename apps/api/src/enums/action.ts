@@ -8,6 +8,7 @@ export const Action = Object.freeze({
     updateCandidateBanner: 'update_candidate_banner',
     updateUserProfilePicture: 'update_user_profile_picture',
     sendUserChangePasswordToken: 'send_user_change_password_token',
+    userAuthentication: 'user_authentication',
     confirmUserChangePassword: 'confirm_user_change_password',
 });
 

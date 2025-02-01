@@ -1,73 +1,104 @@
-import { Router, Request, Response, NextFunction } from 'express';
-import { z } from 'zod';
-import { candidatesRouter as candidateRouter } from '../api/candidates/candidate-routes';
-import { logger } from '../services/logging-service';
+/* eslint-disable arrow-body-style */
+import { Router } from 'express';
+import klawSync from 'klaw-sync';
+import path from 'path';
+import { AnyRequestHandler, ApiResource, Route } from '../types/api-resource';
+import { authorize } from '../middlewares/authorization-middleware';
 import { validate } from '../middlewares/validation-middleware';
-import { fileStorageService } from '../services/file-storage-service';
-import { userRouter } from '../api/users/user-router';
-import { authenticate } from '../middlewares/authentication-middleware';
-import { companyRouter } from '../api/companies/company-routes';
-import { jobOpeningRouter } from '../api/job-openings/job-opening-routes';
-import { jobApplicationRouter } from '../api/job-applications/job-application-routes';
+import { Resource } from '../enums/resource';
+import { logger } from '../services/logging-service';
+import { config } from '../config/environment';
 
-export const apiRoutes = Router();
+const buildActionPipe = (
+    resource: Resource,
+    { auth, action, middlewares, schema, handler }: Route,
+) => {
+    const middlewarePipe: AnyRequestHandler[] = [];
 
-apiRoutes.use('/candidates', authenticate, candidateRouter);
-apiRoutes.use('/companies', authenticate, companyRouter);
-apiRoutes.use('/job-openings', authenticate, jobOpeningRouter);
-apiRoutes.use('/job-applications', authenticate, jobApplicationRouter);
-apiRoutes.use('/users', userRouter);
+    if (auth === true) {
+        middlewarePipe.push(authorize({ resource, action }));
+    }
 
-export const staticRoutes = Router();
+    if (middlewares) {
+        middlewarePipe.push(...middlewares);
+    }
 
-const staticFileHandler: (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    req: Request<{ fileKey: string }, any, any, any>,
-    res: Response,
-    next: NextFunction,
-) => Promise<void> = async(req, res, next) => {
-    try {
-        const { fileKey } = req.params;
-        const { stream, contentType } = await fileStorageService.getFileStream({
-            key: fileKey,
-        });
+    if (schema) {
+        middlewarePipe.push(validate(schema));
+    }
 
-        if (!stream) {
-            res.status(404).send('File not found');
-            return;
+    middlewarePipe.push(async (req, res, next) => {
+        try {
+            const timer = logger.startTimer();
+            logger.info(`Resource[${resource}]: ${action} stated ${timer.start}`);
+            await handler(req, res, next);
+            timer.done({ message: `Resource[${resource}]: ${action} completed in ` });
+        } catch (e) {
+            logger.error(`Resource[${resource}]: ${action} failed`, e);
+            next(e);
         }
+    });
 
-        res.setHeader('Content-Type', contentType);
-        stream.pipe(res);
+    return middlewarePipe;
+};
 
-        stream.on('error', error => {
-            logger.error(error);
-            res.status(500).send('Internal server error');
-        });
+const findApiResources = async () => {
+    const promises = klawSync(path.resolve(__dirname, '../api'), {
+        traverseAll: true,
+        nodir: true,
+        filter: ({ path }) => path.indexOf('-routes') > 0,
+    }).map(async ({ path }) => {
+        const module = await import(path);
+        return Object.values(module)[0] as ApiResource;
+    });
 
-        stream.on('end', () => {
-            res.end();
-        });
+    return await Promise.all(promises);
+};
 
-        const destroyEvents = ['close', 'error', 'end'];
-        destroyEvents.forEach(event => {
-            res.on(event, () => {
-                stream.destroy();
-            });
-        });
-    } catch (err) {
-        next(err);
+const logEndpoints = (apiResources: ApiResource[]) => {
+    for (const { resource, routes } of apiResources) {
+        logger.info(`Resource: ${resource}`);
+
+        const rows = routes.map(({ method, path, auth }) => ({
+            method: method.toUpperCase().padEnd(7),
+            path: `${config.api.basePath}/${resource}${path}`,
+            auth: auth ? 'on' : 'off',
+        }));
+
+        // eslint-disable-next-line no-console
+        console.table(rows);
     }
 };
 
-staticRoutes.get(
-    '/:fileKey',
-    validate(
-        z.object({
-            params: z.object({
-                fileKey: z.string(),
-            }),
-        }),
-    ),
-    staticFileHandler,
-);
+export const buildApiRouter = async () => {
+    try {
+        const apiResources = await findApiResources();
+
+        const routers = apiResources.map(({ resource, routes }) => {
+            const endpointsRouter = Router();
+
+            routes.forEach((route) => {
+                const { path, method } = route;
+
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (endpointsRouter as any)[method](path, buildActionPipe(resource, route));
+            });
+
+            const resourceRouter = Router();
+            resourceRouter.use(`/${resource}`, endpointsRouter);
+
+            return resourceRouter;
+        });
+
+        const apiRouter = Router();
+
+        apiRouter.use(config.api.basePath, routers);
+
+        logEndpoints(apiResources);
+
+        return apiRouter;
+    } catch (error) {
+        logger.error('Routes registration error:', error);
+        process.exit(1);
+    }
+};

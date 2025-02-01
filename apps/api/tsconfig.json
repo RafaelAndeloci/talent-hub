@@ -17,7 +17,6 @@
         "noFallthroughCasesInSwitch": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "types": ["jest", "node"]
     },
     "include": ["src/**/*"],
     "exclude": ["node_modules", "dist"]

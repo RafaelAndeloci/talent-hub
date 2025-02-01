@@ -1,5 +1,3 @@
-import { Router } from 'express';
-
 import {
     CreateCandidateSchema,
     DeleteCandidateSchema,
@@ -8,225 +6,72 @@ import {
     UpdateCandidateCvSchema,
     UpdateCandidateSchema,
 } from './candidate-schema';
-import { validate } from '../../middlewares/validation-middleware';
 import { candidateController } from './candidate-controller';
-import { authorize } from '../../middlewares/authorization-middleware';
 import { singleFileUpload } from '../../middlewares/file-upload-middleware';
 import { Resource } from '../../enums/resource';
 import { Action } from '../../enums/action';
+import { ApiResource } from '../../types/api-resource';
 
-/**
- * @swagger
- * tags:
- *   name: Candidates
- *   description: API endpoints for managing candidates
- */
-export const candidatesRouter = Router();
-
-/**
- * @swagger
- * /api/candidates:
- *   post:
- *     summary: Create a new candidate
- *     tags: [Candidates]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/CreateCandidateSchema'
- *     responses:
- *       201:
- *         description: Candidate created successfully
- *       400:
- *         description: Invalid input
- */
-candidatesRouter.post(
-    '/',
-    authorize({ resource: Resource.candidates, action: Action.create }),
-    validate(CreateCandidateSchema),
-    candidateController.create,
-);
-
-/**
- * @swagger
- * /api/candidates/{id}:
- *   put:
- *     summary: Update a candidate
- *     tags: [Candidates]
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *         required: true
- *         description: Candidate ID
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/UpdateCandidateSchema'
- *     responses:
- *       200:
- *         description: Candidate updated successfully
- *       400:
- *         description: Invalid input
- *       404:
- *         description: Candidate not found
- */
-candidatesRouter.put(
-    '/:id',
-    authorize({ resource: Resource.candidates, action: Action.update }),
-    validate(UpdateCandidateSchema),
-    candidateController.update,
-);
-
-/**
- * @swagger
- * /api/candidates/{id}:
- *   delete:
- *     summary: Remove a candidate
- *     tags: [Candidates]
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *         required: true
- *         description: Candidate ID
- *     responses:
- *       200:
- *         description: Candidate removed successfully
- *       404:
- *         description: Candidate not found
- */
-candidatesRouter.delete(
-    '/:id',
-    authorize({ resource: Resource.candidates, action: Action.delete }),
-    validate(DeleteCandidateSchema),
-    candidateController.remove,
-);
-
-/**
- * @swagger
- * /api/candidates/{id}:
- *   get:
- *     summary: Get a candidate by ID
- *     tags: [Candidates]
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *         required: true
- *         description: Candidate ID
- *     responses:
- *       200:
- *         description: Candidate retrieved successfully
- *       404:
- *         description: Candidate not found
- */
-candidatesRouter.get(
-    '/:id',
-    authorize({ resource: Resource.candidates, action: Action.readById }),
-    validate(FindCandidateByIdSchema),
-    candidateController.findById,
-);
-
-/**
- * @swagger
- * /api/candidates:
- *   get:
- *     summary: Get all candidates
- *     tags: [Candidates]
- *     responses:
- *       200:
- *         description: List of candidates retrieved successfully
- */
-candidatesRouter.get(
-    '/',
-    authorize({ resource: Resource.candidates, action: Action.readAll }),
-    validate(FindAllCandidatesSchema),
-    candidateController.findAll,
-);
-
-/**
- * @swagger
- * /api/candidates/{id}/cv:
- *   put:
- *     summary: Update candidate CV
- *     tags: [Candidates]
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *         required: true
- *         description: Candidate ID
- *     requestBody:
- *       required: true
- *       content:
- *         multipart/form-data:
- *           schema:
- *             type: object
- *             properties:
- *               file:
- *                 type: string
- *                 format: binary
- *     responses:
- *       200:
- *         description: Candidate CV updated successfully
- *       400:
- *         description: Invalid input
- */
-candidatesRouter.put(
-    '/:id/cv',
-    authorize({
-        resource: Resource.candidates,
-        action: Action.updateCandidateCv,
-    }),
-    singleFileUpload,
-    validate(UpdateCandidateCvSchema),
-    candidateController.updateCv,
-);
-
-/**
- * @swagger
- * /api/candidates/{id}/banner:
- *   put:
- *     summary: Update candidate banner
- *     tags: [Candidates]
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *         required: true
- *         description: Candidate ID
- *     requestBody:
- *       required: true
- *       content:
- *         multipart/form-data:
- *           schema:
- *             type: object
- *             properties:
- *               file:
- *                 type: string
- *                 format: binary
- *     responses:
- *       200:
- *         description: Candidate banner updated successfully
- *       400:
- *         description: Invalid input
- */
-candidatesRouter.put(
-    '/:id/banner',
-    authorize({
-        resource: Resource.candidates,
-        action: Action.updateCandidateBanner,
-    }),
-    singleFileUpload,
-    validate(UpdateCandidateSchema),
-    candidateController.updateBanner,
-);
+export const candidateRoutes: ApiResource = {
+    resource: Resource.candidates,
+    routes: [
+        {
+            method: 'get',
+            path: '/',
+            auth: true,
+            action: Action.readAll,
+            schema: FindAllCandidatesSchema,
+            handler: candidateController.findAll,
+        },
+        {
+            method: 'get',
+            path: '/:id',
+            auth: true,
+            action: Action.readById,
+            schema: FindCandidateByIdSchema,
+            handler: candidateController.findById,
+        },
+        {
+            method: 'post',
+            path: '/',
+            auth: true,
+            action: Action.create,
+            schema: CreateCandidateSchema,
+            handler: candidateController.create,
+        },
+        {
+            method: 'put',
+            path: '/:id',
+            auth: true,
+            action: Action.update,
+            schema: UpdateCandidateSchema,
+            handler: candidateController.update,
+        },
+        {
+            method: 'delete',
+            path: '/:id',
+            auth: true,
+            action: Action.delete,
+            schema: DeleteCandidateSchema,
+            handler: candidateController.remove,
+        },
+        {
+            method: 'patch',
+            path: '/:id/cv',
+            auth: true,
+            action: Action.updateCandidateCv,
+            schema: UpdateCandidateCvSchema,
+            handler: candidateController.updateCv,
+            middlewares: [singleFileUpload],
+        },
+        {
+            method: 'patch',
+            path: '/:id/banner',
+            auth: true,
+            action: Action.updateCandidateBanner,
+            schema: UpdateCandidateSchema,
+            handler: candidateController.updateBanner,
+            middlewares: [singleFileUpload],
+        },
+    ],
+};

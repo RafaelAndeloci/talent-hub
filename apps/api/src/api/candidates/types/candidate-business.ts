@@ -13,7 +13,7 @@ export type CandidateBusiness = {
 
     findById: (id: string) => Promise<Candidate>;
 
-    findAll: (query: FindAllCandidatesQuery) => Promise<PagedList<Candidate>>;
+    findAll: (args: { query: FindAllCandidatesQuery }) => Promise<PagedList<Candidate>>;
 
     remove: (id: string) => Promise<void>;
 

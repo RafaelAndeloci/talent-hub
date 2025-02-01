@@ -7,28 +7,6 @@ import { User } from './types/user';
 
 const passwordRule = z.string().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,20}$/);
 
-/**
- * @swagger
- * components:
- *  schemas:
- *   CreateUserSchema:
- *    type: object
- *    properties:
- *     email:
- *      type: string
- *      format: email
- *      example: pedro.lima47@fatec.sp.gov.br
- *     password:
- *      type: string
- *      description: Password with at least one uppercase letter, one lowercase letter, and one number, between 8-20 characters.
- *      example: as@a#1234Abbcs
- *     username:
- *      type: string
- *      description: Username between 3 and 20 characters.
- *      example: pedro.lima
- *     role:
- *      $ref: '#/components/schemas/RoleSchema'
- */
 export const CreateUserSchema = z.object({
     body: z.object({
         email: z.string().email(),
@@ -38,20 +16,6 @@ export const CreateUserSchema = z.object({
     }),
 });
 
-/**
- * @swagger
- * components:
- *  schemas:
- *   AuthSchema:
- *    type: object
- *    properties:
- *     usernameOrEmail:
- *      type: string
- *      description: Username or email of the user.
- *     password:
- *      type: string
- *      description: User password.
- */
 export const AuthSchema = z.object({
     body: z.object({
         identifier: z.string(),
@@ -59,33 +23,6 @@ export const AuthSchema = z.object({
     }),
 });
 
-/**
- * @swagger
- * components:
- *  schemas:
- *   UpdateProfilePictureSchema:
- *    type: object
- *    properties:
- *     params:
- *      type: object
- *      properties:
- *       id:
- *        type: string
- *        description: User ID.
- *     body:
- *      type: object
- *      properties:
- *       userId:
- *        type: string
- *        description: ID of the user.
- *       file:
- *        type: object
- *        properties:
- *         content:
- *          type: string
- *         contentType:
- *          type: string
- */
 export const UpdateProfilePictureSchema = ParamsSchema.extend({
     file: z.object({
         buffer: z
@@ -110,20 +47,9 @@ export const UpdateProfilePictureSchema = ParamsSchema.extend({
 
 export const RemoveUserSchema = ParamsSchema;
 
-/**
- * @swagger
- * components:
- *  schemas:
- *   FindAllUsersSchema:
- *    type: object
- *    properties:
- *     query:
- *      type: object
- *      description: Query parameters for filtering and sorting users.
- */
 export const FindAllUsersSchema = z.object({
     query: buildQuerySchema<User>({
-        searchs: [
+        searches: [
             {
                 field: 'email',
                 operators: ['eq', 'like', 'iLike', 'startsWith', 'endsWith'],
@@ -140,17 +66,6 @@ export const FindAllUsersSchema = z.object({
 
 export const FindUserByIdSchema = ParamsSchema;
 
-/**
- * @swagger
- * components:
- *  schemas:
- *   SendResetPasswordTokenSchema:
- *    type: object
- *    properties:
- *     body:
- *      type: object
- *      description: Either email or username is required.
- */
 export const SendPasswordChangeTokenSchema = z.object({
     body: z.object({
         identifier: z.string(),

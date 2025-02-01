@@ -12,3 +12,4 @@ coverage/
 logs/
 /**/*.session.sql
 uploads/
+/.dev/

@@ -59,7 +59,7 @@ export const FindJobOpeningsSchema = z.object({
             'contractType',
             'deadline',
         ],
-        searchs: [
+        searches: [
             {
                 field: 'title',
                 operators: [FilterOperator.eq, FilterOperator.endsWith, FilterOperator.startsWith],

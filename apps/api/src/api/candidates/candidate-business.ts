@@ -14,13 +14,16 @@ export const candidateBusiness: CandidateBusiness = {
     create: async ({ userId, payload }) => {
         const user = await userRepository.findById(userId);
         if (!user) {
-            ApiError.throwNotFound('User not found');
-            return null!;
+            ApiError.throwNotFound('user not found');
+        }
+
+        const candidateAlreadyExists = await candidateRepository.exists({ userId });
+        if (candidateAlreadyExists) {
+            ApiError.throwUnprocessableEntity('candidate already exists');
         }
 
         if (!userBusiness.canCreateCandidate({ user })) {
-            ApiError.throwForbidden('User cannot create candidate');
-            return null!;
+            ApiError.throwForbidden('user cannot create candidate');
         }
 
         const candidate = candidateParser.newInstance({ userId, payload });
@@ -36,8 +39,7 @@ export const candidateBusiness: CandidateBusiness = {
     update: async ({ candidateId, payload }) => {
         const candidate = await candidateRepository.findById(candidateId);
         if (!candidate) {
-            ApiError.throwNotFound('Candidate not found');
-            return null!;
+            ApiError.throwNotFound('candidate not found');
         }
 
         const updated = _.merge(candidate, payload);
@@ -49,20 +51,18 @@ export const candidateBusiness: CandidateBusiness = {
     findById: async (id: string): Promise<Candidate> => {
         const candidate = await candidateRepository.findById(id);
         if (!candidate) {
-            ApiError.throwNotFound('Candidate not found');
-            return null!;
+            ApiError.throwNotFound('candidate not found');
         }
 
         return candidate;
     },
 
-    findAll: (query) => candidateRepository.findAll(query as FindAllArgs<Candidate>),
+    findAll: ({ query }) => candidateRepository.findAll(query as unknown as FindAllArgs<Candidate>),
 
     remove: async (id) => {
         const candidate = await candidateRepository.findById(id);
         if (!candidate) {
             ApiError.throwNotFound(`candidate with id ${id} not found`);
-            return null!;
         }
 
         await candidateRepository.deleteById(id);
@@ -72,7 +72,6 @@ export const candidateBusiness: CandidateBusiness = {
         const candidate = await candidateRepository.findById(candidateId);
         if (!candidate) {
             ApiError.throwNotFound(`candidate with id ${candidateId} not found`);
-            return null!;
         }
 
         const key = `candidate-${candidateId}-cv.${file.mimetype.split('/')[1]}`;
@@ -84,7 +83,6 @@ export const candidateBusiness: CandidateBusiness = {
         });
         if (!url) {
             ApiError.throwInternalServerError('error uploading cv file');
-            return null!;
         }
         candidate.cvUrl = url;
 
@@ -95,8 +93,7 @@ export const candidateBusiness: CandidateBusiness = {
     updateBanner: async ({ candidateId, file }) => {
         const candidate = await candidateRepository.findById(candidateId);
         if (!candidate) {
-            ApiError.throwNotFound(`Candidate with id ${candidateId} not found`);
-            return null!;
+            ApiError.throwNotFound(`candidate with id ${candidateId} not found`);
         }
 
         const key = `candidate-${candidateId}-banner.${file.mimetype.split('/')[1]}`;
@@ -107,8 +104,7 @@ export const candidateBusiness: CandidateBusiness = {
         });
 
         if (!url) {
-            ApiError.throwInternalServerError('Error uploading banner file');
-            return null!;
+            ApiError.throwInternalServerError('error uploading banner file');
         }
 
         candidate.bannerUrl = url;

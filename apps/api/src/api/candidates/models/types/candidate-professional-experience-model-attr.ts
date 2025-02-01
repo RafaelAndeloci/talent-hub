@@ -1,6 +1,7 @@
 import { EmploymentType } from '../../types/enums/employment-type';
 import { PositionLevel } from '../../types/enums/position-level';
 import { WorkplaceType } from '../../types/enums/workplace-type';
+import { Location } from '../../../../types/location';
 
 export interface CandidateProfessionalExperienceModelAttr {
     id?: string;
@@ -16,6 +17,6 @@ export interface CandidateProfessionalExperienceModelAttr {
     startMonth: number;
     endYear: number | null;
     endMonth: number | null;
-    location: object | null;
+    location: Location;
     relatedSkills: string[];
 }

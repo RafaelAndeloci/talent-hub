@@ -102,7 +102,7 @@ export const FindJobApplicationByIdSchema = ParamsSchema;
  */
 export const FindAllJobApplicationsSchema = z.object({
     query: buildQuerySchema<JobApplication>({
-        searchs: [
+        searches: [
             {
                 field: 'status',
                 operators: [FilterOperator.eq],

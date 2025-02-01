@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DataTypes, ModelAttributeColumnOptions } from 'sequelize';
-import { Uf } from '../enums/uf';
+// import { Uf } from '../enums/uf';
 import { ApiError } from '../types/api-error';
-import { Address } from '../types/address';
+// import { Address } from '../types/address';
 
 export const urlColumn: ModelAttributeColumnOptions = {
     type: DataTypes.STRING(255),
@@ -18,29 +18,29 @@ export const addressColumn: ModelAttributeColumnOptions = {
     type: DataTypes.JSONB,
     allowNull: true,
     validate: {
-        isAddress(value: any) {
-            const address: Address = {
-                street: value.street,
-                number: value.number,
-                complement: value.complement,
-                neighborhood: value.neighborhood,
-                city: value.city,
-                uf: value.uf,
-                zipCode: value.zipCode,
-            };
-
-            if (Object.values(address).some((v) => v === undefined)) {
-                ApiError.throwBadRequest('invalid address');
-            }
-
-            if (/^\d{8}$/.test(address.zipCode) === false) {
-                ApiError.throwBadRequest('invalid zip code, must be 8 digits');
-            }
-
-            if (!Object.values(Uf).includes(address.uf)) {
-                ApiError.throwBadRequest('invalid uf');
-            }
-        },
+        // isAddress(value: any) {
+        //     if (typeof value !== 'object') {
+        //         return;
+        //     }
+        //     const address: Address = {
+        //         street: value.street,
+        //         number: value.number,
+        //         complement: value.complement,
+        //         neighborhood: value.neighborhood,
+        //         city: value.city,
+        //         uf: value.uf,
+        //         zipCode: value.zipCode,
+        //     };
+        //     if (Object.values(address).some((v) => v === undefined)) {
+        //         ApiError.throwBadRequest('invalid address');
+        //     }
+        //     if (/^\d{8}$/.test(address.zipCode) === false) {
+        //         ApiError.throwBadRequest('invalid zip code, must be 8 digits');
+        //     }
+        //     if (!Object.values(Uf).includes(address.uf)) {
+        //         ApiError.throwBadRequest('invalid uf');
+        //     }
+        // },
     },
 };
 

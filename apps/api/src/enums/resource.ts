@@ -2,8 +2,8 @@ export const Resource = Object.freeze({
     candidates: 'candidates',
     users: 'users',
     companies: 'companies',
-    jobOpenings: 'job_openings',
-    jobApplications: 'job_applications',
+    jobOpenings: 'job-openings',
+    jobApplications: 'job-applications',
 });
 
 export const AllResources = Object.freeze(Object.values(Resource)) as Resource[];

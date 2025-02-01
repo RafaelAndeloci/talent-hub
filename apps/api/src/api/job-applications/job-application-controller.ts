@@ -4,58 +4,38 @@ import { jobApplicationBusiness } from './job-application-business';
 import { JobApplicationController } from './types/job-application-controller';
 
 export const jobApplicationController: JobApplicationController = {
-    findById: async (req, res, next) => {
-        try {
-            const jobApplication = await jobApplicationBusiness.findById({
-                jobApplicationId: req.params.id,
-            });
-            res.status(HTTPStatus.OK).json(jobApplication!);
-        } catch (e) {
-            next(e);
-        }
+    findById: async ({ params: { id: jobApplicationId } }, res) => {
+        const jobApplication = await jobApplicationBusiness.findById({
+            jobApplicationId,
+        });
+        res.status(HTTPStatus.OK).json(jobApplication!);
     },
 
-    findAll: async (req, res, next) => {
-        try {
-            const result = await jobApplicationBusiness.findAll({
-                query: req.query,
-            });
-            res.status(HTTPStatus.OK).json(result);
-        } catch (e) {
-            next(e);
-        }
+    findAll: async ({ query }, res) => {
+        const result = await jobApplicationBusiness.findAll({
+            query,
+        });
+        res.status(HTTPStatus.OK).json(result);
     },
 
-    create: async (req, res, next) => {
-        try {
-            const jobApplication = await jobApplicationBusiness.create({
-                payload: req.body,
-                context: res.locals,
-            });
-            res.status(HTTPStatus.CREATED).json(jobApplication);
-        } catch (e) {
-            next(e);
-        }
+    create: async ({ body: payload }, res) => {
+        const jobApplication = await jobApplicationBusiness.create({
+            payload,
+            context: res.locals,
+        });
+        res.status(HTTPStatus.CREATED).json(jobApplication);
     },
 
-    update: async (req, res, next) => {
-        try {
-            const jobApplication = await jobApplicationBusiness.update({
-                jobApplicationId: req.params.id,
-                payload: req.body,
-            });
-            res.status(HTTPStatus.OK).json(jobApplication);
-        } catch (e) {
-            next(e);
-        }
+    update: async ({ params: { id: jobApplicationId }, body: payload }, res) => {
+        const jobApplication = await jobApplicationBusiness.update({
+            jobApplicationId,
+            payload,
+        });
+        res.status(HTTPStatus.OK).json(jobApplication);
     },
 
-    remove: async (req, res, next) => {
-        try {
-            await jobApplicationBusiness.remove({ jobApplicationId: req.params.id });
-            res.status(HTTPStatus.NO_CONTENT).send();
-        } catch (e) {
-            next(e);
-        }
+    remove: async ({ params: { id: jobApplicationId } }, res) => {
+        await jobApplicationBusiness.remove({ jobApplicationId });
+        res.status(HTTPStatus.NO_CONTENT).send();
     },
 };

@@ -5,7 +5,7 @@ import { AllResources, Resource } from './resource';
 type Permission = {
     role: Role;
     actionsPerResource: {
-        resource: keyof typeof Resource;
+        resource: Resource[keyof Resource];
         actions: Action[];
     }[];
 };

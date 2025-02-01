@@ -21,37 +21,17 @@ CandidateAchievementModel.init(
             type: DataTypes.STRING(100),
             allowNull: false,
         },
-        issueMonth: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            validate: {
-                min: 1,
-                max: 12,
-            },
-        },
-        issueYear: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            validate: {
-                min: 1900,
-                max: 2100,
-            },
-        },
-        expirationMonth: {
-            type: DataTypes.INTEGER,
+        workload: {
+            type: DataTypes.FLOAT,
             allowNull: true,
-            validate: {
-                min: 1,
-                max: 12,
-            },
         },
-        expirationYear: {
-            type: DataTypes.INTEGER,
+        issueDate: {
+            type: DataTypes.DATEONLY,
+            allowNull: false,
+        },
+        expirationDate: {
+            type: DataTypes.DATEONLY,
             allowNull: true,
-            validate: {
-                min: 1900,
-                max: 2100,
-            },
         },
         credentialId: {
             type: DataTypes.STRING(100),

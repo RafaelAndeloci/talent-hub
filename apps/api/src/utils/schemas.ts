@@ -3,10 +3,11 @@ import { z } from 'zod';
 import { Id } from '../types/id';
 import { FilterOperator, FilterOperatorValues } from '../enums/filter-operator';
 import { ApiError } from '../types/api-error';
+import moment from 'moment';
 
 export type BuildQuerySchemaArgs<T extends Id> = {
     sorts: (keyof T)[];
-    searchs: {
+    searches: {
         field: keyof T;
         operators: FilterOperator[];
         transform?: (value: string) => T[keyof T];
@@ -44,7 +45,7 @@ const SortSchema = <T extends Id>(sorts: BuildQuerySchemaArgs<T>['sorts']) =>
         .optional()
         .default('id:asc');
 
-const FilterSchema = <T extends Id>(searchs: BuildQuerySchemaArgs<T>['searchs']) =>
+const FilterSchema = <T extends Id>(searches: BuildQuerySchemaArgs<T>['searches']) =>
     z
         .string()
         .transform((value) => {
@@ -66,7 +67,7 @@ const FilterSchema = <T extends Id>(searchs: BuildQuerySchemaArgs<T>['searchs'])
                 const [, field, operator, value] = match!;
 
                 const { transform, validation } =
-                    searchs.find((sf) => sf.field === (field as keyof T)) ?? {};
+                    searches.find((sf) => sf.field === (field as keyof T)) ?? {};
 
                 if (validation) {
                     const errorMessage = validation(value);
@@ -103,9 +104,13 @@ const FilterSchema = <T extends Id>(searchs: BuildQuerySchemaArgs<T>['searchs'])
                 filters.every(
                     ({ field, operator }) =>
                         FilterOperatorValues.includes(operator) &&
-                        searchs.some((sf) => sf.field === field && sf.operators.includes(operator)),
+                        searches.some(
+                            (sf) => sf.field === field && sf.operators.includes(operator),
+                        ),
                 ),
-            `filter must be in the format 'field[operator]:value'. Allowed: ${searchs.map(({ field, operators }) => `${field as string}[${operators.join(', ')}]`).join(', ')}`,
+            `filter must be in the format 'field[operator]:value'. Allowed: ${searches
+                .map(({ field, operators }) => `${field as string}[${operators.join(', ')}]`)
+                .join(', ')}`,
         )
         .optional()
         .default('');
@@ -119,7 +124,7 @@ const OffsetSchema = z
 
 export const buildQuerySchema = <T extends Id>({
     sorts = ['id'],
-    searchs = [
+    searches = [
         {
             field: 'id',
             operators: [FilterOperator.eq],
@@ -130,8 +135,8 @@ export const buildQuerySchema = <T extends Id>({
         sorts.push('id');
     }
 
-    if (!searchs.some(({ field }) => field === 'id')) {
-        searchs.push({
+    if (!searches.some(({ field }) => field === 'id')) {
+        searches.push({
             field: 'id',
             operators: [FilterOperator.eq],
         });
@@ -141,7 +146,7 @@ export const buildQuerySchema = <T extends Id>({
         limit: LimitSchema,
         offset: OffsetSchema,
         sort: SortSchema(sorts),
-        filter: FilterSchema(searchs),
+        filter: FilterSchema(searches),
     });
 };
 
@@ -164,3 +169,8 @@ export const buildFileSchema = ({ allowedMimeTypes, maxSize }: BuildFileSchemaAr
             },
         ),
     });
+
+export const DateSchema = z
+    .string()
+    .transform((p) => moment(p))
+    .refine((p) => p.isValid());

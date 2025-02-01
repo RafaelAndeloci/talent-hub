@@ -105,13 +105,11 @@ export const generateCandidates = (count: number, userId: string): Candidate[] =
                 positionLevel: faker.helpers.arrayElement(Object.values(PositionLevel)),
                 isCurrent: faker.datatype.boolean(),
                 period: generatePeriod(),
-                location: faker.datatype.boolean()
-                    ? {
-                        city: faker.location.city(),
-                        state: faker.location.state(),
-                        country: faker.location.country(),
-                    }
-                    : null,
+                location: {
+                    uf: faker.helpers.arrayElement(Object.values(Uf)),
+                    neighborhood: faker.location.county(),
+                    city: faker.location.city(),
+                },
                 relatedSkills: [faker.word.sample(), faker.word.sample(), faker.word.sample()],
             })),
         },
@@ -136,8 +134,9 @@ export const generateCandidates = (count: number, userId: string): Candidate[] =
             name: faker.word.sample(),
             type: faker.helpers.arrayElement(Object.values(AchievementType)),
             issuer: faker.company.name(),
-            issueDate: generateYearMonth(),
-            expirationDate: faker.datatype.boolean() ? generateYearMonth() : null,
+            workload: faker.number.int({ min: 1, max: 1000 }),
+            issueDate: faker.date.past(),
+            expirationDate: faker.date.future(),
             credentialId: faker.string.uuid(),
             credentialUrl: faker.internet.url(),
             relatedSkills: [faker.word.sample(), faker.word.sample()],

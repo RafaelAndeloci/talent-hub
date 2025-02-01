@@ -32,7 +32,5 @@ export const seed = async () => {
     await candidateRepository.bulkCreate(candidates);
 
     const companies = generateCompanies(100);
-    for (const c of companies) {
-        await companyRepository.create(c);
-    }
+    await companyRepository.bulkCreate(companies);
 };

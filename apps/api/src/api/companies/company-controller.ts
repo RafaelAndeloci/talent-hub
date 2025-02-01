@@ -4,62 +4,41 @@ import { companyBusiness } from './company-business';
 import { CompanyController } from './types/company-controller';
 
 export const companyController: CompanyController = {
-    findById: async (req, res, next) => {
-        try {
-            const company = await companyBusiness.findById({
-                companyId: req.params.id,
-                context: res.locals,
-            });
-
-            res.status(HTTPStatus.OK).json(company);
-        } catch (error) {
-            next(error);
-        }
+    findById: async ({ params: { id: companyId } }, res) => {
+        const company = await companyBusiness.findById({
+            companyId,
+            context: res.locals,
+        });
+        res.status(HTTPStatus.OK).json(company);
     },
 
-    findAll: async (req, res, next) => {
-        try {
-            const companies = await companyBusiness.findAll({
-                query: req.query,
-                context: res.locals,
-            });
-            res.status(HTTPStatus.OK).json(companies);
-        } catch (error) {
-            next(error);
-        }
+    findAll: async ({ query }, res) => {
+        const companies = await companyBusiness.findAll({
+            query,
+            context: res.locals,
+        });
+        res.status(HTTPStatus.OK).json(companies);
     },
 
-    create: async (req, res, next) => {
-        try {
-            const company = await companyBusiness.create({
-                payload: req.body,
-                context: res.locals,
-            });
-            res.status(HTTPStatus.CREATED).json(company);
-        } catch (error) {
-            next(error);
-        }
+    create: async ({ body: payload }, res) => {
+        const company = await companyBusiness.create({
+            payload,
+            context: res.locals,
+        });
+        res.status(HTTPStatus.CREATED).json(company);
     },
 
-    update: async (req, res, next) => {
-        try {
-            const company = await companyBusiness.update({
-                companyId: req.params.id,
-                payload: req.body,
-                context: res.locals,
-            });
-            res.status(HTTPStatus.OK).json(company);
-        } catch (error) {
-            next(error);
-        }
+    update: async ({ params: { id: companyId }, body: payload }, res) => {
+        const company = await companyBusiness.update({
+            companyId,
+            payload,
+            context: res.locals,
+        });
+        res.status(HTTPStatus.OK).json(company);
     },
 
-    remove: async (req, res, next) => {
-        try {
-            await companyBusiness.remove({ companyId: req.params.id, context: res.locals });
-            res.sendStatus(HTTPStatus.NO_CONTENT);
-        } catch (error) {
-            next(error);
-        }
+    remove: async ({ params: { id: companyId } }, res) => {
+        await companyBusiness.remove({ companyId, context: res.locals });
+        res.sendStatus(HTTPStatus.NO_CONTENT);
     },
 };
