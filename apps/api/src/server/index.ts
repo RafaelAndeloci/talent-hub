@@ -9,9 +9,11 @@ const {
     api: { host, port },
 } = config;
 
-const app = express();
+export const app = express();
 
-buildApiRouter().then((apiRouter) => {
+async function startServer() {
+    const apiRouter = await buildApiRouter();
+
     app.use([
         getStaticFilesRouter(),
         express.json({ strict: true }),
@@ -20,11 +22,13 @@ buildApiRouter().then((apiRouter) => {
         apiRouter,
         errorHandler,
         (_, res) => {
-            res.status(404).json({
-                status: 'Not Found',
-                code: 404,
-                errors: ['Resource not found'],
-            });
+            if (!res.headersSent) {
+                res.status(404).json({
+                    status: 'Not Found',
+                    code: 404,
+                    errors: ['Resource not found'],
+                });
+            }
         },
     ] as express.RequestHandler[]);
 
@@ -38,4 +42,16 @@ buildApiRouter().then((apiRouter) => {
         .on('close', () => {
             logger.info('Server is closing');
         });
+}
+
+process.on('SIGINT', () => {
+    logger.info('Received SIGINT, shutting down...');
+    app.emit('close');
 });
+
+process.on('SIGTERM', () => {
+    logger.info('Received SIGTERM, shutting down...');
+    app.emit('close');
+});
+
+export const serverStartPromise = startServer();

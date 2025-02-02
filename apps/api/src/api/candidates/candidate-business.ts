@@ -5,7 +5,6 @@ import { Candidate } from './types/candidate';
 import { Role } from '../users/types/enums/role';
 import { CandidateBusiness } from './types/candidate-business';
 import { candidateParser } from './candidate-parser';
-import _ from 'lodash';
 import { fileStorageService } from '../../services/file-storage-service';
 import { ApiError } from '../../types/api-error';
 import { FindAllArgs } from '../../types/find-all-args';
@@ -53,7 +52,11 @@ export const candidateBusiness: CandidateBusiness = {
             ApiError.throwNotFound('candidate not found');
         }
 
-        const updated = _.merge(candidate, payload);
+        const updated: Candidate = {
+            ...candidate,
+            ...payload,
+        };
+
         await candidateRepository.update(updated);
 
         return candidateParser.toDto({ candidate: updated });

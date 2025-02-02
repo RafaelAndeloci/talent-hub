@@ -40,5 +40,6 @@ export const companyParser: CompanyParser = {
         vision: c.vision,
         values: c.values,
         industry: c.industry,
+        gallery: c.gallery,
     }),
 };

@@ -48,4 +48,9 @@ export const userController: UserController = {
         await userBusiness.confirmChangePassword({ userId, payload });
         res.status(HTTPStatus.OK).end();
     },
+
+    confirmEmail: async ({ params: { id: userId }, body: { token } }, res) => {
+        await userBusiness.confirmEmail({ token, userId });
+        res.status(HTTPStatus.OK).end();
+    },
 };

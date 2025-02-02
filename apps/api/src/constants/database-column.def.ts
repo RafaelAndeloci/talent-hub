@@ -4,11 +4,6 @@ import { ApiError } from '../types/api-error';
 import { Address } from '../types/address';
 import { Uf } from '../enums/uf';
 
-export const urlColumn: ModelAttributeColumnOptions = {
-    type: DataTypes.STRING(255),
-    allowNull: true,
-};
-
 export const primaryColumn: ModelAttributeColumnOptions = {
     type: DataTypes.UUID,
     primaryKey: true,
@@ -65,12 +60,12 @@ export const emailColumn: ModelAttributeColumnOptions = {
 };
 
 export const socialMediasColumns = {
-    linkedin: urlColumn,
-    github: urlColumn,
-    twitter: urlColumn,
-    facebook: urlColumn,
-    instagram: urlColumn,
-    youtube: urlColumn,
-    medium: urlColumn,
-    website: urlColumn,
+    linkedin: { type: DataTypes.STRING, allowNull: true },
+    github: { type: DataTypes.STRING, allowNull: true },
+    twitter: { type: DataTypes.STRING, allowNull: true },
+    facebook: { type: DataTypes.STRING, allowNull: true },
+    instagram: { type: DataTypes.STRING, allowNull: true },
+    youtube: { type: DataTypes.STRING, allowNull: true },
+    medium: { type: DataTypes.STRING, allowNull: true },
+    website: { type: DataTypes.STRING, allowNull: true },
 };

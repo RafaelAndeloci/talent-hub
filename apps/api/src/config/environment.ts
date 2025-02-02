@@ -98,4 +98,7 @@ export const config = {
         },
     },
     emailConfirmationUrl: process.env.EMAIL_CONFIRMATION_URL!,
+    company: {
+        maxGallerySize: parseInt(process.env.COMPANY_MAX_GALLERY_SIZE || '5'),
+    }
 };

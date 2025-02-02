@@ -21,7 +21,6 @@ import {
     phoneColumn,
     primaryColumn,
     socialMediasColumns,
-    urlColumn,
 } from '../../../constants/database-column.def';
 
 type CandidateModelAttrInternal = Omit<
@@ -51,7 +50,10 @@ CandidateModel.init(
             type: DataTypes.DATEONLY,
             allowNull: false,
         },
-        cvUrl: urlColumn,
+        cvUrl: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
         about: {
             type: DataTypes.TEXT('long'),
             allowNull: true,
@@ -60,7 +62,10 @@ CandidateModel.init(
             type: DataTypes.STRING,
             allowNull: true,
         },
-        bannerUrl: urlColumn,
+        bannerUrl: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
         hobbies: {
             type: DataTypes.ARRAY(DataTypes.STRING(200)),
             allowNull: false,

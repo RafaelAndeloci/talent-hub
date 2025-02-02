@@ -5,10 +5,15 @@ import {
     DeleteCompanySchema,
     FindAllCompaniesSchema,
     FindCompanyByIdSchema,
+    RemoveGalleryItemSchema,
+    SetBannerSchema,
+    SetGaleryItemSchema,
+    SetLogoSchema,
     UpdateCompanySchema,
 } from './company-schema';
 import { companyController } from './company-controller';
 import { ApiResource } from '../../types/api-resource';
+import { singleFileUpload } from '../../middlewares/file-upload-middleware';
 
 export const companyRoutes: ApiResource = {
     resource: Resource.companies,
@@ -53,5 +58,40 @@ export const companyRoutes: ApiResource = {
             action: Action.delete,
             handler: companyController.remove,
         },
-    ],
+        {
+            method: 'patch',
+            path: '/:id/banner',
+            auth: true,
+            action: Action.setCompanyBanner,
+            schema: SetBannerSchema,
+            middlewares: [singleFileUpload],
+            handler: companyController.setBanner,
+        },
+        {
+            method: 'patch',
+            path: '/:id/logo',
+            auth: true,
+            action: Action.setCompanyLogo,
+            schema: SetLogoSchema,
+            middlewares: [singleFileUpload],
+            handler: companyController.setLogo,
+        },
+        {
+            method: 'patch',
+            path: '/:id/gallery/:order',
+            auth: true,
+            action: Action.setCompanyGallery,
+            schema: SetGaleryItemSchema,
+            middlewares: [singleFileUpload],
+            handler: companyController.setGalleryItem,
+        },
+        {
+            method: 'delete',
+            path: '/:id/gallery/:order?',
+            auth: true,
+            action: Action.deleteCompanyGallery,
+            schema: RemoveGalleryItemSchema,
+            handler: companyController.deleteGalleryItem,
+        }
+    ],  
 };

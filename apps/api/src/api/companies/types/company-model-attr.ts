@@ -25,4 +25,8 @@ export interface CompanyModelAttr {
     vision: string | null;
     values: string[] | null;
     industry: string;
+    gallery: {
+        url: string;
+        order: number;
+    }[];
 }

@@ -2,7 +2,7 @@ import { DataTypes, Model } from 'sequelize';
 import { AchievementType } from '../types/enums/achievement-type';
 import database from '../../../config/database';
 import { CandidateAchievementModelAttr } from './types/candidate-achievement-model-attr';
-import { primaryColumn, urlColumn } from '../../../constants/database-column.def';
+import { primaryColumn } from '../../../constants/database-column.def';
 
 export class CandidateAchievementModel extends Model<CandidateAchievementModelAttr> {}
 
@@ -37,7 +37,10 @@ CandidateAchievementModel.init(
             type: DataTypes.STRING,
             allowNull: true,
         },
-        credentialUrl: urlColumn,
+        credentialUrl: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
         relatedSkills: {
             type: DataTypes.ARRAY(DataTypes.STRING(50)),
             allowNull: false,

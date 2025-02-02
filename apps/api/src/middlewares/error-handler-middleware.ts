@@ -24,11 +24,20 @@ export const errorHandler: ErrorRequestHandler = (err, _, res, next) => {
         res.status(HTTPStatus.BAD_REQUEST).json({
             status: HTTPStatus['400_NAME'],
             code: HTTPStatus.BAD_REQUEST,
-            errors: err.issues.map(issue => ({
+            errors: err.issues.map((issue) => ({
                 code: issue.code,
                 message: issue.message,
                 path: issue.path.join('.'),
             })),
+        });
+        return;
+    }
+
+    if (err instanceof SyntaxError) {
+        res.status(HTTPStatus.BAD_REQUEST).json({
+            status: HTTPStatus['400_NAME'],
+            code: HTTPStatus.BAD_REQUEST,
+            errors: ['invalid json'],
         });
         return;
     }

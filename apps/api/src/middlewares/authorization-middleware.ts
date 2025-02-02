@@ -28,7 +28,7 @@ export const authorize =
                 (ap) => ap.resource === resource && ap.actions.includes(action),
             )
         ) {
-            ApiError.throwUnauthorized(
+            ApiError.throwForbidden(
                 `user cannot performe action ${action} on resource ${resource}`,
             );
         }

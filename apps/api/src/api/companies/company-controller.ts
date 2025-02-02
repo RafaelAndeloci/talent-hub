@@ -41,4 +41,49 @@ export const companyController: CompanyController = {
         await companyBusiness.remove({ companyId, context: res.locals });
         res.sendStatus(HTTPStatus.NO_CONTENT);
     },
+
+    setBanner: async ({ params: { id: companyId }, file: { buffer, mimetype } = {} }, res) => {
+        const company = await companyBusiness.setBanner({
+            companyId,
+            file: {
+                content: buffer!,
+                mimetype: mimetype!,
+            },
+        });
+        res.status(HTTPStatus.OK).json(company);
+    },
+
+    setLogo: async ({ params: { id: companyId }, file: { buffer, mimetype } = {} }, res) => {
+        const company = await companyBusiness.setLogo({
+            companyId,
+            file: {
+                content: buffer!,
+                mimetype: mimetype!,
+            },
+        });
+        res.status(HTTPStatus.OK).json(company);
+    },
+
+    setGalleryItem: async (
+        { params: { id: companyId, order }, file: { buffer, mimetype } = {} },
+        res,
+    ) => {
+        const company = await companyBusiness.setGaleryItem({
+            companyId,
+            picture: {
+                content: buffer!,
+                mimetype: mimetype!,
+            },
+            order,
+        });
+        res.status(HTTPStatus.OK).json(company);
+    },
+
+    deleteGalleryItem: async ({ params: { id: companyId, order } }, res) => {
+        const company = await companyBusiness.deleteGalleryItem({
+            companyId,
+            order,
+        });
+        res.status(HTTPStatus.OK).json(company);
+    },
 };

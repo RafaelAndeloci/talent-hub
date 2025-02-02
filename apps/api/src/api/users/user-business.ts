@@ -9,7 +9,7 @@ import { userParser } from './user-parser';
 import { hasher } from '../../services/hasher';
 import { AppEvent } from '../../enums/app-event';
 import { fileStorageService } from '../../services/file-storage-service';
-import { jobQueueService } from '../../services/job-service';
+import { jobQueueService } from '../../services/job-queue-service';
 import { jwtService } from '../../services/jwt-service';
 import { ApiError } from '../../types/api-error';
 
@@ -63,7 +63,7 @@ export const userBusiness: UserBusiness = {
         }
 
         if (user.emailConfirmationToken && user.role !== Role.sysAdmin) {
-            ApiError.throwUnauthorized('email not confirmed');
+            ApiError.throwForbidden('email not confirmed');
         }
 
         if (!(await hasher.compare(payload.password, user.hashedPassword))) {
@@ -129,7 +129,7 @@ export const userBusiness: UserBusiness = {
         }
 
         if (!user.passwordReset) {
-            ApiError.throwBadRequest('user did not request password reset');
+            ApiError.throwBadRequest('user did confirm password reset');
         }
 
         const isExpired = moment().unix() > user.passwordReset!.expiration;

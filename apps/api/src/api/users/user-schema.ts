@@ -5,7 +5,12 @@ import { ParamsSchema } from '../../schemas/params-schema';
 import { buildQuerySchema } from '../../utils/schemas';
 import { User } from './types/user';
 
-const passwordRule = z.string().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,20}$/);
+const passwordRule = z
+    .string()
+    .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,20}$/,
+        'password must contain at least one lowercase letter, one uppercase letter, and one number and be between 8 and 20 characters long',
+    );
 
 export const CreateUserSchema = z.object({
     body: z.object({
@@ -76,5 +81,11 @@ export const ConfirmPasswordChangeSchema = ParamsSchema.extend({
     body: z.object({
         token: z.string(),
         password: passwordRule,
+    }),
+});
+
+export const ConfirmEmailSchema = ParamsSchema.extend({
+    body: z.object({
+        token: z.string(),
     }),
 });

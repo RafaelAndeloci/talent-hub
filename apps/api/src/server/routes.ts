@@ -58,7 +58,7 @@ const findApiResources = async () => {
 
 const logEndpoints = (apiResources: ApiResource[]) => {
     for (const { resource, routes } of apiResources) {
-        logger.info(`Resource: ${resource}`);
+        console.info(`Resource: ${resource}`);
 
         const rows = routes.map(({ method, path, auth }) => ({
             method: method.toUpperCase().padEnd(7),
@@ -66,7 +66,6 @@ const logEndpoints = (apiResources: ApiResource[]) => {
             auth: auth ? 'on' : 'off',
         }));
 
-        // eslint-disable-next-line no-console
         console.table(rows);
     }
 };
@@ -99,7 +98,7 @@ export const buildApiRouter = async () => {
 
         return apiRouter;
     } catch (error) {
-        logger.error('Routes registration error:', error);
+        console.error('Routes registration error:', error);
         process.exit(1);
     }
 };

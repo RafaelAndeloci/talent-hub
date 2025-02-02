@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Senha Alterada - Talent Hub</title>
+        <title>Alteração de Senha - Talent Hub</title>
         <style type="text/css">
             /* Estilos globais */
             body {
@@ -26,11 +26,15 @@
                 padding: 20px;
                 border-radius: 8px;
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                border-top: 5px solid #8b0000;
             }
 
             .header {
                 text-align: center;
                 padding: 20px 0;
+                background-color: #8b0000;
+                color: #ffffff;
+                border-radius: 8px 8px 0 0;
             }
 
             .header img {
@@ -41,17 +45,22 @@
             .content {
                 padding: 20px;
                 text-align: center;
+                color: #333333;
             }
 
             .button {
                 display: inline-block;
                 padding: 12px 24px;
                 margin-top: 20px;
-                background-color: #007bff;
+                background-color: #b22222;
                 color: #ffffff;
                 text-decoration: none;
                 border-radius: 5px;
                 font-weight: bold;
+            }
+
+            .button:hover {
+                background-color: #a51d1d;
             }
 
             .footer {
@@ -59,6 +68,9 @@
                 padding: 20px;
                 font-size: 12px;
                 color: #777777;
+                background-color: #333333;
+                color: #ffffff;
+                border-radius: 0 0 8px 8px;
             }
         </style>
     </head>
@@ -74,39 +86,27 @@
                         border="0">
                         <tr>
                             <td class="header">
-                                <!-- TODO: adicionar logo -->
-                                <img
-                                    src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.facebook.com%2Ffatecribeirao%2F&psig=AOvVaw1Rvajinw9mDxaMho8QUG5k&ust=1738191978009000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCKjVvt_DmYsDFQAAAAAdAAAAABAE"
-                                    alt="Logo Talent Hub" />
+                                <svg xmlns="http://www.w3.org/2000/svg" version="1.0" width="155.000000pt" height="65.000000pt" viewBox="0 0 155.000000 65.000000" preserveAspectRatio="xMidYMid meet">
+
+                                    <g transform="translate(0.000000,65.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="none">
+                                    </g>
+                                    </svg>
                             </td>
                         </tr>
                         <tr>
                             <td class="content">
-                                <h1>Sua Senha Foi Alterada - Talent Hub</h1>
+                                <h1 style="color: #003366;">Alteração de Senha - Talent Hub</h1>
                                 <p>Olá @username,</p>
                                 <p>
-                                    Gostaríamos de informar que a senha da sua conta na plataforma
-                                    Talent Hub foi alterada com sucesso.
+                                    Você solicitou a alteração de sua senha na plataforma Talent
+                                    Hub. Para continuar com o processo, por favor, clique no botão
+                                    abaixo para ir até a tela de troca de senha.
                                 </p>
+                                <a href="@resetPasswordUrl" class="button">Alterar Minha Senha</a>
                                 <p>
-                                    Se você fez essa alteração, não há mais nada a fazer. Caso
-                                    contrário, recomendamos que você tome as seguintes medidas:
+                                    Se você não solicitou essa alteração, pode ignorar este e-mail
+                                    com segurança. Sua senha permanecerá inalterada.
                                 </p>
-                                <ul style="text-align: left; margin: 0 auto; padding-left: 20px">
-                                    <li>
-                                        Acesse sua conta imediatamente e altere sua senha novamente.
-                                    </li>
-                                    <li>Verifique se há atividades suspeitas na sua conta.</li>
-                                    <li>Entre em contato conosco se precisar de assistência.</li>
-                                </ul>
-                                <p>
-                                    Se você tiver qualquer dúvida ou preocupação, não hesite em
-                                    entrar em contato com nosso suporte clicando no botão abaixo.
-                                </p>
-                                <!-- TODO: adiconar contato -->
-                                <a href="mailto:pedronetto31415@gmail.com" class="button"
-                                    >Contate-nos</a
-                                >
                             </td>
                         </tr>
                         <tr>

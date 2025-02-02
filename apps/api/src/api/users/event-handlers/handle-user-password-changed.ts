@@ -16,7 +16,7 @@ export const handleUserPasswordChanged = async({ userId }: { userId: string }) =
 
         const templatePath = path.resolve(
             __dirname,
-            '../../../../static/templates/emails/password-change.html',
+            '../../../../static/templates/emails/pass-change-info.html',
         );
 
         const emailBody = await fs.promises.readFile(templatePath, 'utf8');

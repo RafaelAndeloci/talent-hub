@@ -3,147 +3,50 @@ import { z } from 'zod';
 import { isValidCnpj } from '../../utils/document-validator';
 import { RelatedWebsiteSchema } from '../../schemas/related-websites-schema';
 import { ContactSchema } from '../../schemas/contact-schema';
-import { AddressSchema } from '../../schemas/address-schema';
 import { buildQuerySchema } from '../../utils/schemas';
 import { Company } from './types/company';
 import { ParamsSchema } from '../../schemas/params-schema';
+import { Uf } from '../../enums/uf';
+import { FileImageSchema } from '../../schemas/image-file-schema';
+import { config } from '../../config/environment';
 
 export const FindCompanyByIdSchema = ParamsSchema;
 
-/**
- * @swagger
- * components:
- *   schemas:
- *     CreateCompany:
- *       type: object
- *       properties:
- *         tradeName:
- *           type: string
- *           minLength: 1
- *           maxLength: 150
- *         legalName:
- *           type: string
- *           minLength: 1
- *           maxLength: 200
- *         cnpj:
- *           type: string
- *           length: 14
- *         employeesQuantity:
- *           type: integer
- *           minimum: 1
- *         foundationYear:
- *           type: integer
- *           minimum: 1900
- *         social:
- *           $ref: '#/components/schemas/RelatedWebsite'
- *         about:
- *           type: string
- *           maxLength: 500
- *           nullable: true
- *         contact:
- *           $ref: '#/components/schemas/Contact'
- *         address:
- *           $ref: '#/components/schemas/Address'
- *         bannerUrl:
- *           type: string
- *           format: url
- *           nullable: true
- *         logoUrl:
- *           type: string
- *           format: url
- *           nullable: true
- *         mission:
- *           type: string
- *           maxLength: 500
- *           nullable: true
- *         vision:
- *           type: string
- *           maxLength: 500
- *           nullable: true
- *         values:
- *           type: array
- *           items:
- *             type: string
- *           maxItems: 10
- *           nullable: true
- *         industry:
- *           type: string
- *           maxLength: 100
- */
 export const CreateCompanySchema = z.object({
-    body: z.object({
-        tradeName: z.string().min(1).max(150),
-        legalName: z.string().min(1).max(200),
-        cnpj: z
-            .string()
-            .length(14)
-            .refine((cnpj) => isValidCnpj({ cnpj }), { message: 'Invalid CNPJ' }),
-        employeesQuantity: z.number().int().min(1),
-        foundationYear: z.number().int().min(1900),
-        social: RelatedWebsiteSchema,
-        about: z.string().max(500).nullable(),
-        contact: ContactSchema,
-        address: AddressSchema,
-        bannerUrl: z.string().url().nullable(),
-        logoUrl: z.string().url().nullable(),
-        mission: z.string().max(500).nullable(),
-        vision: z.string().max(500).nullable(),
-        values: z.array(z.string()).max(10).nullable(),
-        industry: z.string().max(100),
-    }),
+    body: z
+        .object({
+            tradeName: z.string().min(1).max(150),
+            legalName: z.string().min(1).max(200),
+            cnpj: z
+                .string()
+                .length(14)
+                .refine((cnpj) => isValidCnpj({ cnpj }), { message: 'Invalid CNPJ' }),
+            employeesQuantity: z.number().int().min(1),
+            foundationYear: z.number().int().min(1900),
+            social: RelatedWebsiteSchema,
+            about: z.string().max(500).nullable(),
+            contact: ContactSchema,
+            location: z
+                .object({
+                    neighborhood: z.string().max(100),
+                    uf: z.nativeEnum(Uf),
+                    city: z.string().max(100),
+                })
+                .strict(),
+            mission: z.string().max(500).nullable(),
+            vision: z.string().max(500).nullable(),
+            values: z.array(z.string()).max(10).nullable(),
+            industry: z.string().max(100),
+        })
+        .strict(),
 });
 
-/**
- * @swagger
- * components:
- *   schemas:
- *     UpdateCompany:
- *       type: object
- *       properties:
- *         params:
- *           type: object
- *           properties:
- *             id:
- *               type: string
- *         body:
- *           $ref: '#/components/schemas/CreateCompany'
- */
 export const UpdateCompanySchema = ParamsSchema.extend({
-    body: CreateCompanySchema.partial(),
+    body: CreateCompanySchema.shape.body,
 });
 
 export const DeleteCompanySchema = ParamsSchema;
 
-/**
- * @swagger
- * components:
- *   schemas:
- *     FindAllCompanies:
- *       type: object
- *       properties:
- *         query:
- *           type: object
- *           properties:
- *             searchFields:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   field:
- *                     type: string
- *                   operators:
- *                     type: array
- *                     items:
- *                       type: string
- *                   validation:
- *                     type: string
- *                   transform:
- *                     type: string
- *             sortFields:
- *               type: array
- *               items:
- *                 type: string
- */
 export const FindAllCompaniesSchema = z.object({
     query: buildQuerySchema<Company & { hasOpenPositions: boolean }>({
         searches: [
@@ -196,5 +99,29 @@ export const FindAllCompaniesSchema = z.object({
             'foundationYear',
             'industry',
         ],
+    }).strict(),
+});
+
+export const SetGaleryItemSchema = z.object({
+    params: ParamsSchema.shape.params
+        .extend({
+            order: z
+                .string()
+                .transform(Number)
+                .refine((value) => value >= 0 && value < config.company.maxGallerySize, {
+                    message: `index must be between 1 and ${config.company.maxGallerySize}`,
+                }),
+        })
+        .strict(),
+    file: FileImageSchema.shape.file,
+});
+
+export const SetBannerSchema = ParamsSchema.merge(FileImageSchema);
+
+export const RemoveGalleryItemSchema = z.object({
+    params: ParamsSchema.shape.params.extend({
+        order: SetGaleryItemSchema.shape.params.shape.order.optional().nullable().default(null),
     }),
 });
+
+export const SetLogoSchema = ParamsSchema.merge(FileImageSchema);

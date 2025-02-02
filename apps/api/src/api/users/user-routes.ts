@@ -1,6 +1,8 @@
 import { userController } from './user-controller';
 import {
     AuthSchema,
+    ConfirmEmailSchema,
+    ConfirmPasswordChangeSchema,
     CreateUserSchema,
     FindAllUsersSchema,
     FindUserByIdSchema,
@@ -58,16 +60,21 @@ export const userRoutes: ApiResource = {
         {
             method: 'post',
             path: '/change-password',
-            auth: true,
             schema: SendPasswordChangeTokenSchema,
             action: Action.sendUserChangePasswordToken,
             handler: userController.sendChangePasswordToken,
         },
         {
             method: 'post',
-            path: '/change-password/confirm',
-            auth: true,
-            schema: SendPasswordChangeTokenSchema,
+            path: '/:id/confirm-email',
+            schema: ConfirmEmailSchema,
+            action: Action.confirmUserEmail,
+            handler: userController.confirmEmail,
+        },
+        {
+            method: 'post',
+            path: '/:id/change-password/confirm',
+            schema: ConfirmPasswordChangeSchema,
             action: Action.confirmUserChangePassword,
             handler: userController.confirmChangePassword,
         },
@@ -76,7 +83,7 @@ export const userRoutes: ApiResource = {
             path: '/:id/profile-picture',
             auth: true,
             schema: UpdateUserProfilePictureSchema,
-            action: Action.updateUserProfilePicture,
+            action: Action.setUserProfilePicture,
             handler: userController.updateProfilePicture,
             middlewares: [singleFileUpload],
         },

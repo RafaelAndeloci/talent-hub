@@ -18,8 +18,9 @@ export const Permissions = Object.freeze([
                 resource: Resource.candidates,
                 actions: [
                     Action.create,
+                    Action.update,
                     Action.readById,
-                    Action.updateCandidateBanner,
+                    Action.setCandidateBanner,
                     Action.updateCandidateCv,
                 ],
             },
@@ -28,7 +29,7 @@ export const Permissions = Object.freeze([
                 actions: [
                     Action.create,
                     Action.sendUserChangePasswordToken,
-                    Action.updateUserProfilePicture,
+                    Action.setUserProfilePicture,
                 ],
             },
             {

@@ -3,7 +3,7 @@ import { AcademicStatus } from '../types/enums/academic-status';
 import { AcademicDegreeType } from '../types/enums/academic-degree-type';
 import database from '../../../config/database';
 import { CandidateEducationalExperienceModelAttr } from './types/candidate-education-experience-model-attr';
-import { primaryColumn, urlColumn } from '../../../constants/database-column.def';
+import { primaryColumn } from '../../../constants/database-column.def';
 
 export class CandidateEducationalExperienceModel extends Model<CandidateEducationalExperienceModelAttr> {}
 
@@ -30,7 +30,10 @@ CandidateEducationalExperienceModel.init(
             type: DataTypes.STRING,
             allowNull: false,
         },
-        institutionWebsite: urlColumn,
+        institutionWebsite: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
         description: {
             type: DataTypes.TEXT,
             allowNull: true,

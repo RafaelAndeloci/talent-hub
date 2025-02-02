@@ -5,7 +5,7 @@ import {
     emailColumn,
     phoneColumn,
     primaryColumn,
-    urlColumn,
+    socialMediasColumns,
 } from '../../constants/database-column.def';
 import database from '../../config/database';
 import { CompanyModelAttr } from './types/company-model-attr';
@@ -37,14 +37,7 @@ CompanyModel.init(
             allowNull: false,
             validate: { min: 1900 },
         },
-        linkedin: urlColumn,
-        github: urlColumn,
-        instagram: urlColumn,
-        facebook: urlColumn,
-        twitter: urlColumn,
-        youtube: urlColumn,
-        medium: urlColumn,
-        website: urlColumn,
+        ...socialMediasColumns,
         about: { type: DataTypes.TEXT, allowNull: true },
         contactPhone: phoneColumn,
         contactEmail: emailColumn,
@@ -52,12 +45,19 @@ CompanyModel.init(
             type: DataTypes.JSON,
             allowNull: false,
         },
-        bannerUrl: urlColumn,
-        logoUrl: urlColumn,
+        bannerUrl: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        logoUrl: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
         mission: { type: DataTypes.TEXT, allowNull: true },
         vision: { type: DataTypes.TEXT, allowNull: true },
         values: { type: DataTypes.ARRAY(DataTypes.STRING), allowNull: true },
         industry: { type: DataTypes.STRING, allowNull: false },
+        gallery: { type: DataTypes.ARRAY(DataTypes.JSON), allowNull: true },
     },
     { sequelize: database, modelName: 'Company', tableName: 'companies' },
 );

@@ -3,6 +3,7 @@ import {
     DeleteCandidateSchema,
     FindAllCandidatesSchema,
     FindCandidateByIdSchema,
+    UpdateCandidateBannerSchema,
     UpdateCandidateCvSchema,
     UpdateCandidateSchema,
 } from './candidate-schema';
@@ -68,8 +69,8 @@ export const candidateRoutes: ApiResource = {
             method: 'patch',
             path: '/:id/banner',
             auth: true,
-            action: Action.updateCandidateBanner,
-            schema: UpdateCandidateSchema,
+            action: Action.setCandidateBanner,
+            schema: UpdateCandidateBannerSchema,
             handler: candidateController.updateBanner,
             middlewares: [singleFileUpload],
         },

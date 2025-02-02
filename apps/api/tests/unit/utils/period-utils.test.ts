@@ -1,12 +1,15 @@
 import { expect, test, describe } from 'vitest';
-import { isValidModelPeriods, isValidPeriod } from '../../utils/period-utils';
 import validPeriods from './scenarios/validPeriods.json';
 import overlappingPeriods from './scenarios/overlappingPeriods.json';
 import multipleIsCurrent from './scenarios/multipleIsCurrent.json';
 import singleCurrentWithNoEnd from './scenarios/singleCurrentWithNoEnd.json';
 import unorderedValidPeriods from './scenarios/unorderedValidPeriods.json';
-import { sortModelsByPeriod } from '../../utils/period-utils';
-import { Period } from '../../types/period';
+import { Period } from '../../../src/types/period';
+import {
+    isValidModelPeriods,
+    sortModelsByPeriod,
+    isValidPeriod,
+} from '../../../src/utils/period-utils';
 
 describe('isValidModelPeriods', () => {
     test('should validate correctly ordered, non-overlapping periods', () => {

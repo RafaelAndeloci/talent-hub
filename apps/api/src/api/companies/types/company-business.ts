@@ -1,3 +1,4 @@
+import { FileInput } from '../../../types/file-input';
 import { AuthContext } from '../../users/types/auth-context';
 import { CompanyDto } from './company-dto';
 import { CreateCompanyPayload } from './create-company-payload';
@@ -22,4 +23,16 @@ export type CompanyBusiness = {
     }) => Promise<FindAllCompaniesDto>;
 
     remove: (args: { companyId: string; context: AuthContext }) => Promise<void>;
+
+    setLogo: (args: { companyId: string; file: FileInput }) => Promise<CompanyDto>;
+
+    setBanner: (args: { companyId: string; file: FileInput }) => Promise<CompanyDto>;
+
+    setGaleryItem: (args: {
+        companyId: string;
+        picture: FileInput;
+        order: number;
+    }) => Promise<CompanyDto>;
+
+    deleteGalleryItem: (args: { companyId: string; order?: number }) => Promise<CompanyDto>;
 };

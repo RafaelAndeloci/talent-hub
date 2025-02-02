@@ -5,7 +5,7 @@ import { candidateBusiness } from '../candidates/candidate-business';
 import { JobApplicationStatus } from './types/enums/job-application-status';
 import { jobOpeningBusiness } from '../job-openings/job-opening-business';
 import { jobApplicationParser } from './job-application-parser';
-import { jobQueueService } from '../../services/job-service';
+import { jobQueueService } from '../../services/job-queue-service';
 import { AppEvent } from '../../enums/app-event';
 import _ from 'lodash';
 

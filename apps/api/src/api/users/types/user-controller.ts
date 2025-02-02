@@ -9,6 +9,7 @@ import { AuthPayload } from './auth-payload';
 import { Id } from '../../../types/id';
 import { SendChangePasswordPayload } from './send-change-password-payload';
 import { ConfirmChangePasswordPayload } from './confirm-reset-password-payload';
+import { ConfirmUserEmailPayload } from './confirm-user-email-payload';
 
 export type UserController = {
     findById: RequestHandler<Id, UserDto, void, void, AuthContext>;
@@ -28,8 +29,10 @@ export type UserController = {
         void,
         SendChangePasswordPayload,
         void,
-        AuthContext
+        any
     >;
 
     confirmChangePassword: RequestHandler<Id, void, ConfirmChangePasswordPayload>;
+
+    confirmEmail: RequestHandler<Id, void, ConfirmUserEmailPayload, void, any>;
 };

@@ -1,16 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ZodSchema } from 'zod';
-import { Request, Response, NextFunction } from 'express';
 
 export const validate =
     (schema: ZodSchema): any =>
-    (req: Request, _res: Response, next: NextFunction): void => {
+    (req: any, _res: any, next: any): void => {
         try {
             const { body, query, params } = schema.parse({
                 body: req.body,
                 query: req.query,
                 params: req.params,
-                file: (req as any).file ?? {},
+                file: { buffer: req.file?.buffer, mimetype: req.file?.mimetype },
             });
 
             req.body = body;

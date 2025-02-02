@@ -37,7 +37,7 @@ export const handleUserPasswordResetTokenRequested = async({ userId }: { userId:
 
         const templatePath = path.resolve(
             __dirname,
-            '../../../../templates/emails/reset-password.html',
+            '../../../../static/templates/emails/pass-change-token.html',
         );
 
         let emailBody = await fs.promises.readFile(templatePath, 'utf8');

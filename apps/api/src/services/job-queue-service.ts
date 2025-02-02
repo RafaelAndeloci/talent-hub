@@ -20,7 +20,7 @@ const eventsQueue = new Queue('jobs', {
     },
 });
 
-eventsQueue.on('completed', job => {
+eventsQueue.on('completed', (job) => {
     logger.info(`Job ${job.id} completed`);
 });
 
@@ -28,7 +28,7 @@ eventsQueue.on('failed', (job, error) => {
     logger.error(`Job ${job.id} failed:`, error);
 });
 
-eventsQueue.on('error', error => {
+eventsQueue.on('error', (error) => {
     logger.error('Queue error:', error);
 });
 
@@ -45,7 +45,7 @@ const listenersMap = {
 };
 
 Object.entries(listenersMap).forEach(([event, handler]) => {
-    eventsQueue.process(event, async job => {
+    eventsQueue.process(event, async (job) => {
         await handler(job.data);
     });
 });
@@ -56,6 +56,7 @@ export const jobQueueService = {
 
         try {
             await eventsQueue.add(event, payload, {
+                jobId: `${event}-${Date.now()}`,
                 removeOnComplete: true,
                 removeOnFail: true,
                 attempts: 3,

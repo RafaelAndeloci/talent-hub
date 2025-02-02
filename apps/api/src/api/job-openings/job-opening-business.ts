@@ -2,7 +2,7 @@ import { jobOpeningRepository } from './job-opening-repository';
 import { companyRepository } from '../companies/company-repository';
 import { ApiError } from '../../types/api-error';
 import { JobOpeningStatus } from './types/enums/job-opening-status';
-import { jobQueueService } from '../../services/job-service';
+import { jobQueueService } from '../../services/job-queue-service';
 import { AppEvent } from '../../enums/app-event';
 import { jobApplicationRepository } from '../job-applications/job-application-repository';
 import { JobApplicationStatus } from '../job-applications/types/enums/job-application-status';
