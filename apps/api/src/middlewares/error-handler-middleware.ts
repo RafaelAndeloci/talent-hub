@@ -15,7 +15,7 @@ export const errorHandler: ErrorRequestHandler = (err, _, res, next) => {
         res.status(HTTPStatus.UNAUTHORIZED).json({
             status: HTTPStatus['401_NAME'],
             code: HTTPStatus.UNAUTHORIZED,
-            errors: ['Token expired'],
+            errors: ['token expired'],
         });
         return;
     }

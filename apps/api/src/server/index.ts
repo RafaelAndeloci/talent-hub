@@ -17,7 +17,7 @@ buildApiRouter().then((apiRouter) => {
         express.urlencoded({ extended: true }),
         methodOverride(),
         apiRouter,
-        useServeStaticFiles,
+        useServeStaticFiles(),
         errorHandler,
     ] as express.RequestHandler[]);
 
