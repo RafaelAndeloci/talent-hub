@@ -19,5 +19,5 @@ export interface CandidateProfessionalExperienceModelAttr {
     endMonth: number | null;
     location: Location;
     relatedSkills: string[];
-    responsabilities: string[];
+    responsibilities: string[];
 }

@@ -125,7 +125,7 @@ export const candidateParser: CandidateParser = {
                 },
                 location: p.location,
                 relatedSkills: p.relatedSkills,
-                responsabilities: p.responsabilities,
+                responsibilities: p.responsibilities,
             })),
         },
         references: model.references.map((r) => ({

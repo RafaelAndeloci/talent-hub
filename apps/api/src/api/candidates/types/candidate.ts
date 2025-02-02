@@ -36,7 +36,7 @@ export interface CandidateProfessionalExperience {
     period: Period;
     location: Location;
     relatedSkills: string[];
-    responsabilities: string[];
+    responsibilities: string[];
 }
 
 export interface CandidateLanguage {
