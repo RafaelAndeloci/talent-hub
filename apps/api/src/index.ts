@@ -1,13 +1,16 @@
 import { logger } from './services/logging-service';
-import { config } from './config/environment';
 import { initDatabase } from './config/database/init';
+import { config } from './config/environment';
+const {
+    database: { sync },
+} = config;
 
 const runApplication = async () => {
     try {
         await initDatabase({
-            sync: config.database.sync.enabled,
-            force: config.database.sync.force,
-            alter: config.database.sync.alter,
+            sync: sync.enabled,
+            force: sync.force,
+            alter: sync.alter,
         });
 
         await import('./server');
