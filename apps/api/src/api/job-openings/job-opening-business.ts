@@ -101,7 +101,7 @@ export const jobOpeningBusiness: JobOpeningBusiness = {
         await jobOpeningRepository.update(jobOpening);
 
         await jobQueueService.enqueue({
-            event: AppEvent.jobOpeningUpdated,
+            event: AppEvent.jobOpeningClosed,
             payload: {
                 jobOpeningId: jobOpening.id,
             },
@@ -126,7 +126,7 @@ export const jobOpeningBusiness: JobOpeningBusiness = {
         await jobOpeningRepository.update(jobOpening);
 
         await jobQueueService.enqueue({
-            event: AppEvent.jobOpeningUpdated,
+            event: AppEvent.jobOpeningOpened,
             payload: {
                 jobOpeningId: jobOpening.id,
             },
@@ -152,7 +152,7 @@ export const jobOpeningBusiness: JobOpeningBusiness = {
         await jobOpeningRepository.update(jobOpening);
 
         await jobQueueService.enqueue({
-            event: AppEvent.jobOpeningUpdated,
+            event: AppEvent.jobOpeningFilled,
             payload: {
                 jobOpeningId: jobOpening.id,
             },

@@ -4,7 +4,7 @@ import {
     CreateJobOpeningSchema,
     FillJobOpeningSchema,
     FindJobOpeningByIdSchema,
-    FindJobOpeningsSchema,
+    FindAllJobOpeningsSchema,
     UpdateJobOpeningSchema,
     UpdateJobOpeningStatusSchema,
 } from './job-opening-schema';
@@ -18,7 +18,7 @@ export const jobOpeningRoutes: ApiResource = {
             method: 'get',
             path: '/',
             auth: true,
-            schema: FindJobOpeningsSchema,
+            schema: FindAllJobOpeningsSchema,
             action: Action.readAll,
             handler: jobOpeningController.findAll,
         },

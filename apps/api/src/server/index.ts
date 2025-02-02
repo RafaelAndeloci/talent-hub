@@ -1,5 +1,6 @@
 import express from 'express';
 import methodOverride from 'method-override';
+
 import { logger } from '../services/logging-service';
 import { buildApiRouter } from './routes';
 import { config } from '../config/environment';

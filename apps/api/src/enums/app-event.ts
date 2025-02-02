@@ -15,6 +15,9 @@ export const AppEvent = Object.freeze({
     jobOpeningCreated: 'job_opening_created',
     jobOpeningUpdated: 'job_opening_updated',
     jobOpeningRemoved: 'job_opening_removed',
+    jobOpeningClosed: 'job_opening_closed',
+    jobOpeningOpened: 'job_opening_opened',
+    jobOpeningFilled: 'job_opening_filled',
 });
 
 export type AppEvent = (typeof AppEvent)[keyof typeof AppEvent];

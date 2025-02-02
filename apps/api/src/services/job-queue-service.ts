@@ -1,15 +1,10 @@
 import Queue from 'bull';
+import klawSync from 'klaw-sync';
+import path from 'path';
+
 import { config } from '../config/environment';
 import { AppEvent } from '../enums/app-event';
 import { logger } from './logging-service';
-import { handleJobApplicationCreated } from '../api/job-applications/event-handlers/handle-job-application-created';
-import { handleJobApplicationRemoved } from '../api/job-applications/event-handlers/handle-job-application-removed';
-import { handleJobOpeningCreated } from '../api/job-openings/event-handlers/handle-job-opening-created';
-import { handleJobOpeningRemoved } from '../api/job-openings/event-handlers/handle-job-opening-removed';
-import { handleJobOpeningUpdated } from '../api/job-openings/event-handlers/handle-job-opening-updated';
-import { handleUserCreated } from '../api/users/event-handlers/handle-user-created';
-import { handleUserPasswordChanged } from '../api/users/event-handlers/handle-user-password-changed';
-import { handleUserPasswordResetTokenRequested } from '../api/users/event-handlers/handle-user-password-reset-token-requested';
 
 const { cache } = config;
 
@@ -18,37 +13,16 @@ const eventsQueue = new Queue('jobs', {
         host: cache.host,
         port: cache.port,
     },
-});
-
-eventsQueue.on('completed', (job) => {
-    logger.info(`Job ${job.id} completed`);
-});
-
-eventsQueue.on('failed', (job, error) => {
-    logger.error(`Job ${job.id} failed:`, error);
-});
-
-eventsQueue.on('error', (error) => {
-    logger.error('Queue error:', error);
-});
-
-const listenersMap = {
-    [AppEvent.userPasswordResetTokenRequested]: handleUserPasswordResetTokenRequested,
-    [AppEvent.userPasswordChanged]: handleUserPasswordChanged,
-    [AppEvent.userCreated]: handleUserCreated,
-    [AppEvent.jobApplicationCreated]: handleJobApplicationCreated,
-    [AppEvent.jobApplicationRemoved]: handleJobApplicationRemoved,
-    [AppEvent.jobApplicationUpdated]: handleJobApplicationCreated,
-    [AppEvent.jobOpeningCreated]: handleJobOpeningCreated,
-    [AppEvent.jobOpeningRemoved]: handleJobOpeningRemoved,
-    [AppEvent.jobOpeningUpdated]: handleJobOpeningUpdated,
-};
-
-Object.entries(listenersMap).forEach(([event, handler]) => {
-    eventsQueue.process(event, async (job) => {
-        await handler(job.data);
+})
+    .on('completed', (job) => {
+        logger.info(`Job ${job.id} completed`);
+    })
+    .on('failed', (job, error) => {
+        logger.error(`Job ${job.id} failed:`, error);
+    })
+    .on('error', (error) => {
+        logger.error('Queue error:', error);
     });
-});
 
 export const jobQueueService = {
     async enqueue({ event, payload }: { event: AppEvent; payload: Record<string, unknown> }) {
@@ -71,3 +45,29 @@ export const jobQueueService = {
         }
     },
 };
+
+export const registerJobQueueListeners = async () => {
+    try {
+        const events = Object.values(AppEvent);
+
+        const eventHandlers = await Promise.all(
+            klawSync(path.resolve(__dirname, '../api'), {
+                nodir: true,
+                traverseAll: true,
+                filter: ({ path }) => path.indexOf('-event-handler') > -1,
+            }).map(({ path }) => import(path).then((module) => Object.values(module)[0])),
+        );
+
+        events.forEach((event) => {
+            const handler = eventHandlers.find((handler) => (handler as any)[event]);
+            if (handler) {
+                eventsQueue.process(event, (handler as any)[event]);
+            } else {
+                logger.error(`No handler found for event: ${event}`);
+            }
+        });
+    } catch (error) {
+        logger.error('Error registering listeners:', error);
+    }
+};
+

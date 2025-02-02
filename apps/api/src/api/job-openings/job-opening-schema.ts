@@ -10,6 +10,7 @@ import { Benefit } from '../candidates/types/enums/benefit';
 import moment from 'moment';
 import _ from 'lodash';
 import { ParamsSchema } from '../../schemas/params-schema';
+import { JobOpeningStatus } from './types/enums/job-opening-status';
 
 export const FindJobOpeningByIdSchema = z.object({
     params: z.object({
@@ -17,7 +18,7 @@ export const FindJobOpeningByIdSchema = z.object({
     }),
 });
 
-export const FindJobOpeningsSchema = z.object({
+export const FindAllJobOpeningsSchema = z.object({
     query: buildQuerySchema<JobOpening>({
         sorts: [
             'title',
@@ -34,12 +35,46 @@ export const FindJobOpeningsSchema = z.object({
                 field: 'title',
                 operators: [FilterOperator.eq, FilterOperator.endsWith, FilterOperator.startsWith],
             },
-            { field: 'status', operators: [FilterOperator.eq] },
-            { field: 'positionLevel', operators: [FilterOperator.eq] },
-            { field: 'workplaceType', operators: [FilterOperator.eq] },
-            { field: 'employmentType', operators: [FilterOperator.eq] },
-            { field: 'salary', operators: [FilterOperator.eq] },
-            { field: 'contractType', operators: [FilterOperator.eq] },
+            {
+                field: 'status',
+                operators: [FilterOperator.eq, FilterOperator.not, FilterOperator.in],
+                validation: (status) =>
+                    Object.values(JobOpeningStatus).includes(status as JobOpeningStatus)
+                        ? null
+                        : `Invalid status. Possible values: ${Object.values(JobOpeningStatus).join(', ')}`,
+            },
+            {
+                field: 'positionLevel',
+                operators: [FilterOperator.eq],
+                validation: (level) =>
+                    Object.values(PositionLevel).includes(level as PositionLevel)
+                        ? null
+                        : `Invalid position level. Possible values: ${Object.values(PositionLevel).join(', ')}`,
+            },
+            {
+                field: 'workplaceType',
+                operators: [FilterOperator.eq],
+                validation: (type) =>
+                    Object.values(WorkplaceType).includes(type as WorkplaceType)
+                        ? null
+                        : `Invalid workplace type. Possible values: ${Object.values(WorkplaceType).join(', ')}`,
+            },
+            {
+                field: 'employmentType',
+                operators: [FilterOperator.eq],
+                validation: (type) =>
+                    Object.values(EmploymentType).includes(type as EmploymentType)
+                        ? null
+                        : `Invalid employment type. Possible values: ${Object.values(EmploymentType).join(', ')}`,
+            },
+            {
+                field: 'contractType',
+                operators: [FilterOperator.eq],
+                validation: (type) =>
+                    Object.values(ContractType).includes(type as ContractType)
+                        ? null
+                        : `Invalid contract type. Possible values: ${Object.values(ContractType).join(', ')}`,
+            },
             {
                 field: 'deadline',
                 operators: [
@@ -49,6 +84,7 @@ export const FindJobOpeningsSchema = z.object({
                     FilterOperator.gte,
                     FilterOperator.lte,
                 ],
+                transform: (value) => moment(value).toDate(),
             },
             {
                 field: 'salary',
@@ -59,10 +95,19 @@ export const FindJobOpeningsSchema = z.object({
                     FilterOperator.gte,
                     FilterOperator.lte,
                 ],
+                transform: (value) => parseFloat(value),
+                validation: (value) => {
+                    const num = parseFloat(value);
+                    return isNaN(num) || num < 0 ? 'Invalid salary' : null;
+                },
             },
             {
                 field: 'benefits',
                 operators: [FilterOperator.in, FilterOperator.notIn],
+                validation: (benefit) =>
+                    Object.values(Benefit).includes(benefit as Benefit)
+                        ? null
+                        : `Invalid benefit. Possible values: ${Object.values(Benefit).join(', ')}`,
             },
         ],
     }).strict(),
@@ -133,7 +178,9 @@ export const DeleteJobOpeningSchema = ParamsSchema;
 export const UpdateJobOpeningStatusSchema = ParamsSchema;
 
 export const FillJobOpeningSchema = ParamsSchema.extend({
-    body: z.object({
-        selectedApplicationId: z.string().uuid(),
-    }).strict(),
+    body: z
+        .object({
+            selectedApplicationId: z.string().uuid(),
+        })
+        .strict(),
 });
