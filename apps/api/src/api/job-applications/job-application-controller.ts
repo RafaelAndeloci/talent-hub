@@ -26,14 +26,6 @@ export const jobApplicationController: JobApplicationController = {
         res.status(HTTPStatus.CREATED).json(jobApplication);
     },
 
-    update: async ({ params: { id: jobApplicationId }, body: payload }, res) => {
-        const jobApplication = await jobApplicationBusiness.update({
-            jobApplicationId,
-            payload,
-        });
-        res.status(HTTPStatus.OK).json(jobApplication);
-    },
-
     remove: async ({ params: { id: jobApplicationId } }, res) => {
         await jobApplicationBusiness.remove({ jobApplicationId });
         res.status(HTTPStatus.NO_CONTENT).send();

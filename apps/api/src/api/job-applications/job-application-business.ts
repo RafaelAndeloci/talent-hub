@@ -61,36 +61,6 @@ export const jobApplicationBusiness: JobApplicationBusiness = {
         return jobApplication;
     },
 
-    update: async ({ jobApplicationId, payload }) => {
-        const jobApplication = await jobApplicationRepository.findById(jobApplicationId);
-        if (!jobApplication) {
-            ApiError.throwNotFound(`job application with id ${jobApplicationId} not found`);
-            return null!;
-        }
-
-        if (jobApplication!.status !== JobApplicationStatus.applied) {
-            ApiError.throwBadRequest('job application status must be applied to be updated');
-            return null!;
-        }
-
-        if (payload.status === JobApplicationStatus.rejected && !payload.rejection) {
-            ApiError.throwBadRequest('rejection reason is required');
-            return null!;
-        }
-
-        const updated = _.merge(jobApplication, payload);
-        await jobApplicationRepository.update(updated);
-
-        await jobQueueService.enqueue({
-            event: AppEvent.jobApplicationUpdated,
-            payload: {
-                jobApplicationId: updated.id,
-            },
-        });
-
-        return updated;
-    },
-
     remove: async ({ jobApplicationId }) => {
         const jobApplication = await jobApplicationRepository.findById(jobApplicationId);
         if (!jobApplication) {
@@ -131,6 +101,13 @@ export const jobApplicationBusiness: JobApplicationBusiness = {
         jobApplication.stage = payload.stage;
         await jobApplicationRepository.update(jobApplication);
 
+        await jobQueueService.enqueue({
+            event: AppEvent.jobApplicationStageUpdated,
+            payload: {
+                jobApplicationId: jobApplication.id,
+            },
+        });
+
         return jobApplication;
     },
 
@@ -163,6 +140,13 @@ export const jobApplicationBusiness: JobApplicationBusiness = {
         }
 
         await jobApplicationRepository.update(jobApplication);
+
+        await jobQueueService.enqueue({
+            event: AppEvent.jobApplicationStatusUpdated,
+            payload: {
+                jobApplicationId: jobApplication.id,
+            },
+        });
 
         return jobApplication;
     },

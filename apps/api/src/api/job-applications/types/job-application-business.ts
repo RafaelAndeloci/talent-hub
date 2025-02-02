@@ -17,12 +17,7 @@ export type JobApplicationBusiness = {
         payload: CreateJobApplicationPayload;
         context: AuthContext;
     }) => Promise<JobApplication>;
-    
-    update: (args: {
-        jobApplicationId: string;
-        payload: UpdateJobApplicationDto;
-    }) => Promise<JobApplication>;
-    
+ 
     remove: (args: { jobApplicationId: string }) => Promise<void>;
 
     updateCoverLetter: (args: {

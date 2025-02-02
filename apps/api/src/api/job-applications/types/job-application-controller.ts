@@ -20,7 +20,6 @@ export type JobApplicationController = {
         AuthContext
     >;
     create: RequestHandler<void, JobApplication, CreateJobApplicationPayload, void, AuthContext>;
-    update: RequestHandler<Id, JobApplication, UpdateJobApplicationDto, void, AuthContext>;
     remove: RequestHandler<Id, void, void, void, AuthContext>;
     updateCoverLetter: RequestHandler<
         Id,

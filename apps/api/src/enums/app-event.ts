@@ -7,8 +7,9 @@ export const AppEvent = Object.freeze({
 
     // job applications
     jobApplicationCreated: 'job_application_created',
-    jobApplicationUpdated: 'job_application_updated',
     jobApplicationRemoved: 'job_application_removed',
+    jobApplicationStatusUpdated: 'job_application_status_updated',
+    jobApplicationStageUpdated: 'job_application_stage_updated',
 
     // job openings
     jobOpeningCreated: 'job_opening_created',
