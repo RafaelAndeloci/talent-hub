@@ -4,7 +4,7 @@ import { fileStorageService } from '../services/file-storage-service';
 import { validate } from '../middlewares/validation-middleware';
 import { Router } from 'express';
 
-export const useServeStaticFiles = () => {
+export const getStaticFilesRouter = () => {
     const staticFilesRouter = Router();
 
     staticFilesRouter.get(
