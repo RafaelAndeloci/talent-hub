@@ -81,7 +81,7 @@ CandidateProfessionalExperienceModel.init(
             allowNull: false,
             defaultValue: [],
         },
-        responsabilities: {
+        responsibilities: {
             type: DataTypes.ARRAY(DataTypes.STRING),
             allowNull: false,
             defaultValue: [],
