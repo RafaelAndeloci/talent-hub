@@ -1,17 +1,23 @@
-import { Contact } from '../../../types/contact';
-import { Id } from '../../../types/id';
 import { Location } from '../../../types/location';
-import { RelatedWebsites } from '../../../types/related-websites';
 
-export interface Company extends Id {
+export interface CompanyModelAttr {
+    id: string;
     tradeName: string;
     legalName: string;
     cnpj: string;
     employeesQuantity: number;
     foundationYear: number;
-    social: RelatedWebsites;
+    linkedin: string | null;
+    github: string | null;
+    instagram: string | null;
+    facebook: string | null;
+    twitter: string | null;
+    youtube: string | null;
+    medium: string | null;
+    website: string | null;
     about: string | null;
-    contact: Contact;
+    contactPhone: string;
+    contactEmail: string;
     location: Location;
     bannerUrl: string | null;
     logoUrl: string | null;

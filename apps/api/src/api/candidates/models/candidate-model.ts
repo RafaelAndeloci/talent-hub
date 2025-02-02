@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { DataTypes, Model } from 'sequelize';
-import _ from 'lodash';
 
-import { database } from '../../../config/database';
+import database from '../../../config/database';
 import { EmploymentType } from '../types/enums/employment-type';
 import { WorkplaceType } from '../types/enums/workplace-type';
 import { PositionLevel } from '../types/enums/position-level';
@@ -16,7 +16,13 @@ import {
 } from '.';
 import { UserModel } from '../../users/user-model';
 import { CandidateModelAttr } from './types/candidate-model-attr';
-import { addressColumn, primaryColumn, urlColumn } from '../../../constants/database-column.def';
+import {
+    addressColumn,
+    phoneColumn,
+    primaryColumn,
+    socialMediasColumns,
+    urlColumn,
+} from '../../../constants/database-column.def';
 
 type CandidateModelAttrInternal = Omit<
     CandidateModelAttr,
@@ -33,7 +39,7 @@ CandidateModel.init(
     {
         id: primaryColumn,
         fullName: {
-            type: DataTypes.STRING(100),
+            type: DataTypes.STRING,
             allowNull: false,
         },
         userId: {
@@ -47,27 +53,20 @@ CandidateModel.init(
         },
         cvUrl: urlColumn,
         about: {
-            type: DataTypes.TEXT,
+            type: DataTypes.TEXT('long'),
             allowNull: true,
         },
         professionalHeadline: {
-            type: DataTypes.STRING(100),
+            type: DataTypes.STRING,
             allowNull: true,
         },
         bannerUrl: urlColumn,
         hobbies: {
-            type: DataTypes.ARRAY(DataTypes.STRING(50)),
+            type: DataTypes.ARRAY(DataTypes.STRING(200)),
             allowNull: false,
             defaultValue: [],
         },
-        linkedin: urlColumn,
-        github: urlColumn,
-        twitter: urlColumn,
-        facebook: urlColumn,
-        instagram: urlColumn,
-        youtube: urlColumn,
-        medium: urlColumn,
-        website: urlColumn,
+        ...socialMediasColumns,
         isAvailableForWork: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
@@ -104,19 +103,13 @@ CandidateModel.init(
         },
         address: addressColumn,
         contactEmail: {
-            type: DataTypes.STRING(100),
+            type: DataTypes.STRING,
             allowNull: false,
             validate: {
                 isEmail: true,
             },
         },
-        contactPhone: {
-            type: DataTypes.STRING(100),
-            allowNull: false,
-            validate: {
-                is: /^\d{11}$/,
-            },
-        },
+        contactPhone: phoneColumn,
     },
     {
         sequelize: database,
@@ -188,7 +181,10 @@ UserModel.hasOne(CandidateModel, {
 });
 
 CandidateModel.prototype.toJSON = function () {
-    const candidate = this.get() as CandidateModelAttrInternal;
+    const model = this.get() as any;
+    delete model.createdAt;
+    delete model.updatedAt;
+    delete model.deletedAt;
 
-    return _.omit(candidate, ['createdAt', 'updatedAt', 'deletedAt', 'userId']);
+    return model;
 };

@@ -6,12 +6,17 @@ import fs from 'fs/promises';
 import { emailService } from '../../../services/email-service';
 import { config } from '../../../config/environment';
 import moment from 'moment';
+import { Role } from '../types/enums/role';
 
-export const handleUserCreated = async({ userId }: { userId: string }) => {
+export const handleUserCreated = async ({ userId }: { userId: string }) => {
     try {
         const user = await userRepository.findById(userId);
         if (!user) {
             logger.info(`Cannot process event ${AppEvent.userCreated}: user ${userId} not found`);
+            return;
+        }
+
+        if (user.role === Role.sysAdmin) {
             return;
         }
 

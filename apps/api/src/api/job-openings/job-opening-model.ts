@@ -1,7 +1,7 @@
 import { Model, DataTypes, Op } from 'sequelize';
 import moment from 'moment';
 
-import { database } from '../../config/database';
+import database from '../../config/database';
 import { PositionLevel } from '../candidates/types/enums/position-level';
 import { WorkplaceType } from '../candidates/types/enums/workplace-type';
 import { EmploymentType } from '../candidates/types/enums/employment-type';
@@ -10,24 +10,7 @@ import { Benefit } from '../candidates/types/enums/benefit';
 import { CompanyModel } from '../companies/company-model';
 import { JobOpeningStatus } from './types/enums/job-opening-status';
 import { primaryColumn } from '../../constants/database-column.def';
-
-export interface JobOpeningModelAttr {
-    id: string;
-    title: string;
-    selectedApplicationId: string | null;
-    status: JobOpeningStatus;
-    companyId: string;
-    description: string;
-    positionLevel: PositionLevel;
-    workplaceType: WorkplaceType;
-    employmentType: EmploymentType;
-    salary: number;
-    contractType: ContractType;
-    benefits: Benefit[];
-    deadline: Date;
-    responsibilities: string[];
-    requirements: string[];
-}
+import { JobOpeningModelAttr } from './types/job-opening-model-attr';
 
 export class JobOpeningModel extends Model<JobOpeningModelAttr> {}
 JobOpeningModel.init(

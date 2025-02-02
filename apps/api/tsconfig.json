@@ -1,9 +1,9 @@
 {
     "compilerOptions": {
         "target": "ESNext",
+        "module": "CommonJS",
         "strict": true,
         "esModuleInterop": true,
-        "module": "CommonJS",
         "skipLibCheck": true,
         "outDir": "./dist",
         "rootDir": "./src",
@@ -17,7 +17,8 @@
         "noFallthroughCasesInSwitch": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
+        "types": ["node", "jest"]
     },
-    "include": ["src/**/*"],
+    "include": ["src/**/*", "tests/**/*"],
     "exclude": ["node_modules", "dist"]
 }

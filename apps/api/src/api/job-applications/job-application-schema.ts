@@ -26,7 +26,7 @@ import { ParamsSchema } from '../../schemas/params-schema';
 export const CreateJobApplicationSchema = z.object({
     body: z.object({
         candidateId: z.string().uuid(),
-        coverLetter: z.string().min(3).max(1000).nullable().default(null),
+        coverLetter: z.string().min(3).max(1000).nullable(),
         jobOpeningId: z.string().uuid(),
     }),
 });

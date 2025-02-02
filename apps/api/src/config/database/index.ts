@@ -14,7 +14,7 @@ const logQuery = (query: string) => {
     logger.info(formatSql(query));
 };
 
-export const database = new Sequelize(name, user, password, {
+const database = new Sequelize(name, user, password, {
     host,
     port,
     dialect: 'postgres',
@@ -53,3 +53,5 @@ export const database = new Sequelize(name, user, password, {
 (database as any).dialect.queryGenerator.generateTransactionId = function () {
     return `talenthub_api_${uuid.v4()}`.replace(/-/g, '');
 };
+
+export default database;

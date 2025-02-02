@@ -7,6 +7,7 @@ import { validate } from '../middlewares/validation-middleware';
 import { Resource } from '../enums/resource';
 import { logger } from '../services/logging-service';
 import { config } from '../config/environment';
+import { authenticate } from '../middlewares/authentication-middleware';
 
 const buildActionPipe = (
     resource: Resource,
@@ -15,6 +16,7 @@ const buildActionPipe = (
     const middlewarePipe: AnyRequestHandler[] = [];
 
     if (auth === true) {
+        middlewarePipe.push(authenticate);
         middlewarePipe.push(authorize({ resource, action }));
     }
 

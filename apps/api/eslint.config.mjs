@@ -20,6 +20,10 @@ export default [
     ...tseslint.configs.recommended,
     eslintConfigPrettier,
     {
+        env: {
+            node: true,
+            jest: true
+        },
         rules: {
             'no-console': 'error',
             'no-debugger': 'error',

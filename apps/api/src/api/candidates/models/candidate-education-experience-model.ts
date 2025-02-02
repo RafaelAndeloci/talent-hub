@@ -1,7 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
 import { AcademicStatus } from '../types/enums/academic-status';
 import { AcademicDegreeType } from '../types/enums/academic-degree-type';
-import { database } from '../../../config/database';
+import database from '../../../config/database';
 import { CandidateEducationalExperienceModelAttr } from './types/candidate-education-experience-model-attr';
 import { primaryColumn, urlColumn } from '../../../constants/database-column.def';
 
@@ -11,12 +11,12 @@ CandidateEducationalExperienceModel.init(
     {
         id: primaryColumn,
         degree: {
-            type: DataTypes.STRING(100),
+            type: DataTypes.STRING,
             allowNull: false,
         },
         fieldOfStudy: {
-            type: DataTypes.STRING(100),
-            allowNull: false,
+            type: DataTypes.STRING,
+            allowNull: true,
         },
         status: {
             type: DataTypes.ENUM(...Object.values(AcademicStatus)),
@@ -27,7 +27,7 @@ CandidateEducationalExperienceModel.init(
             allowNull: false,
         },
         institution: {
-            type: DataTypes.STRING(100),
+            type: DataTypes.STRING,
             allowNull: false,
         },
         institutionWebsite: urlColumn,
@@ -81,7 +81,7 @@ CandidateEducationalExperienceModel.init(
             allowNull: true,
         },
         institutionRegistrationNumber: {
-            type: DataTypes.STRING(100),
+            type: DataTypes.STRING,
             allowNull: true,
         },
         gradePointAverage: {
@@ -108,6 +108,7 @@ CandidateEducationalExperienceModel.init(
     {
         sequelize: database,
         underscored: true,
+        timestamps: false,
         tableName: 'candidate_educational_experiences',
         modelName: 'CandidateEducationalExperience',
     },

@@ -1,5 +1,5 @@
 import { Model, DataTypes } from 'sequelize';
-import { database } from '../../../config/database';
+import database from '../../../config/database';
 import { primaryColumn } from '../../../constants/database-column.def';
 import { Language } from '../../../enums/language';
 import { LanguageProficiency } from '../types/enums/language-proficiency';
@@ -34,7 +34,15 @@ CandidateLanguageModel.init(
     {
         sequelize: database,
         underscored: true,
+        timestamps: false,
         tableName: 'candidate_languages',
         modelName: 'CandidateLanguage',
     },
 );
+
+CandidateLanguageModel.prototype.toJSON = function () {
+    const values = this.get();
+    delete values.id;
+    delete values.candidateId;
+    return values;
+};

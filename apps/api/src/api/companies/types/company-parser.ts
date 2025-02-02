@@ -1,7 +1,7 @@
 import { Role } from '../../users/types/enums/role';
-import { CompanyModelAttr } from '../company-model';
 import { Company } from './company';
 import { CompanyDto } from './company-dto';
+import { CompanyModelAttr } from './company-model-attr';
 
 export type CompanyParser = {
     toDatabase: (company: Company) => CompanyModelAttr;

@@ -16,7 +16,7 @@ import { YearMonthSchema } from './year-month-schema';
 export const PeriodSchema = z
     .object({
         start: YearMonthSchema,
-        end: YearMonthSchema.nullable().default(null),
+        end: YearMonthSchema.nullable(),
     })
     .refine(
         ({ end, start }) =>

@@ -14,6 +14,20 @@ import { jwtService } from '../../services/jwt-service';
 import { ApiError } from '../../types/api-error';
 
 export const userBusiness: UserBusiness = {
+    findById: async ({ userId }) => {
+        const user = await userRepository.findById(userId);
+        if (!user) {
+            ApiError.throwNotFound(`user with id ${userId}`);
+        }
+
+        return userParser.toDto({ user });
+    },
+
+    findAll: async ({ query }) => {
+        const users = await userRepository.findAll(query);
+        return users.parse((user) => userParser.toDto({ user }));
+    },
+
     create: async ({ payload }) => {
         if (
             await userRepository.exists({
@@ -78,20 +92,6 @@ export const userBusiness: UserBusiness = {
         await userRepository.update(user);
 
         return userParser.toDto({ user });
-    },
-
-    findById: async ({ userId }) => {
-        const user = await userRepository.findById(userId);
-        if (!user) {
-            ApiError.throwNotFound(`user with id ${userId}`);
-        }
-
-        return userParser.toDto({ user });
-    },
-
-    findAll: async ({ query }) => {
-        const users = await userRepository.findAll(query);
-        return users.parse((user) => userParser.toDto({ user }));
     },
 
     remove: async ({ userId }) => {

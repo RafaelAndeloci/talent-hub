@@ -2,46 +2,43 @@
 import './models';
 import { logger } from '../../services/logging-service';
 import { formatSql } from '../../utils/sql-formatter';
-import { database } from '.';
-import { seed } from './seed';
+import database from '.';
 
 const actionMap = Object.freeze({
-    drop: async() => {
+    drop: async () => {
         logger.info('dropping tables');
         await database.drop({
             cascade: true,
-            logging: sql => logger.info(formatSql(sql)),
+            logging: (sql) => logger.info(formatSql(sql)),
         });
     },
 
-    migrate: async() => {
+    migrate: async () => {
         logger.info('syncing database');
         await database.sync({
             force: false,
             alter: true,
-            logging: sql => logger.info(formatSql(sql)),
+            logging: (sql) => logger.info(formatSql(sql)),
         });
     },
 
-    truncate: async() => {
+    truncate: async () => {
         logger.info('truncating tables');
         await database.truncate({
             force: true,
             cascade: true,
-            logging: sql => logger.info(formatSql(sql)),
+            logging: (sql) => logger.info(formatSql(sql)),
         });
     },
-
-    seed,
 });
 
-const performDatabaseAction = async() => {
+const performDatabaseAction = async () => {
     const type = process.argv[2];
 
     try {
         logger.info('init database authentication');
         await database.authenticate({
-            logging: sql => logger.info(formatSql(sql)),
+            logging: (sql) => logger.info(formatSql(sql)),
         });
         logger.info('database authentication success');
 

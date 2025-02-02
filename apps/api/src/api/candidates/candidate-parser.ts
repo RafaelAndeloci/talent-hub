@@ -2,7 +2,7 @@ import * as uuid from 'uuid';
 import moment from 'moment';
 
 import { CandidateParser } from './types/candidate-parse';
-import { YearMonth } from '../../types/year-month';
+import _ from 'lodash';
 
 export const candidateParser: CandidateParser = {
     toDatabase: (candidate) => ({
@@ -35,40 +35,43 @@ export const candidateParser: CandidateParser = {
         })),
     }),
 
-    fromDatabase: (attr) => ({
-        id: attr.id,
-        userId: attr.userId,
-        fullName: attr.fullName,
-        birthDate: moment(attr.birthDate).format('YYYY-MM-DD'),
-        contact: { email: attr.contactEmail, phone: attr.contactPhone },
-        address: attr.address,
-        cvUrl: attr.cvUrl,
-        about: attr.about,
-        professionalHeadline: attr.professionalHeadline,
-        bannerUrl: attr.bannerUrl,
-        hobbies: attr.hobbies,
-        social: {
-            linkedin: attr.linkedin,
-            github: attr.github,
-            twitter: attr.twitter,
-            facebook: attr.facebook,
-            instagram: attr.instagram,
-            youtube: attr.youtube,
-            medium: attr.medium,
-            website: attr.website,
+    fromDatabase: (model) => ({
+        id: model.id,
+        userId: model.userId,
+        fullName: model.fullName,
+        birthDate: moment(model.birthDate.toString(), true).format('YYYY-MM-DD'),
+        contact: {
+            email: model.contactEmail,
+            phone: model.contactPhone,
         },
-        isAvailableForWork: attr.isAvailableForWork,
-        allowThirdPartyApplications: attr.allowThirdPartyApplications,
+        address: model.address,
+        cvUrl: model.cvUrl,
+        about: model.about,
+        professionalHeadline: model.professionalHeadline,
+        bannerUrl: model.bannerUrl,
+        hobbies: model.hobbies,
+        social: {
+            linkedin: model.linkedin,
+            github: model.github,
+            twitter: model.twitter,
+            facebook: model.facebook,
+            instagram: model.instagram,
+            youtube: model.youtube,
+            medium: model.medium,
+            website: model.website,
+        },
+        isAvailableForWork: model.isAvailableForWork,
+        allowThirdPartyApplications: model.allowThirdPartyApplications,
         preferences: {
-            salary: Number(attr.salaryPreference),
-            contractType: attr.contractTypePreference,
-            employmentType: attr.employmentTypePreference,
-            workplaceType: attr.workplaceTypePreference,
-            benefits: attr.benefitsPreference,
-            positionLevel: attr.positionLevelPreference,
+            salary: Number(model.salaryPreference),
+            contractType: model.contractTypePreference,
+            employmentType: model.employmentTypePreference,
+            workplaceType: model.workplaceTypePreference,
+            benefits: model.benefitsPreference,
+            positionLevel: model.positionLevelPreference,
         },
         experiences: {
-            education: attr.educationalExperiences.map((e) => ({
+            education: model.educationalExperiences.map((e) => ({
                 degree: e.degree,
                 fieldOfStudy: e.fieldOfStudy,
                 status: e.status,
@@ -77,8 +80,16 @@ export const candidateParser: CandidateParser = {
                 institutionWebsite: e.institutionWebsite,
                 description: e.description,
                 period: {
-                    start: { year: e.startYear, month: e.startMonth },
-                    end: e.endYear ? ({ year: e.endYear, month: e.endMonth } as YearMonth) : null,
+                    start: {
+                        year: e.startYear,
+                        month: e.startMonth,
+                    },
+                    end: e.endYear
+                        ? {
+                              year: e.endYear,
+                              month: e.endMonth!,
+                          }
+                        : null,
                 },
                 isCurrent: e.isCurrent,
                 semesters: e.semesters,
@@ -86,14 +97,14 @@ export const candidateParser: CandidateParser = {
                 institutionRegistrationNumber: e.institutionRegistrationNumber,
                 gradePointAverage: Number(e.gradePointAverage),
                 expectedGraduation: e.expectedGraduationYear
-                    ? ({
+                    ? {
                           year: e.expectedGraduationYear,
-                          month: e.expectedGraduationMonth,
-                      } as YearMonth)
+                          month: e.expectedGraduationMonth!,
+                      }
                     : null,
             })),
-            professional: attr.professionalExperiences.map((p) => ({
-                title: p.title,
+            professional: model.professionalExperiences.map((p) => ({
+                position: p.position,
                 description: p.description,
                 company: p.company,
                 employmentType: p.employmentType,
@@ -101,16 +112,48 @@ export const candidateParser: CandidateParser = {
                 positionLevel: p.positionLevel,
                 isCurrent: p.isCurrent,
                 period: {
-                    start: { year: p.startYear, month: p.startMonth } as YearMonth,
-                    end: p.endYear ? ({ year: p.endYear!, month: p.endMonth } as YearMonth) : null,
+                    start: {
+                        year: p.startYear,
+                        month: p.startMonth,
+                    },
+                    end: p.isCurrent
+                        ? null
+                        : {
+                              year: p.endYear!,
+                              month: p.endMonth!,
+                          },
                 },
                 location: p.location,
                 relatedSkills: p.relatedSkills,
+                responsabilities: p.responsabilities,
             })),
         },
-        references: attr.references,
-        languages: attr.languages,
-        achievements: attr.achievements,
+        references: model.references.map((r) => ({
+            name: r.name,
+            position: r.position,
+            phone: r.phone,
+            email: r.email,
+            relationship: r.relationship,
+            company: r.company,
+        })),
+        languages: model.languages.map((l) => ({
+            language: l.language,
+            writtenLevel: l.writtenLevel,
+            spokenLevel: l.spokenLevel,
+            readingLevel: l.readingLevel,
+            listeningLevel: l.listeningLevel,
+        })),
+        achievements: model.achievements.map((a) => ({
+            name: a.name,
+            type: a.type,
+            issuer: a.issuer,
+            issueDate: a.issueDate,
+            workload: a.workload,
+            expirationDate: a.expirationDate,
+            credentialId: a.credentialId,
+            credentialUrl: a.credentialUrl,
+            relatedSkills: a.relatedSkills,
+        })),
     }),
 
     newInstance: ({ userId, payload }) => ({
@@ -118,7 +161,7 @@ export const candidateParser: CandidateParser = {
         userId,
         fullName: payload.fullName,
         birthDate: payload.birthDate,
-        professionalHeadline: payload.about,
+        professionalHeadline: payload.professionalHeadline,
         contact: payload.contact,
         address: payload.address,
         cvUrl: null,
@@ -134,4 +177,6 @@ export const candidateParser: CandidateParser = {
         references: payload.references,
         achievements: payload.achievements,
     }),
+
+    toDto: ({ candidate }) => _.omit(candidate, 'userId'),
 };

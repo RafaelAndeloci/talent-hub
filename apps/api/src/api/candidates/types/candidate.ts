@@ -26,7 +26,7 @@ export interface CandidateReference {
 }
 
 export interface CandidateProfessionalExperience {
-    title: string;
+    position: string;
     description: string | null;
     company: string;
     employmentType: EmploymentType;
@@ -36,6 +36,7 @@ export interface CandidateProfessionalExperience {
     period: Period;
     location: Location;
     relatedSkills: string[];
+    responsabilities: string[];
 }
 
 export interface CandidateLanguage {
@@ -52,7 +53,7 @@ export interface CandidateAchievement {
     issuer: string;
     workload: number | null;
     issueDate: Date;
-    expirationDate: Date | null
+    expirationDate: Date | null;
     credentialId: string | null;
     credentialUrl: string | null;
     relatedSkills: string[];

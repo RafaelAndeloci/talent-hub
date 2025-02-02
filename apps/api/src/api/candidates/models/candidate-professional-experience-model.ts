@@ -1,5 +1,5 @@
 import { DataTypes, Model } from 'sequelize';
-import { database } from '../../../config/database';
+import database from '../../../config/database';
 import { PositionLevel } from '../types/enums/position-level';
 import { WorkplaceType } from '../types/enums/workplace-type';
 import { EmploymentType } from '../types/enums/employment-type';
@@ -11,8 +11,8 @@ export class CandidateProfessionalExperienceModel extends Model<CandidateProfess
 CandidateProfessionalExperienceModel.init(
     {
         id: primaryColumn,
-        title: {
-            type: DataTypes.STRING(100),
+        position: {
+            type: DataTypes.STRING,
             allowNull: false,
         },
         description: {
@@ -20,7 +20,7 @@ CandidateProfessionalExperienceModel.init(
             allowNull: true,
         },
         company: {
-            type: DataTypes.STRING(100),
+            type: DataTypes.STRING,
             allowNull: false,
         },
         employmentType: {
@@ -77,7 +77,12 @@ CandidateProfessionalExperienceModel.init(
             allowNull: true,
         },
         relatedSkills: {
-            type: DataTypes.ARRAY(DataTypes.STRING(50)),
+            type: DataTypes.ARRAY(DataTypes.STRING),
+            allowNull: false,
+            defaultValue: [],
+        },
+        responsabilities: {
+            type: DataTypes.ARRAY(DataTypes.STRING),
             allowNull: false,
             defaultValue: [],
         },
@@ -85,6 +90,7 @@ CandidateProfessionalExperienceModel.init(
     {
         sequelize: database,
         underscored: true,
+        timestamps: false,
         tableName: 'candidate_professional_experiences',
         modelName: 'CandidateProfessionalExperience',
     },

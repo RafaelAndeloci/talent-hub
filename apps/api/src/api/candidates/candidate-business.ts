@@ -11,6 +11,17 @@ import { ApiError } from '../../types/api-error';
 import { FindAllArgs } from '../../types/find-all-args';
 
 export const candidateBusiness: CandidateBusiness = {
+    findById: async (id) => {
+        const candidate = await candidateRepository.findById(id);
+        if (!candidate) {
+            ApiError.throwNotFound('candidate not found');
+        }
+
+        return candidateParser.toDto({ candidate });
+    },
+
+    findAll: ({ query }) => candidateRepository.findAll(query as unknown as FindAllArgs<Candidate>),
+
     create: async ({ userId, payload }) => {
         const user = await userRepository.findById(userId);
         if (!user) {
@@ -33,7 +44,7 @@ export const candidateBusiness: CandidateBusiness = {
             userId,
         });
 
-        return candidate;
+        return candidateParser.toDto({ candidate });
     },
 
     update: async ({ candidateId, payload }) => {
@@ -45,19 +56,8 @@ export const candidateBusiness: CandidateBusiness = {
         const updated = _.merge(candidate, payload);
         await candidateRepository.update(updated);
 
-        return updated;
+        return candidateParser.toDto({ candidate: updated });
     },
-
-    findById: async (id: string): Promise<Candidate> => {
-        const candidate = await candidateRepository.findById(id);
-        if (!candidate) {
-            ApiError.throwNotFound('candidate not found');
-        }
-
-        return candidate;
-    },
-
-    findAll: ({ query }) => candidateRepository.findAll(query as unknown as FindAllArgs<Candidate>),
 
     remove: async (id) => {
         const candidate = await candidateRepository.findById(id);
@@ -87,7 +87,7 @@ export const candidateBusiness: CandidateBusiness = {
         candidate.cvUrl = url;
 
         await candidateRepository.update(candidate);
-        return candidate;
+        return candidateParser.toDto({ candidate });
     },
 
     updateBanner: async ({ candidateId, file }) => {
@@ -110,7 +110,7 @@ export const candidateBusiness: CandidateBusiness = {
         candidate.bannerUrl = url;
 
         await candidateRepository.update(candidate);
-        return candidate;
+        return candidateParser.toDto({ candidate });
     },
 
     validateForApplication: async ({ userRole, candidate }) => {

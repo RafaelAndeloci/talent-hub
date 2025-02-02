@@ -6,7 +6,7 @@ import { Location } from '../../../../types/location';
 export interface CandidateProfessionalExperienceModelAttr {
     id?: string;
     candidateId?: string;
-    title: string;
+    position: string;
     description: string | null;
     company: string;
     employmentType: EmploymentType;
@@ -19,4 +19,5 @@ export interface CandidateProfessionalExperienceModelAttr {
     endMonth: number | null;
     location: Location;
     relatedSkills: string[];
+    responsabilities: string[];
 }

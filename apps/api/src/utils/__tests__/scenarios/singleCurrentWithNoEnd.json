@@ -1,0 +1,11 @@
+[
+    {
+      "period": { "start": { "year": 2022, "month": 1 }, "end": { "year": 2023, "month": 12 } },
+      "isCurrent": false
+    },
+    {
+      "period": { "start": { "year": 2024, "month": 2 }, "end": null },
+      "isCurrent": true
+    }
+  ]
+  

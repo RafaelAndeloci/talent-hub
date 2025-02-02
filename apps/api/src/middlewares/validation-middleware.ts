@@ -4,27 +4,18 @@ import { Request, Response, NextFunction } from 'express';
 
 export const validate =
     (schema: ZodSchema): any =>
-    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    (req: Request, _res: Response, next: NextFunction): void => {
         try {
-            const parsedData = await schema.safeParseAsync({
+            const { body, query, params } = schema.parse({
                 body: req.body,
                 query: req.query,
                 params: req.params,
+                file: (req as any).file ?? {},
             });
 
-            if (!parsedData.success) {
-                res.status(400).json({
-                    status: 'BAD_REQUEST',
-                    code: 400,
-                    errors: parsedData.error.errors,
-                });
-
-                return;
-            }
-
-            req.body = parsedData.data.body;
-            req.query = parsedData.data.query;
-            req.params = parsedData.data.params;
+            req.body = body;
+            req.query = query;
+            req.params = params;
             next();
         } catch (error) {
             next(error);

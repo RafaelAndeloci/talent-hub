@@ -1,5 +1,5 @@
 export const AcademicStatus = Object.freeze({
-    Ongoing: 'ongoing',
+    InProgress: 'in_progress',
     Completed: 'completed',
     Locked: 'locked',
     Interrupted: 'interrupted',

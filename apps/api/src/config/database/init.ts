@@ -1,8 +1,9 @@
-import { database } from '.';
+import database from '.';
 import { Role } from '../../api/users/types/enums/role';
 import { hasher } from '../../services/hasher';
 import { logger } from '../../services/logging-service';
 import { config } from '../environment';
+import models from './models';
 
 export const initDatabase = async ({
     sync,
@@ -14,8 +15,6 @@ export const initDatabase = async ({
     alter: boolean;
 }) => {
     try {
-        const { models } = await import('./models');
-
         logger.info('connecting to database...');
         await database.authenticate();
         logger.info('database connected!');
@@ -29,7 +28,7 @@ export const initDatabase = async ({
             logger.info('database synced!');
         }
 
-        await models.Users.Self.upsert({
+        await models.User.upsert({
             id: config.sysAdmin.id,
             username: config.sysAdmin.username,
             email: config.sysAdmin.email,

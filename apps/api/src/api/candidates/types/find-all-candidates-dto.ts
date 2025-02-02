@@ -1,4 +1,4 @@
 import { PagedList } from '../../../types/paged-list';
-import { Candidate } from './candidate';
+import { CandidateDto } from './candidate-dto';
 
-export type FindAllCandidatesDto = PagedList<Candidate>;
+export type FindAllCandidatesDto = PagedList<CandidateDto>;

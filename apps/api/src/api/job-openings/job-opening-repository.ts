@@ -1,8 +1,9 @@
 import { Op } from 'sequelize';
 import { makeRepository } from '../../services/repository';
-import { JobOpeningModel, JobOpeningModelAttr } from './job-opening-model';
+import { JobOpeningModel } from './job-opening-model';
 import { JobOpening } from './types/job-opening';
 import { JobOpeningStatus } from './types/enums/job-opening-status';
+import { JobOpeningModelAttr } from './types/job-opening-model-attr';
 
 export const jobOpeningRepositoryBase = makeRepository<
     JobOpening,

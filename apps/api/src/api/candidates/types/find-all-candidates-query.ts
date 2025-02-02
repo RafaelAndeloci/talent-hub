@@ -1,8 +1,8 @@
 import { FindAllArgs } from '../../../types/find-all-args';
-import { Candidate } from './candidate';
+import { CandidateDto } from './candidate-dto';
 
 export type FindAllCandidatesQuery = FindAllArgs<
-    Candidate & {
+    CandidateDto & {
         contactEmail: string;
         contactPhone: string;
         ['address.zipCode']: string;

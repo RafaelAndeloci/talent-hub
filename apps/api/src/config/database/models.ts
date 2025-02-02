@@ -1,37 +1,33 @@
-import {
-    CandidateAchievementModel,
-    CandidateEducationalExperienceModel,
-    CandidateLanguageModel,
-    CandidateModel,
-    CandidateProfessionalExperienceModel,
-    CandidateReferenceModel,
-} from '../../api/candidates/models';
-import { database } from '.';
-import { UserModel } from '../../api/users/user-model';
-import { JobOpeningModel } from '../../api/job-openings/job-opening-model';
-import { JobApplicationModel } from '../../api/job-applications/job-application-model';
-import { CompanyModel } from '../../api/companies/company-model';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { createRequire } from 'module';
+const requireSync = createRequire(__filename);
+import path from 'path';
 
-export const models = {
-    Candidates: {
-        Self: CandidateModel,
-        EducationalExperiences: CandidateEducationalExperienceModel,
-        ProfessionalExperiences: CandidateProfessionalExperienceModel,
-        Achievements: CandidateAchievementModel,
-        References: CandidateReferenceModel,
-        Languages: CandidateLanguageModel,
-    },
-    JobOpenings: {
-        Self: JobOpeningModel,
-    },
-    JobApplications: {
-        Self: JobApplicationModel,
-    },
-    Companies: {
-        Self: CompanyModel,
-    },
-    Users: {
-        Self: UserModel,
-    },
-    database,
-};
+import database from '.';
+import klawSync from 'klaw-sync';
+import { Model, ModelStatic, Sequelize } from 'sequelize';
+
+const modelsBasePath = path.resolve(__dirname, '../../api');
+
+const models = {} as any;
+models.sequelize = database;
+models.Sequelize = Sequelize;
+
+klawSync(modelsBasePath, {
+    traverseAll: true,
+    nodir: true,
+    filter: ({ path }) => path.indexOf('-model') > 0,
+}).forEach(({ path }) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { __esModule, ...rest } = requireSync(path);
+    const values = Object.values(rest);
+
+    if (!values?.length) {
+        return;
+    }
+
+    const model = values[0] as ModelStatic<Model<any, any>>;
+    models[model.name] = model;
+});
+
+export default models;

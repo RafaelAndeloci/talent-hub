@@ -2,7 +2,7 @@ import { Model, DataTypes } from 'sequelize';
 
 import { Role } from './types/enums/role';
 import { primaryColumn } from '../../constants/database-column.def';
-import { database } from '../../config/database';
+import database from '../../config/database';
 
 export interface UserModelAttr {
     id: string;

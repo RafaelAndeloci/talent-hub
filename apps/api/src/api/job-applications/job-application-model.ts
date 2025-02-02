@@ -1,32 +1,15 @@
 import { DataTypes, Model } from 'sequelize';
 
-import { database } from '../../config/database';
+import database from '../../config/database';
 import { JobApplicationStatus } from './types/enums/job-application-status';
 import { CandidateModel } from '../candidates/models';
 import { JobOpeningModel } from '../job-openings/job-opening-model';
 import { JobApplicationStage } from './types/enums/job-application-stage';
 import { UserModel } from '../users/user-model';
 import { primaryColumn } from '../../constants/database-column.def';
+import { JobApplicationModelAttr } from './types/job-application-model-attr';
 
-export interface JobApplicationModelAttr {
-    id: string;
-    candidateId: string;
-    coverLetter: string | null;
-    jobOpeningId: string;
-    /**
-     * true if application  is created by system
-     */
-    isAutoCreated: boolean;
-    status: JobApplicationStatus;
-    stage: JobApplicationStage;
-    appliedBy: string;
-    rejectedBy: string | null;
-    rejectionReason: string | null;
-    createdAt: Date;
-    updatedAt: Date;
-}
-
-export class JobApplicationModel extends Model<JobApplicationModelAttr> { }
+export class JobApplicationModel extends Model<JobApplicationModelAttr> {}
 JobApplicationModel.init(
     {
         id: primaryColumn,
@@ -93,7 +76,8 @@ JobApplicationModel.init(
     },
     {
         sequelize: database,
-        modelName: 'job_application',
+        modelName: 'JobApplication',
+        tableName: 'job_applications',
         underscored: true,
         timestamps: true,
         indexes: [

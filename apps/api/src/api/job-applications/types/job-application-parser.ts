@@ -1,7 +1,7 @@
 import { UserDto } from '../../users/types/user-dto';
-import { JobApplicationModelAttr } from '../job-application-model';
 import { CreateJobApplicationPayload } from './create-job-application-payload';
 import { JobApplication } from './job-application';
+import { JobApplicationModelAttr } from './job-application-model-attr';
 
 export type JobApplicationParser = {
     newInstance: (args: { payload: CreateJobApplicationPayload; user: UserDto }) => JobApplication;

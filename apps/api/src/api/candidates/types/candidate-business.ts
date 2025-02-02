@@ -1,25 +1,28 @@
-import { Candidate } from './candidate';
-import { PagedList } from '../../../types/paged-list';
 import { FileInput } from '../../../types/file-input';
 import { Role } from '../../users/types/enums/role';
 import { UpdateCandidatePayload } from './update-candidate-payload';
 import { CreateCandidatePayload } from './create-candidate-payload';
 import { FindAllCandidatesQuery } from './find-all-candidates-query';
+import { CandidateDto } from './candidate-dto';
+import { FindAllCandidatesDto } from './find-all-candidates-dto';
 
 export type CandidateBusiness = {
-    create: (args: { userId: string; payload: CreateCandidatePayload }) => Promise<Candidate>;
+    findAll: (args: { query: FindAllCandidatesQuery }) => Promise<FindAllCandidatesDto>;
 
-    update: (args: { candidateId: string; payload: UpdateCandidatePayload }) => Promise<Candidate>;
+    findById: (id: string) => Promise<CandidateDto>;
 
-    findById: (id: string) => Promise<Candidate>;
+    create: (args: { userId: string; payload: CreateCandidatePayload }) => Promise<CandidateDto>;
 
-    findAll: (args: { query: FindAllCandidatesQuery }) => Promise<PagedList<Candidate>>;
+    update: (args: {
+        candidateId: string;
+        payload: UpdateCandidatePayload;
+    }) => Promise<CandidateDto>;
 
     remove: (id: string) => Promise<void>;
 
-    updateCv: (args: { candidateId: string; file: FileInput }) => Promise<Candidate>;
+    updateCv: (args: { candidateId: string; file: FileInput }) => Promise<CandidateDto>;
 
-    updateBanner: (args: { candidateId: string; file: FileInput }) => Promise<Candidate>;
+    updateBanner: (args: { candidateId: string; file: FileInput }) => Promise<CandidateDto>;
 
-    validateForApplication: (args: { candidate: Candidate; userRole: Role }) => void;
+    validateForApplication: (args: { candidate: CandidateDto; userRole: Role }) => void;
 };

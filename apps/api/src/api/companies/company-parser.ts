@@ -9,17 +9,9 @@ export const companyParser: CompanyParser = {
 
     toDatabase: c => ({
         ...c,
-        linkedin: c.social.linkedin,
-        github: c.social.github,
-        instagram: c.social.instagram,
-        facebook: c.social.facebook,
-        twitter: c.social.twitter,
-        youtube: c.social.youtube,
-        medium: c.social.medium,
-        website: c.social.website,
+        ...c.social,
         contactPhone: c.contact.phone,
         contactEmail: c.contact.email,
-        address: c.address,
     }),
 
     fromDatabase: c => ({
@@ -41,7 +33,7 @@ export const companyParser: CompanyParser = {
         },
         about: c.about,
         contact: { phone: c.contactPhone, email: c.contactEmail },
-        address: c.address,
+        location: c.location,
         bannerUrl: c.bannerUrl,
         logoUrl: c.logoUrl,
         mission: c.mission,

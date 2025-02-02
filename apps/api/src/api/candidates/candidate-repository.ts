@@ -4,7 +4,6 @@ import * as uuid from 'uuid';
 
 import { makeRepository } from '../../services/repository';
 import { Candidate } from './types/candidate';
-import { models } from '../../config/database/models';
 import { CandidateProfessionalExperienceModelAttr } from './models/types/candidate-professional-experience-model-attr';
 import { CandidateModel } from './models';
 import { CandidateAchievementModelAttr } from './models/types/candidate-achievement-model-attr';
@@ -13,6 +12,7 @@ import { CandidateLanguageModelAttr } from './models/types/candidate-language-mo
 import { CandidateModelAttr } from './models/types/candidate-model-attr';
 import { CandidateReferenceModelAttr } from './models/types/candidate-reference-model-attr';
 import { candidateParser } from './candidate-parser';
+import models from '../../config/database/models';
 
 const baseRepo = makeRepository<Candidate, CandidateModelAttr, CandidateModel>({
     model: CandidateModel,
@@ -20,7 +20,7 @@ const baseRepo = makeRepository<Candidate, CandidateModelAttr, CandidateModel>({
     toDatabase: candidateParser.toDatabase,
 });
 
-const bulkCreateCandidateComposites = async(
+const bulkCreateCandidateComposites = async (
     transaction: Transaction,
     candidateId: string,
     professionalExperiences: CandidateProfessionalExperienceModelAttr[],
@@ -29,28 +29,28 @@ const bulkCreateCandidateComposites = async(
     references: CandidateReferenceModelAttr[],
     achievements: CandidateAchievementModelAttr[],
 ) => {
-    const bulkInsert = async(model: any, data: any[]) => {
+    const bulkInsert = async (model: any, data: any[]) => {
         if (data.length) {
             await model.bulkCreate(
-                data.map(item => ({ ...item, candidateId, id: uuid.v4() })),
+                data.map((item) => ({ ...item, candidateId, id: uuid.v4() })),
                 { transaction },
             );
         }
     };
 
-    await bulkInsert(models.Candidates.ProfessionalExperiences, professionalExperiences);
-    await bulkInsert(models.Candidates.EducationalExperiences, educationalExperiences);
-    await bulkInsert(models.Candidates.Languages, languages);
-    await bulkInsert(models.Candidates.References, references);
-    await bulkInsert(models.Candidates.Achievements, achievements);
+    await bulkInsert(models.CandidateProfessionalExperience, professionalExperiences);
+    await bulkInsert(models.CandidateEducationalExperience, educationalExperiences);
+    await bulkInsert(models.CandidateLanguage, languages);
+    await bulkInsert(models.CandidateReference, references);
+    await bulkInsert(models.CandidateAchievement, achievements);
 };
 
 export const candidateRepository = {
     ...baseRepo,
-    create: async(candidate: Candidate): Promise<void> => {
+    create: async (candidate: Candidate): Promise<void> => {
         const attr = candidateParser.toDatabase(candidate);
 
-        const transaction = await models.database.transaction({
+        const transaction = await models.sequelize.transaction({
             autocommit: false,
         });
 
@@ -76,8 +76,8 @@ export const candidateRepository = {
         }
     },
 
-    bulkCreate: async(candidates: Candidate[]): Promise<void> => {
-        const transaction = await models.database.transaction({
+    bulkCreate: async (candidates: Candidate[]): Promise<void> => {
+        const transaction = await models.sequelize.transaction({
             autocommit: false,
         });
 
@@ -88,9 +88,9 @@ export const candidateRepository = {
                 transaction,
             });
 
-            await models.Candidates.ProfessionalExperiences.bulkCreate(
-                attrs.flatMap(attr =>
-                    attr.professionalExperiences.map(item => ({
+            await models.CandidateProfessionalExperience.bulkCreate(
+                attrs.flatMap((attr) =>
+                    attr.professionalExperiences.map((item) => ({
                         ...item,
                         candidateId: attr.id,
                         id: uuid.v4(),
@@ -99,9 +99,9 @@ export const candidateRepository = {
                 { transaction },
             );
 
-            await models.Candidates.EducationalExperiences.bulkCreate(
-                attrs.flatMap(attr =>
-                    attr.educationalExperiences.map(item => ({
+            await models.CandidateEducationalExperience.bulkCreate(
+                attrs.flatMap((attr) =>
+                    attr.educationalExperiences.map((item) => ({
                         ...item,
                         candidateId: attr.id,
                         id: uuid.v4(),
@@ -110,9 +110,9 @@ export const candidateRepository = {
                 { transaction },
             );
 
-            await models.Candidates.Languages.bulkCreate(
-                attrs.flatMap(attr =>
-                    attr.languages.map(item => ({
+            await models.CandidateLanguage.bulkCreate(
+                attrs.flatMap((attr) =>
+                    attr.languages.map((item) => ({
                         ...item,
                         candidateId: attr.id,
                         id: uuid.v4(),
@@ -121,9 +121,9 @@ export const candidateRepository = {
                 { transaction },
             );
 
-            await models.Candidates.References.bulkCreate(
-                attrs.flatMap(attr =>
-                    attr.references.map(item => ({
+            await models.CandidateReference.bulkCreate(
+                attrs.flatMap((attr) =>
+                    attr.references.map((item) => ({
                         ...item,
                         candidateId: attr.id,
                         id: uuid.v4(),
@@ -132,9 +132,9 @@ export const candidateRepository = {
                 { transaction },
             );
 
-            await models.Candidates.Achievements.bulkCreate(
-                attrs.flatMap(attr =>
-                    attr.achievements.map(item => ({
+            await models.CandidateAchievement.bulkCreate(
+                attrs.flatMap((attr) =>
+                    attr.achievements.map((item) => ({
                         ...item,
                         candidateId: attr.id,
                         id: uuid.v4(),
@@ -150,7 +150,7 @@ export const candidateRepository = {
         }
     },
 
-    update: async(candidate: Candidate): Promise<void> => {
+    update: async (candidate: Candidate): Promise<void> => {
         const attr = candidateParser.toDatabase(candidate);
         const {
             professionalExperiences,
@@ -161,7 +161,7 @@ export const candidateRepository = {
             ...candidateAttr
         } = attr;
 
-        const transaction = await models.database.transaction();
+        const transaction = await models.sequelize.transaction();
 
         try {
             await CandidateModel.update(candidateAttr, {
@@ -169,18 +169,18 @@ export const candidateRepository = {
                 transaction,
             });
 
-            const bulkDelete = async(model: any) => {
+            const bulkDelete = async (model: any) => {
                 await model.destroy({
                     where: { candidateId: candidate.id },
                     transaction,
                 });
             };
 
-            await bulkDelete(models.Candidates.ProfessionalExperiences);
-            await bulkDelete(models.Candidates.EducationalExperiences);
-            await bulkDelete(models.Candidates.Languages);
-            await bulkDelete(models.Candidates.References);
-            await bulkDelete(models.Candidates.Achievements);
+            await bulkDelete(models.CandidateProfessionalExperience);
+            await bulkDelete(models.CandidateEducationalExperience);
+            await bulkDelete(models.CandidateLanguage);
+            await bulkDelete(models.CandidateReference);
+            await bulkDelete(models.CandidateAchievement);
 
             await bulkCreateCandidateComposites(
                 transaction,

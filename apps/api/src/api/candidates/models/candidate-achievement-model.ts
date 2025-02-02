@@ -1,6 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import { AchievementType } from '../types/enums/achievement-type';
-import { database } from '../../../config/database';
+import database from '../../../config/database';
 import { CandidateAchievementModelAttr } from './types/candidate-achievement-model-attr';
 import { primaryColumn, urlColumn } from '../../../constants/database-column.def';
 
@@ -10,7 +10,7 @@ CandidateAchievementModel.init(
     {
         id: primaryColumn,
         name: {
-            type: DataTypes.STRING(100),
+            type: DataTypes.STRING,
             allowNull: false,
         },
         type: {
@@ -18,7 +18,7 @@ CandidateAchievementModel.init(
             allowNull: false,
         },
         issuer: {
-            type: DataTypes.STRING(100),
+            type: DataTypes.STRING(200),
             allowNull: false,
         },
         workload: {
@@ -27,14 +27,14 @@ CandidateAchievementModel.init(
         },
         issueDate: {
             type: DataTypes.DATEONLY,
-            allowNull: false,
+            allowNull: true,
         },
         expirationDate: {
             type: DataTypes.DATEONLY,
             allowNull: true,
         },
         credentialId: {
-            type: DataTypes.STRING(100),
+            type: DataTypes.STRING,
             allowNull: true,
         },
         credentialUrl: urlColumn,
@@ -47,6 +47,7 @@ CandidateAchievementModel.init(
     {
         sequelize: database,
         underscored: true,
+        timestamps: false,
         tableName: 'candidate_achievements',
         modelName: 'CandidateAchievement',
     },
