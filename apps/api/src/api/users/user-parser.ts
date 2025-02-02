@@ -12,11 +12,17 @@ export const userParser: UserParser = {
         passwordReset:
             model.passwordResetExpiration && model.passwordResetToken
                 ? {
-                    expiration: model.passwordResetExpiration,
-                    token: model.passwordResetToken,
-                }
+                      expiration: model.passwordResetExpiration,
+                      token: model.passwordResetToken,
+                  }
                 : null,
-        emailConfirmationToken: model.emailConfirmationToken,
+        emailConfirmation: model.emailConfirmationToken
+            ? {
+                  token: model.emailConfirmationToken!,
+                  sentAt: model.emailConfirmationTokenSentAt!,
+                  confirmedAt: model.emailConfirmedAt!,
+              }
+            : null,
         profilePictureUrl: model.profilePictureUrl,
         role: model.role,
         createdAt: model.createdAt,
@@ -32,7 +38,9 @@ export const userParser: UserParser = {
         profilePictureUrl: user.profilePictureUrl,
         passwordResetExpiration: user.passwordReset?.expiration || null,
         passwordResetToken: user.passwordReset?.token || null,
-        emailConfirmationToken: user.emailConfirmationToken,
+        emailConfirmationToken: user.emailConfirmation?.token || null,
+        emailConfirmationTokenSentAt: user.emailConfirmation?.sentAt || null,
+        emailConfirmedAt: user.emailConfirmation?.confirmedAt || null,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
     }),
@@ -45,11 +53,15 @@ export const userParser: UserParser = {
         passwordReset: null,
         profilePictureUrl: null,
         role,
-        emailConfirmationToken,
+        emailConfirmation: {
+            token: emailConfirmationToken,
+            sentAt: null,
+            confirmedAt: null,
+        },
         createdAt: new Date(),
         updatedAt: new Date(),
     }),
 
     toDto: ({ user }) =>
-        _.omit(user, ['hashedPassword', 'emailConfirmationToken', 'passwordReset']),
+        _.omit(user, ['hashedPassword', 'emailConfirmation', 'passwordReset']),
 };

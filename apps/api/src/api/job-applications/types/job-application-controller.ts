@@ -6,6 +6,9 @@ import { UpdateJobApplicationDto } from './update-job-application-dto';
 import { Id } from '../../../types/id';
 import { FindAllJobApplicationsQuery } from './find-all-job-applications-query';
 import { FindAllJobApplicationDto } from './find-all-job-application-dto';
+import { UpdateJobApplicationCoverLetterPayload } from './update-job-application-cover-letter-payload';
+import { UpdateJobApplicationStagePayload } from './update-job-application-stage-payload';
+import { UpdateJobApplicationStatusPayload } from './update-job-application-status';
 
 export type JobApplicationController = {
     findById: RequestHandler<Id, JobApplication, void, void, AuthContext>;
@@ -19,4 +22,25 @@ export type JobApplicationController = {
     create: RequestHandler<void, JobApplication, CreateJobApplicationPayload, void, AuthContext>;
     update: RequestHandler<Id, JobApplication, UpdateJobApplicationDto, void, AuthContext>;
     remove: RequestHandler<Id, void, void, void, AuthContext>;
+    updateCoverLetter: RequestHandler<
+        Id,
+        JobApplication,
+        UpdateJobApplicationCoverLetterPayload,
+        void,
+        AuthContext
+    >;
+    updateStage: RequestHandler<
+        Id,
+        JobApplication,
+        UpdateJobApplicationStagePayload,
+        void,
+        AuthContext
+    >;
+    updateStatus: RequestHandler<
+        Id,
+        JobApplication,
+        UpdateJobApplicationStatusPayload,
+        void,
+        AuthContext
+    >;
 };

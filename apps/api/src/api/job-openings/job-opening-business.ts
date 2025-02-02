@@ -10,11 +10,6 @@ import { JobOpeningBusiness } from './types/job-opening-business';
 import { jobOpeningParser } from './job-opening-parser';
 import _ from 'lodash';
 
-const canBeCreateWithStatus = (status: JobOpeningStatus): boolean => {
-    const allowedStatuses: JobOpeningStatus[] = [JobOpeningStatus.draft, JobOpeningStatus.open];
-    return allowedStatuses.includes(status);
-};
-
 export const jobOpeningBusiness: JobOpeningBusiness = {
     findById: async ({ jobOpeningId, context }) => {
         const jobOpening = await jobOpeningRepository.findById(jobOpeningId);
@@ -34,12 +29,6 @@ export const jobOpeningBusiness: JobOpeningBusiness = {
     },
 
     create: async ({ payload, context }) => {
-        if (!canBeCreateWithStatus(payload.status)) {
-            ApiError.throwBadRequest(
-                'job opening cannot be created with this status. Allowed statuses are draft and open',
-            );
-        }
-
         const company = await companyRepository.findById(payload.companyId);
         if (!company) {
             ApiError.throwNotFound(`company with id ${payload.companyId} not found`);

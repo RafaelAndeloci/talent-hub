@@ -62,7 +62,7 @@ export const userBusiness: UserBusiness = {
             ApiError.throwNotFound('invalid credentials');
         }
 
-        if (user.emailConfirmationToken && user.role !== Role.sysAdmin) {
+        if (user.emailConfirmation && user.role !== Role.sysAdmin) {
             ApiError.throwForbidden('email not confirmed');
         }
 
@@ -165,15 +165,15 @@ export const userBusiness: UserBusiness = {
             ApiError.throwBadRequest('invalid user id');
         }
 
-        if (!user.emailConfirmationToken) {
+        if (!user.emailConfirmation) {
             ApiError.throwBadRequest('email already confirmed');
         }
 
-        if (user.emailConfirmationToken !== token) {
+        if (user.emailConfirmation!.token !== token) {
             ApiError.throwBadRequest('invalid token');
         }
 
-        user.emailConfirmationToken = null;
+        user.emailConfirmation!.confirmedAt = new Date();
 
         await userRepository.update(user);
 

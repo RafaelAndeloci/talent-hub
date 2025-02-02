@@ -1,14 +1,17 @@
 export const JobApplicationStage = Object.freeze({
-    // triagem
+    /** triagem */
     screening: 'screening',
 
-    // processo pós-triagem
-    postScreening: 'post_screening',
+    /** entrevista técnica */
+    technicalInterview: 'technical_interview',
 
-    // entrevista
-    interview: 'interview',
+    /** entrevista com gestor */
+    managerInterview: 'manager_interview',
 
-    // entrega de documentos, fase burocrática
+    /** proposta de emprego */
+    offer: 'offer',
+
+    /** entrega de documentos */
     documentDelivery: 'document_delivery',
 });
 

@@ -15,6 +15,9 @@ export const Action = Object.freeze({
     setCompanyLogo: 'set_company_logo',
     setCompanyGallery: 'set_company_gallery',
     deleteCompanyGallery: 'delete_company_gallery',
+    updateJobApplicationCoverLetter: 'update_job_application_cover_letter',
+    updateJobApplicationStage: 'update_job_application_stage',
+    updateJobOpeningStatus: 'update_job_opening_status',
 });
 
 export const AllActions = Object.freeze(Object.values(Action)) as Action[];

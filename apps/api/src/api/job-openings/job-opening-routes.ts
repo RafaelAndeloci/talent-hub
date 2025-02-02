@@ -48,7 +48,7 @@ export const jobOpeningRoutes: ApiResource = {
         },
         {
             method: 'patch',
-            path: '/:id/open',
+            path: `/:id/open`,
             auth: true,
             schema: UpdateJobOpeningStatusSchema,
             action: Action.update,

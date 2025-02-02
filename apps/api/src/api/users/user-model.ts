@@ -14,6 +14,8 @@ export interface UserModelAttr {
     passwordResetToken: string | null;
     passwordResetExpiration: number | null;
     emailConfirmationToken: string | null;
+    emailConfirmationTokenSentAt: Date | null;
+    emailConfirmedAt: Date | null;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -56,6 +58,14 @@ UserModel.init(
         },
         emailConfirmationToken: {
             type: DataTypes.STRING,
+            allowNull: true,
+        },
+        emailConfirmationTokenSentAt: {
+            type: DataTypes.DATE,
+            allowNull: true,
+        },
+        emailConfirmedAt: {
+            type: DataTypes.DATE,
             allowNull: true,
         },
         createdAt: {

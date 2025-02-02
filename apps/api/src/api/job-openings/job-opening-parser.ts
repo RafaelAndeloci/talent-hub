@@ -3,6 +3,7 @@ import * as uuid from 'uuid';
 
 import { JobOpeningParser } from './types/job-opening-parser';
 import { Role } from '../users/types/enums/role';
+import { JobOpeningStatus } from './types/enums/job-opening-status';
 
 export const jobOpeningParser: JobOpeningParser = {
     toDto: ({ jobOpening, role }) =>
@@ -12,7 +13,7 @@ export const jobOpeningParser: JobOpeningParser = {
         id: uuid.v4(),
         title: payload.title,
         description: payload.description,
-        status: payload.status,
+        status: JobOpeningStatus.draft,
         companyId: payload.companyId,
         selectedApplicationId: null,
         positionLevel: payload.positionLevel,

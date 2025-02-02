@@ -8,6 +8,10 @@ import { jobApplicationParser } from './job-application-parser';
 import { jobQueueService } from '../../services/job-queue-service';
 import { AppEvent } from '../../enums/app-event';
 import _ from 'lodash';
+import { JobApplication } from './types/job-application';
+
+const canChangeStatus = (jobApplication: JobApplication) =>
+    jobApplication.status === JobApplicationStatus.applied;
 
 export const jobApplicationBusiness: JobApplicationBusiness = {
     findById: async ({ jobApplicationId }) => {
@@ -102,5 +106,64 @@ export const jobApplicationBusiness: JobApplicationBusiness = {
                 jobApplicationId,
             },
         });
+    },
+
+    updateCoverLetter: async ({ jobApplicationId, payload }) => {
+        const jobApplication = await jobApplicationRepository.findById(jobApplicationId);
+        if (!jobApplication) {
+            ApiError.throwNotFound(`job application with id ${jobApplicationId} not found`);
+            return null!;
+        }
+
+        jobApplication.coverLetter = payload.coverLetter;
+        await jobApplicationRepository.update(jobApplication);
+
+        return jobApplication;
+    },
+
+    updateStage: async ({ jobApplicationId, payload }) => {
+        const jobApplication = await jobApplicationRepository.findById(jobApplicationId);
+        if (!jobApplication) {
+            ApiError.throwNotFound(`job application with id ${jobApplicationId} not found`);
+            return null!;
+        }
+
+        jobApplication.stage = payload.stage;
+        await jobApplicationRepository.update(jobApplication);
+
+        return jobApplication;
+    },
+
+    updateStatus: async ({ jobApplicationId, payload, context }) => {
+        const jobApplication = await jobApplicationRepository.findById(jobApplicationId);
+        if (!jobApplication) {
+            ApiError.throwNotFound(`job application with id ${jobApplicationId} not found`);
+            return null!;
+        }
+
+        if (!canChangeStatus(jobApplication)) {
+            ApiError.throwBadRequest('job application status cannot be changed');
+            return null!;
+        }
+
+        jobApplication.status = payload.status;
+
+        if (payload.rejectionReason) {
+            if (payload.status !== JobApplicationStatus.rejected) {
+                ApiError.throwBadRequest(
+                    'rejection reason can only be set for rejected applications',
+                );
+                return null!;
+            }
+
+            jobApplication.rejection = {
+                rejectedBy: context.user.id,
+                reason: payload.rejectionReason,
+            };
+        }
+
+        await jobApplicationRepository.update(jobApplication);
+
+        return jobApplication;
     },
 };

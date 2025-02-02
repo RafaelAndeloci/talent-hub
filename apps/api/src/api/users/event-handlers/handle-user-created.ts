@@ -20,6 +20,11 @@ export const handleUserCreated = async ({ userId }: { userId: string }) => {
             return;
         }
 
+        if (!user.emailConfirmation || user.emailConfirmation.sentAt) {
+            logger.info(`confirmation email already sent to user ${user.username}`);
+            return
+        }
+
         const emailTemplatePath = path.resolve(
             __dirname,
             '../../../../static/templates/emails/email-confirmation.html',
@@ -31,7 +36,7 @@ export const handleUserCreated = async ({ userId }: { userId: string }) => {
             .replace('@username', user.username)
             .replace(
                 '@emailConfirmationUrl',
-                `${config.emailConfirmationUrl}?token=${user.emailConfirmationToken}&userId=${user.id}`,
+                `${config.emailConfirmationUrl}?token=${user.emailConfirmation!.token}&userId=${user.id}`,
             )
             .replace('@currYear', moment().format('YYYY'));
 
@@ -42,7 +47,10 @@ export const handleUserCreated = async ({ userId }: { userId: string }) => {
             isHtml: true,
         });
 
-        logger.info(`Email de confirmação enviado com sucesso para o usuário ${user.username}`);
+        user.emailConfirmation.sentAt = new Date();
+        await userRepository.update(user);
+
+        logger.info(`Confirmation email sent to user ${user.username}`);
     } catch (error) {
         logger.error(`Error processing event ${AppEvent.userCreated}: ${error}`);
     }

@@ -5,7 +5,9 @@ import {
     DeleteJobApplicationSchema,
     FindAllJobApplicationsSchema,
     FindJobApplicationByIdSchema,
-    UpdateJobApplicationSchema,
+    UpdateJobApplicationCoverLetterSchema,
+    UpdateJobApplicationStageSchema,
+    UpdateJobApplicationStatusSchema,
 } from './job-application-schema';
 import { jobApplicationController } from './job-application-controller';
 import { ApiResource } from '../../types/api-resource';
@@ -38,12 +40,28 @@ export const jobApplicationRoutes: ApiResource = {
             handler: jobApplicationController.create,
         },
         {
-            method: 'put',
-            path: '/:id',
+            method: 'patch',
+            path: '/:id/cover-letter',
             auth: true,
-            schema: UpdateJobApplicationSchema,
-            action: Action.update,
-            handler: jobApplicationController.update,
+            schema: UpdateJobApplicationCoverLetterSchema,
+            action: Action.updateJobApplicationCoverLetter,
+            handler: jobApplicationController.updateCoverLetter,
+        },
+        {
+            method: 'patch',
+            path: '/:id/stage',
+            auth: true,
+            schema: UpdateJobApplicationStageSchema,
+            action: Action.updateJobApplicationStage,
+            handler: jobApplicationController.updateStage
+        },
+        {
+            method: 'patch',
+            path: '/:id/status',
+            auth: true,
+            schema: UpdateJobApplicationStatusSchema,
+            action: Action.updateJobOpeningStatus,
+            handler: jobApplicationController.updateStatus,
         },
         {
             method: 'delete',

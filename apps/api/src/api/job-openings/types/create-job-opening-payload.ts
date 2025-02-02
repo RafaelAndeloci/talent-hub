@@ -1,3 +1,3 @@
 import { JobOpening } from './job-opening';
 
-export type CreateJobOpeningPayload = Omit<JobOpening, 'hiredCandidateId' | 'id'>;
+export type CreateJobOpeningPayload = Omit<JobOpening, 'hiredCandidateId' | 'id' | 'status'>;

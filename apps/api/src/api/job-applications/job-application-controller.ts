@@ -38,4 +38,29 @@ export const jobApplicationController: JobApplicationController = {
         await jobApplicationBusiness.remove({ jobApplicationId });
         res.status(HTTPStatus.NO_CONTENT).send();
     },
+
+    updateCoverLetter: async ({ params: { id: jobApplicationId }, body: payload }, res) => {
+        const jobApplication = await jobApplicationBusiness.updateCoverLetter({
+            jobApplicationId,
+            payload,
+        });
+        res.status(HTTPStatus.OK).json(jobApplication);
+    },
+
+    updateStage: async ({ params: { id: jobApplicationId }, body: payload }, res) => {
+        const jobApplication = await jobApplicationBusiness.updateStage({
+            jobApplicationId,
+            payload,
+        });
+        res.status(HTTPStatus.OK).json(jobApplication);
+    },
+
+    updateStatus: async ({ params: { id: jobApplicationId }, body: payload }, res) => {
+        const jobApplication = await jobApplicationBusiness.updateStatus({
+            jobApplicationId,
+            payload,
+            context: res.locals,
+        });
+        res.status(HTTPStatus.OK).json(jobApplication);
+    },
 };
