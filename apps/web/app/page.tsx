@@ -1,11 +1,11 @@
-import { Button } from "@talent-hub/ui";
+import { Button } from "@/components";
 
 export default function Home() {
   return (
     <div className="flex h-screen w-full items-center justify-center bg-black">
-      <Button className="font-default">Testando</Button>
+      <Button>Testando</Button>
       <p className="font-mono text-white">
-        Texto<strong className="font-default">Lexend</strong>
+        Texto<strong>Lexend</strong>
       </p>
     </div>
   );
