@@ -3,22 +3,8 @@ import { Model, DataTypes } from 'sequelize';
 import { Role } from './types/enums/role';
 import { primaryColumn } from '../../constants/database-column.def';
 import database from '../../config/database';
+import { UserModelAttr } from './types/user-model-attr';
 
-export interface UserModelAttr {
-    id: string;
-    username: string;
-    email: string;
-    hashedPassword: string;
-    role: Role;
-    profilePictureUrl: string | null;
-    passwordResetToken: string | null;
-    passwordResetExpiration: number | null;
-    emailConfirmationToken: string | null;
-    emailConfirmationTokenSentAt: Date | null;
-    emailConfirmedAt: Date | null;
-    createdAt: Date;
-    updatedAt: Date;
-}
 
 export class UserModel extends Model<UserModelAttr> {}
 UserModel.init(
