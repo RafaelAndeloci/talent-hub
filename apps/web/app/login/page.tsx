@@ -2,7 +2,14 @@ import { GraduationCap } from "lucide-react";
 
 import { LoginForm } from "@/components/login/login-form";
 import loginImg from "@/public/placeholder.svg";
+import { Metadata } from "next";
 import Image from "next/image";
+
+export const metadata: Metadata = {
+  title: "Login",
+  description: "",
+};
+
 export default function LoginPage() {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
