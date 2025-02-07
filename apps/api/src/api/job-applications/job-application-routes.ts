@@ -44,7 +44,7 @@ export const jobApplicationRoutes: ApiResource = {
             path: '/:id/cover-letter',
             auth: true,
             schema: UpdateJobApplicationCoverLetterSchema,
-            action: Action.updateJobApplicationCoverLetter,
+            action: Action.jobApplicationUpdateCoverLetter,
             handler: jobApplicationController.updateCoverLetter,
         },
         {
@@ -52,7 +52,7 @@ export const jobApplicationRoutes: ApiResource = {
             path: '/:id/stage',
             auth: true,
             schema: UpdateJobApplicationStageSchema,
-            action: Action.updateJobApplicationStage,
+            action: Action.jobApplicationUpdateStage,
             handler: jobApplicationController.updateStage
         },
         {
@@ -60,7 +60,7 @@ export const jobApplicationRoutes: ApiResource = {
             path: '/:id/status',
             auth: true,
             schema: UpdateJobApplicationStatusSchema,
-            action: Action.updateJobOpeningStatus,
+            action: Action.jobApplicationUpdateStatus,
             handler: jobApplicationController.updateStatus,
         },
         {

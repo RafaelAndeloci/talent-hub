@@ -1,24 +1,24 @@
-import { Benefit } from '../../candidates/types/enums/benefit';
-import { ContractType } from '../../candidates/types/enums/contract-type';
-import { EmploymentType } from '../../candidates/types/enums/employment-type';
-import { PositionLevel } from '../../candidates/types/enums/position-level';
-import { WorkplaceType } from '../../candidates/types/enums/workplace-type';
-import { JobOpeningStatus } from './enums/job-opening-status';
+import { LanguageProfile } from '../../../types/language-profile';
+import { SkillModelAttr } from '../../skills/types/skill-model-attr copy';
+import { JobOpening, JobOpeningSkillProfile } from './job-opening';
 
-export interface JobOpeningModelAttr {
-    id: string;
-    title: string;
-    selectedApplicationId: string | null;
-    status: JobOpeningStatus;
-    companyId: string;
-    description: string;
-    positionLevel: PositionLevel;
-    workplaceType: WorkplaceType;
-    employmentType: EmploymentType;
-    salary: number;
-    contractType: ContractType;
-    benefits: Benefit[];
-    deadline: Date;
-    responsibilities: string[];
-    requirements: string[];
-}
+export type JobOpeningSkillProfileModelAttr = Omit<
+    JobOpeningSkillProfile,
+    'skillName' | 'skillType'
+> & {
+    id?: string;
+    skill?: SkillModelAttr;
+};
+
+export type JobOpeningModelAttr = Omit<JobOpening, 'salary' | 'profile'> & {
+    minimumSalary: number | null;
+    maximumSalary: number | null;
+    yearsOfExperience: number;
+    minimumEducationLevel?: string;
+    gradePointAvaregeMin?: number;
+    //TODO: CREATE COURSE MODEL
+    courses: string[];
+    languages: LanguageProfile[];
+    // TODO: create certification model to store certification data
+    certifications: string[];
+};

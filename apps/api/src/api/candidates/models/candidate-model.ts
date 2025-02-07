@@ -5,7 +5,7 @@ import database from '../../../config/database';
 import { EmploymentType } from '../types/enums/employment-type';
 import { WorkplaceType } from '../types/enums/workplace-type';
 import { PositionLevel } from '../types/enums/position-level';
-import { ContractType } from '../types/enums/contract-type';
+import { EmploymentRegime } from '../types/enums/employment-regime';
 import { Benefit } from '../types/enums/benefit';
 import {
     CandidateAchievementModel,
@@ -86,8 +86,8 @@ CandidateModel.init(
             type: DataTypes.DECIMAL,
             allowNull: true,
         },
-        contractTypePreference: {
-            type: DataTypes.ENUM(...Object.values(ContractType)),
+        employmentRegimePreference: {
+            type: DataTypes.ENUM(...Object.values(EmploymentRegime)),
             allowNull: true,
         },
         employmentTypePreference: {

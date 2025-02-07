@@ -34,12 +34,12 @@ export const jobOpeningBusiness: JobOpeningBusiness = {
             ApiError.throwNotFound(`company with id ${payload.companyId} not found`);
         }
 
-        const alreadyExists = await jobOpeningRepository.existsByTitle({
-            title: payload.title,
+        const alreadyExists = await jobOpeningRepository.existsByPosition({
+            position: payload.position,
             companyId: payload.companyId,
         });
         if (alreadyExists) {
-            ApiError.throwBadRequest(`job opening with title ${payload.title} already exists`);
+            ApiError.throwBadRequest(`job opening with position ${payload.position} already exists`);
         }
 
         const jobOpening = jobOpeningParser.newInstance({ payload });
@@ -62,13 +62,15 @@ export const jobOpeningBusiness: JobOpeningBusiness = {
             return null!;
         }
 
-        if (jobOpening.title !== payload.title) {
-            const alreadyExists = await jobOpeningRepository.existsByTitle({
-                title: payload.title!,
+        if (jobOpening.position !== payload.position) {
+            const alreadyExists = await jobOpeningRepository.existsByPosition({
+                position: payload.position!,
                 companyId: jobOpening.companyId,
             });
             if (alreadyExists) {
-                ApiError.throwBadRequest(`job opening with title ${payload.title} already exists`);
+                ApiError.throwBadRequest(
+                    `job opening with position ${payload.position} already exists`,
+                );
             }
         }
 

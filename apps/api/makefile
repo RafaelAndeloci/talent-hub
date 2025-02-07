@@ -20,21 +20,17 @@ build:
 	@echo "Building project: $(PROJECT)"
 	npm run build
 
-database-drop:
+db-drop:
 	@echo "Dropping database: $(PROJECT)"
-	npm run database:drop
+	npm run db:drop
 
-database-migrate:
+db-migrate:
 	@echo "Migrating database: $(PROJECT)"
-	npm run database:migrate
+	npm run db:migrate
 
-database-truncate:
+db-truncate:
 	@echo "Truncating database: $(PROJECT)"
-	npm run database:truncate
-
-database-seed:
-	@echo "Seeding database: $(PROJECT)"
-	npm run database:seed
+	npm run db:truncate
 
 lint:
 	@echo "Linting project: $(PROJECT)"

@@ -11,7 +11,7 @@ export const candidateParser: CandidateParser = {
         contactPhone: candidate.contact.phone,
         ...candidate.social,
         salaryPreference: candidate.preferences.salary,
-        contractTypePreference: candidate.preferences.contractType,
+        employmentRegimePreference: candidate.preferences.employmentRegime,
         employmentTypePreference: candidate.preferences.employmentType,
         workplaceTypePreference: candidate.preferences.workplaceType,
         benefitsPreference: candidate.preferences.benefits,
@@ -64,7 +64,7 @@ export const candidateParser: CandidateParser = {
         allowThirdPartyApplications: model.allowThirdPartyApplications,
         preferences: {
             salary: Number(model.salaryPreference),
-            contractType: model.contractTypePreference,
+            employmentRegime: model.employmentRegimePreference,
             employmentType: model.employmentTypePreference,
             workplaceType: model.workplaceTypePreference,
             benefits: model.benefitsPreference,

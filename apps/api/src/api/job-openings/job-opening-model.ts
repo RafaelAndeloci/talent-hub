@@ -5,18 +5,52 @@ import database from '../../config/database';
 import { PositionLevel } from '../candidates/types/enums/position-level';
 import { WorkplaceType } from '../candidates/types/enums/workplace-type';
 import { EmploymentType } from '../candidates/types/enums/employment-type';
-import { ContractType } from '../candidates/types/enums/contract-type';
+import { EmploymentRegime } from '../candidates/types/enums/employment-regime';
 import { Benefit } from '../candidates/types/enums/benefit';
 import { CompanyModel } from '../companies/company-model';
 import { JobOpeningStatus } from './types/enums/job-opening-status';
 import { primaryColumn } from '../../constants/database-column.def';
-import { JobOpeningModelAttr } from './types/job-opening-model-attr';
+import {
+    JobOpeningModelAttr,
+    JobOpeningSkillProfileModelAttr,
+} from './types/job-opening-model-attr';
+import { Proficiency } from '../candidates/types/enums/proficiency';
+import { SkillModel } from '../skills/skill-model';
 
+class JobOpeningSkillProfileModel extends Model<JobOpeningSkillProfileModelAttr> {}
 export class JobOpeningModel extends Model<JobOpeningModelAttr> {}
+
+JobOpeningSkillProfileModel.init(
+    {
+        skillId: {
+            type: DataTypes.UUID,
+            allowNull: false,
+        },
+        proficiencyLevel: {
+            type: DataTypes.ENUM(...Object.values(Proficiency)),
+            allowNull: false,
+        },
+        mandatory: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false,
+        },
+        skill: {
+            type: DataTypes.VIRTUAL,
+        }
+    },
+    {
+        sequelize: database,
+        timestamps: false,
+        modelName: 'JobOpeningSkillProfile',
+        tableName: 'job_opening_skill_profiles',
+    },
+);
+
 JobOpeningModel.init(
     {
         id: primaryColumn,
-        title: {
+        position: {
             type: DataTypes.STRING,
             allowNull: false,
         },
@@ -52,15 +86,22 @@ JobOpeningModel.init(
             type: DataTypes.ENUM(...Object.values(EmploymentType)),
             allowNull: false,
         },
-        salary: {
+        minimumSalary: {
             type: DataTypes.DECIMAL(10, 2),
             allowNull: true,
             validate: {
                 min: 0,
             },
         },
-        contractType: {
-            type: DataTypes.ENUM(...Object.values(ContractType)),
+        maximumSalary: {
+            type: DataTypes.DECIMAL(10, 2),
+            allowNull: true,
+            validate: {
+                min: 0,
+            },
+        },
+        employmentRegime: {
+            type: DataTypes.ENUM(...Object.values(EmploymentRegime)),
             allowNull: false,
         },
         benefits: {
@@ -75,11 +116,29 @@ JobOpeningModel.init(
         responsibilities: {
             type: DataTypes.ARRAY(DataTypes.STRING),
             allowNull: false,
+            defaultValue: [],
+        },
+        yearsOfExperience: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            validate: {
+                min: 0,
+            },
         },
         requirements: {
-            type: DataTypes.ARRAY(DataTypes.STRING),
+            type: DataTypes.ARRAY(DataTypes.JSONB),
             allowNull: false,
+            defaultValue: [],
         },
+        courses: {
+            type: DataTypes.ARRAY(DataTypes.STRING),
+        },
+        languages: {
+            type: DataTypes.ARRAY(DataTypes.JSONB),
+        },
+        certifications: {
+            type: DataTypes.ARRAY(DataTypes.STRING),
+        }
     },
     {
         sequelize: database,
@@ -90,7 +149,7 @@ JobOpeningModel.init(
         timestamps: true,
         indexes: [
             {
-                fields: ['company_id', 'title'],
+                fields: ['company_id', 'position'],
                 unique: true,
                 where: {
                     status: {
@@ -105,3 +164,44 @@ JobOpeningModel.init(
         ],
     },
 );
+
+JobOpeningModel.hasMany(JobOpeningSkillProfileModel, {
+    foreignKey: 'job_opening_id',
+    as: 'skills',
+    onDelete: 'CASCADE',
+});
+
+JobOpeningSkillProfileModel.belongsTo(JobOpeningModel, {
+    foreignKey: 'job_opening_id',
+});
+
+CompanyModel.hasMany(JobOpeningModel, {
+    foreignKey: 'company_id',
+    as: 'job_openings',
+});
+
+JobOpeningModel.belongsTo(CompanyModel, {
+    foreignKey: 'company_id',
+    as: 'company',
+});
+
+JobOpeningModel.beforeFind((options) => {
+    options.include = [
+        {
+            model: JobOpeningSkillProfileModel,
+            as: 'skillProfiles',
+            include: [
+                {
+                    model: SkillModel,
+                    as: 'skill',
+                    where: {
+                        id: {
+                            [Op.col]: 'skill_profiles.skill_id',
+                        }
+                    }
+                }
+            ]
+        },
+        
+    ];
+});

@@ -1,6 +1,6 @@
 import { Address } from '../../../../types/address';
 import { Benefit } from '../../types/enums/benefit';
-import { ContractType } from '../../types/enums/contract-type';
+import { EmploymentRegime } from '../../types/enums/employment-regime';
 import { EmploymentType } from '../../types/enums/employment-type';
 import { PositionLevel } from '../../types/enums/position-level';
 import { WorkplaceType } from '../../types/enums/workplace-type';
@@ -35,7 +35,7 @@ export interface CandidateModelAttr {
     isAvailableForWork: boolean;
     allowThirdPartyApplications: boolean;
     salaryPreference: number | null;
-    contractTypePreference: ContractType | null;
+    employmentRegimePreference: EmploymentRegime | null;
     employmentTypePreference: EmploymentType | null;
     workplaceTypePreference: WorkplaceType | null;
     benefitsPreference: Benefit[];

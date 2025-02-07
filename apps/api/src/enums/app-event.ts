@@ -18,6 +18,9 @@ export const AppEvent = Object.freeze({
     jobOpeningClosed: 'job_opening_closed',
     jobOpeningOpened: 'job_opening_opened',
     jobOpeningFilled: 'job_opening_filled',
+
+    // skills
+    skillStatusUpdated: 'skill_status_updated',
 });
 
 export type AppEvent = (typeof AppEvent)[keyof typeof AppEvent];

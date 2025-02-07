@@ -1,5 +1,5 @@
 import { Role } from '../api/users/types/enums/role';
-import { Action, AllActions } from './action';
+import { Action } from './action';
 import { AllResources, Resource } from './resource';
 
 type Permission = {
@@ -20,16 +20,18 @@ export const Permissions = Object.freeze([
                     Action.create,
                     Action.update,
                     Action.readById,
-                    Action.setCandidateBanner,
-                    Action.updateCandidateCv,
+                    Action.candidateSetBanner,
+                    Action.candidateUpdateCv,
                 ],
             },
             {
                 resource: Resource.users,
                 actions: [
                     Action.create,
-                    Action.sendUserChangePasswordToken,
-                    Action.setUserProfilePicture,
+                    Action.userRequestChangePasswordToken,
+                    Action.userAuth,
+                    Action.userConfirmEmail,
+                    Action.userSetProfilePicture,
                 ],
             },
             {
@@ -44,13 +46,17 @@ export const Permissions = Object.freeze([
                 resource: Resource.jobApplications,
                 actions: [Action.create, Action.readAll, Action.readById],
             },
+            {
+                resource: Resource.skills,
+                actions: [Action.readAll, Action.readById, Action.create],
+            },
         ],
     },
     {
         role: Role.sysAdmin,
         actionsPerResource: AllResources.map((r) => ({
             resource: r,
-            actions: AllActions,
+            actions: Object.values(Action),
         })),
     },
 ] as Permission[]);

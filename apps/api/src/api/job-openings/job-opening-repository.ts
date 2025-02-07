@@ -4,6 +4,7 @@ import { JobOpeningModel } from './job-opening-model';
 import { JobOpening } from './types/job-opening';
 import { JobOpeningStatus } from './types/enums/job-opening-status';
 import { JobOpeningModelAttr } from './types/job-opening-model-attr';
+import { jobOpeningParser } from './job-opening-parser';
 
 export const jobOpeningRepositoryBase = makeRepository<
     JobOpening,
@@ -11,24 +12,23 @@ export const jobOpeningRepositoryBase = makeRepository<
     JobOpeningModel
 >({
     model: JobOpeningModel,
-    toDatabase: jobOpening => jobOpening as JobOpeningModelAttr,
-    fromDatabase: jobOpening => jobOpening,
+    toDatabase: jobOpeningParser.toDatabase,
+    fromDatabase: jobOpeningParser.fromDatabase,
 });
 
 export const jobOpeningRepository = {
     ...jobOpeningRepositoryBase,
-
-    async existsByTitle({
-        title,
+    existsByPosition: async ({
+        position,
         companyId,
     }: {
-        title: string;
+        position: string;
         companyId: string;
-    }): Promise<boolean> {
+    }): Promise<boolean> => {
         return await jobOpeningRepositoryBase.exists({
             [Op.and]: [
                 { companyId },
-                { title },
+                { position },
                 {
                     status: {
                         [Op.not]: [JobOpeningStatus.closed, JobOpeningStatus.filled],

@@ -1,7 +1,7 @@
-import { UserModelAttr } from '../user-model';
 import { Role } from './enums/role';
 import { User } from './user';
 import { UserDto } from './user-dto';
+import { UserModelAttr } from './user-model-attr';
 
 export type UserParser = {
     fromDatabase: (model: UserModelAttr) => User;

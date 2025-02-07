@@ -1,6 +1,5 @@
 import { JobApplication } from './job-application';
 import { CreateJobApplicationPayload } from './create-job-application-payload';
-import { UpdateJobApplicationDto } from './update-job-application-dto';
 import { FindAllJobApplicationsQuery } from './find-all-job-applications-query';
 import { AuthContext } from '../../users/types/auth-context';
 import { FindAllJobApplicationDto } from './find-all-job-application-dto';

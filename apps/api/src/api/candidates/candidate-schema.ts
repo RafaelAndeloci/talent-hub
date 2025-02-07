@@ -9,7 +9,7 @@ import { WorkplaceType } from './types/enums/workplace-type';
 import { PositionLevel } from './types/enums/position-level';
 import { AcademicDegreeType } from './types/enums/academic-degree-type';
 import { AcademicStatus } from './types/enums/academic-status';
-import { ContractType } from './types/enums/contract-type';
+import { EmploymentRegime } from './types/enums/employment-regime';
 import { Benefit } from './types/enums/benefit';
 import { Language } from '../../enums/language';
 import { AddressSchema } from '../../schemas/address-schema';
@@ -67,7 +67,7 @@ export const FindAllCandidatesSchema = z.object({
                 field: 'contractTypePreference',
                 operators: ['eq'],
                 validation: (value) =>
-                    Object.values(ContractType).includes(value as ContractType)
+                    Object.values(EmploymentRegime).includes(value as EmploymentRegime)
                         ? null
                         : 'Invalid contract type',
             },
@@ -130,7 +130,7 @@ export const CreateCandidateSchema = z.object({
             allowThirdPartyApplications: z.boolean(),
             preferences: z.object({
                 salary: z.number().nullable(),
-                contractType: z.nativeEnum(ContractType).nullable(),
+                contractType: z.nativeEnum(EmploymentRegime).nullable(),
                 employmentType: z.nativeEnum(EmploymentType).nullable(),
                 workplaceType: z.nativeEnum(WorkplaceType).nullable(),
                 benefits: z

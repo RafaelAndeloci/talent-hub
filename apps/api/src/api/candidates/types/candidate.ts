@@ -5,16 +5,15 @@ import { YearMonth } from '../../../types/year-month';
 import { AcademicDegreeType } from './enums/academic-degree-type';
 import { AcademicStatus } from './enums/academic-status';
 import { Benefit } from './enums/benefit';
-import { ContractType } from './enums/contract-type';
+import { EmploymentRegime } from './enums/employment-regime';
 import { EmploymentType } from './enums/employment-type';
 import { PositionLevel } from './enums/position-level';
 import { WorkplaceType } from './enums/workplace-type';
-import { Language } from '../../../enums/language';
-import { LanguageProficiency } from './enums/language-proficiency';
 import { Contact } from '../../../types/contact';
 import { Address } from '../../../types/address';
 import { AchievementType } from './enums/achievement-type';
 import { Location } from '../../../types/location';
+import { LanguageProfile } from '../../../types/language-profile';
 
 export interface CandidateReference {
     name: string;
@@ -37,14 +36,6 @@ export interface CandidateProfessionalExperience {
     location: Location;
     relatedSkills: string[];
     responsibilities: string[];
-}
-
-export interface CandidateLanguage {
-    language: Language;
-    writtenLevel: LanguageProficiency;
-    spokenLevel: LanguageProficiency;
-    readingLevel: LanguageProficiency;
-    listeningLevel: LanguageProficiency;
 }
 
 export interface CandidateAchievement {
@@ -83,7 +74,7 @@ export interface CandidateExperiences {
 
 export interface CandidatePreferences {
     salary: number | null;
-    contractType: ContractType | null;
+    employmentRegime: EmploymentRegime | null;
     employmentType: EmploymentType | null;
     workplaceType: WorkplaceType | null;
     benefits: Benefit[];
@@ -106,7 +97,7 @@ export interface Candidate extends Id {
     allowThirdPartyApplications: boolean;
     preferences: CandidatePreferences;
     experiences: CandidateExperiences;
-    languages: CandidateLanguage[];
+    languages: LanguageProfile[];
     references: CandidateReference[];
     achievements: CandidateAchievement[];
 }

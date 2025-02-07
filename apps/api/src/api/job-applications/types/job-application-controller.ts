@@ -2,7 +2,6 @@ import { RequestHandler } from 'express';
 import { JobApplication } from './job-application';
 import { AuthContext } from '../../users/types/auth-context';
 import { CreateJobApplicationPayload } from './create-job-application-payload';
-import { UpdateJobApplicationDto } from './update-job-application-dto';
 import { Id } from '../../../types/id';
 import { FindAllJobApplicationsQuery } from './find-all-job-applications-query';
 import { FindAllJobApplicationDto } from './find-all-job-application-dto';

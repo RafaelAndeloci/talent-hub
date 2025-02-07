@@ -1,38 +1,50 @@
+import _ from 'lodash';
+import moment from 'moment';
 import { z } from 'zod';
+
 import { buildQuerySchema } from '../../utils/schemas';
 import { JobOpening } from './types/job-opening';
 import { FilterOperator } from '../../enums/filter-operator';
 import { PositionLevel } from '../candidates/types/enums/position-level';
 import { WorkplaceType } from '../candidates/types/enums/workplace-type';
 import { EmploymentType } from '../candidates/types/enums/employment-type';
-import { ContractType } from '../candidates/types/enums/contract-type';
+import { EmploymentRegime } from '../candidates/types/enums/employment-regime';
 import { Benefit } from '../candidates/types/enums/benefit';
-import moment from 'moment';
-import _ from 'lodash';
 import { ParamsSchema } from '../../schemas/params-schema';
 import { JobOpeningStatus } from './types/enums/job-opening-status';
+import { Proficiency } from '../candidates/types/enums/proficiency';
+import { AcademicDegreeType } from '../candidates/types/enums/academic-degree-type';
+import { Language } from '../../enums/language';
+import { LanguageProficiency } from '../candidates/types/enums/language-proficiency';
+import { SkillType } from '../candidates/types/enums/skill-type';
 
-export const FindJobOpeningByIdSchema = z.object({
-    params: z.object({
-        id: z.string(),
-    }),
-});
+export const FindJobOpeningByIdSchema = ParamsSchema;
+
+export type JobOpeningQuery = Omit<
+    JobOpening,
+    'salary' | 'profile' | 'requirements' | 'responsabilities'
+> & {
+    minimumSalary: number;
+    maximumSalary: number;
+    yearsOfExperience: number;
+};
 
 export const FindAllJobOpeningsSchema = z.object({
-    query: buildQuerySchema<JobOpening>({
+    query: buildQuerySchema<JobOpeningQuery>({
         sorts: [
-            'title',
+            'positionLevel',
             'status',
             'positionLevel',
             'workplaceType',
             'employmentType',
-            'salary',
-            'contractType',
+            'minimumSalary',
+            'maximumSalary',
+            'employmentRegime',
             'deadline',
         ],
         searches: [
             {
-                field: 'title',
+                field: 'position',
                 operators: [FilterOperator.eq, FilterOperator.endsWith, FilterOperator.startsWith],
             },
             {
@@ -68,12 +80,12 @@ export const FindAllJobOpeningsSchema = z.object({
                         : `Invalid employment type. Possible values: ${Object.values(EmploymentType).join(', ')}`,
             },
             {
-                field: 'contractType',
+                field: 'employmentRegime',
                 operators: [FilterOperator.eq],
                 validation: (type) =>
-                    Object.values(ContractType).includes(type as ContractType)
+                    Object.values(EmploymentRegime).includes(type as EmploymentRegime)
                         ? null
-                        : `Invalid contract type. Possible values: ${Object.values(ContractType).join(', ')}`,
+                        : `Invalid contract type. Possible values: ${Object.values(EmploymentRegime).join(', ')}`,
             },
             {
                 field: 'deadline',
@@ -87,7 +99,22 @@ export const FindAllJobOpeningsSchema = z.object({
                 transform: (value) => moment(value).toDate(),
             },
             {
-                field: 'salary',
+                field: 'minimumSalary',
+                operators: [
+                    FilterOperator.eq,
+                    FilterOperator.gt,
+                    FilterOperator.lt,
+                    FilterOperator.gte,
+                    FilterOperator.lte,
+                ],
+                transform: (value) => parseFloat(value),
+                validation: (value) => {
+                    const num = parseFloat(value);
+                    return isNaN(num) || num < 0 ? 'Invalid salary' : null;
+                },
+            },
+            {
+                field: 'maximumSalary',
                 operators: [
                     FilterOperator.eq,
                     FilterOperator.gt,
@@ -116,42 +143,18 @@ export const FindAllJobOpeningsSchema = z.object({
 export const CreateJobOpeningSchema = z.object({
     body: z
         .object({
-            title: z.string().min(3).max(100),
+            position: z.string().min(3).max(100),
             description: z.string().min(3).max(1000),
             companyId: z.string().uuid(),
-            positionLevel: z
-                .string()
-                .refine(
-                    (value) => Object.values(PositionLevel).includes(value as PositionLevel),
-                    `Invalid position level. Possible values: ${Object.values(PositionLevel).join(', ')}`,
-                ),
-            workplaceType: z
-                .string()
-                .refine(
-                    (value) => Object.values(WorkplaceType).includes(value as WorkplaceType),
-                    `Invalid workplace type. Possible values: ${Object.values(WorkplaceType).join(', ')}`,
-                ),
-            employmentType: z
-                .string()
-                .refine(
-                    (value) => Object.values(EmploymentType).includes(value as EmploymentType),
-                    `Invalid employment type. Possible values: ${Object.values(EmploymentType).join(', ')}`,
-                ),
-            salary: z.number().min(0).nullable(),
-            contractType: z
-                .string()
-                .refine(
-                    (value) => Object.values(ContractType).includes(value as ContractType),
-                    `Invalid contract type. Possible values: ${Object.values(ContractType).join(', ')}`,
-                ),
-            benefits: z.array(
-                z
-                    .string()
-                    .refine(
-                        (value) => Object.values(Benefit).includes(value as Benefit),
-                        `Invalid benefit. Possible values: ${Object.values(Benefit).join(', ')}`,
-                    ),
-            ),
+            positionLevel: z.nativeEnum(PositionLevel),
+            workplaceType: z.nativeEnum(WorkplaceType),
+            employmentType: z.nativeEnum(EmploymentType),
+            salary: z.object({
+                min: z.number().int().min(0),
+                max: z.number().int().min(0),
+            }),
+            employmentRegime: z.nativeEnum(EmploymentRegime),
+            benefits: z.array(z.nativeEnum(Benefit)),
             deadline: z.string().refine((value) => {
                 const date = moment(value);
                 return date.isValid() && date.isAfter(moment());
@@ -165,6 +168,36 @@ export const CreateJobOpeningSchema = z.object({
             requirements: z
                 .array(z.string().min(3).max(1000))
                 .refine((req) => _.uniq(req).length === req.length, 'Requirements must be unique'),
+            profile: z.object({
+                yearsOfExperience: z.number().int().min(0),
+                skills: z
+                    .array(
+                        z.object({
+                            skillId: z.string().uuid(),
+                            skillType: z.nativeEnum(SkillType).optional(),
+                            skillName: z.string().optional(),
+                            mandatory: z.boolean(),
+                            proficiencyLevel: z.nativeEnum(Proficiency),
+                        }),
+                    )
+                    .refine((skills) => {
+                        const ids = skills.map((s) => s.skillId);
+                        return ids.length === _.uniq(ids).length;
+                    }, 'Skills must be unique'),
+                minimumEducationLevel: z.nativeEnum(AcademicDegreeType).nullable().default(null),
+                gradePointAvaregeMin: z.number().int().min(0).nullable().default(null),
+                courses: z.array(z.string().min(3).max(1000)),
+                languages: z.array(
+                    z.object({
+                        language: z.nativeEnum(Language),
+                        writtenLevel: z.nativeEnum(LanguageProficiency),
+                        spokenLevel: z.nativeEnum(LanguageProficiency),
+                        readingLevel: z.nativeEnum(LanguageProficiency),
+                        listeningLevel: z.nativeEnum(LanguageProficiency),
+                    }),
+                ),
+                certifications: z.array(z.string().min(3).max(1000)),
+            }),
         })
         .strict(),
 });

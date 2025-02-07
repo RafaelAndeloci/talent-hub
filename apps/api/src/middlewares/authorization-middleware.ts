@@ -5,9 +5,10 @@ import { Action } from '../enums/action';
 import { AuthContext } from '../api/users/types/auth-context';
 import { Permissions } from '../enums/permissions';
 import { Resource } from '../enums/resource';
+import { MiddlewareFactory } from '../types/middleware-factory';
 
-export const authorize =
-    ({ resource, action }: { resource: Resource; action: Action }): any =>
+export const authorize: MiddlewareFactory<{ resource: Resource; action: Action }> =
+    ({ resource, action }) =>
     (
         _req: Request,
         res: Response<any, AuthContext | Record<string, any>>,

@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ZodSchema } from 'zod';
+import { MiddlewareFactory } from '../types/middleware-factory';
 
-export const validate =
-    (schema: ZodSchema): any =>
+export const validate: MiddlewareFactory<ZodSchema> =
+    (schema: ZodSchema) =>
     (req: any, _res: any, next: any): void => {
         try {
             const { body, query, params } = schema.parse({

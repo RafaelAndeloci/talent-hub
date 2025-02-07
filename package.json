@@ -10,11 +10,11 @@
     "backend:deps:up": "export NODE_ENV=development && cd apps/api && make docker-up",
     "backend:deps:down": "export NODE_ENV=development && cd apps/api && make docker-down",
     "backend:deps:down-clean": "export NODE_ENV=development && cd apps/api && make docker-down-clean",
-    "backend:db:migrate": "cd apps/api && make database-migrate",
-    "backend:db:drop": "cd apps/api && make database-drop",
-    "backend:db:truncate": "cd apps/api && make database-truncate",
-    "backend:db:seed": "cd apps/api && make database-seed",
-    "backend:build": "cd apps/api && make build"
+    "backend:db:migrate": "cd apps/api && make db-migrate",
+    "backend:db:drop": "cd apps/api && make db-drop",
+    "backend:db:truncate": "cd apps/api && make db-truncate",
+    "backend:build": "cd apps/api && make build",
+    "commit": "cz"
   },
   "devDependencies": {
     "prettier": "^3.4.2",

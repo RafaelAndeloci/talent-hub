@@ -119,7 +119,11 @@ export const Benefit = Object.freeze({
      * Programa de Bem-estar
      */
     WellnessProgram: 'wellness_program',
-  });
-  
-  export type Benefit = (typeof Benefit)[keyof typeof Benefit];
-  
+
+    /**
+     * Outros
+     */
+    Other: 'other',
+});
+
+export type Benefit = (typeof Benefit)[keyof typeof Benefit];
