@@ -1,0 +1,16 @@
+export enum FilterOperator {
+    endsWith = 'endsWith',
+    startsWith = 'startsWith',
+    substring = 'substring',
+    eq = 'eq',
+    gt = 'gt',
+    gte = 'gte',
+    iLike = 'iLike',
+    like = 'like',
+    in = 'in',
+    notIn = 'notIn',
+    is = 'is',
+    lt = 'lt',
+    lte = 'lte',
+    not = 'not',
+}
