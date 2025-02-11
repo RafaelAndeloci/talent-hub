@@ -1,4 +1,4 @@
-import { Role } from '../api/users/types/enums/role';
+import { Role } from '@talent-hub/shared/types';
 import { Action } from './action';
 import { AllResources, Resource } from './resource';
 
@@ -12,7 +12,7 @@ type Permission = {
 
 export const Permissions = Object.freeze([
     {
-        role: Role.candidate,
+        role: Role.Candidate,
         actionsPerResource: [
             {
                 resource: Resource.candidates,
@@ -53,7 +53,7 @@ export const Permissions = Object.freeze([
         ],
     },
     {
-        role: Role.sysAdmin,
+        role: Role.SysAdmin,
         actionsPerResource: AllResources.map((r) => ({
             resource: r,
             actions: Object.values(Action),

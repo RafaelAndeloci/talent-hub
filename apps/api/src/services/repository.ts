@@ -1,20 +1,37 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Attributes, Model, ModelStatic, Order, WhereOptions } from 'sequelize';
-import { Id } from '../types/id';
-import { FindAllArgs } from '../types/find-all-args';
-import { PagedList } from '../types/paged-list';
+import { Id, FindAllArgs, PagedResponse, FilterOperator } from '@talent-hub/shared/types';
+import { Attributes, Model, ModelStatic, Op, Order, WhereOptions } from 'sequelize';
 import { ApiError } from '../types/api-error';
-import { toSequelizeSymbol } from '../enums/filter-operator';
+import { PagedResponseImp } from '../types/paged-response';
+
+const operatorToSequelizeSymbol = {
+    [FilterOperator.endsWith]: Op.endsWith,
+    [FilterOperator.startsWith]: Op.startsWith,
+    [FilterOperator.substring]: Op.substring,
+    [FilterOperator.eq]: Op.eq,
+    [FilterOperator.gt]: Op.gt,
+    [FilterOperator.gte]: Op.gte,
+    [FilterOperator.iLike]: Op.iLike,
+    [FilterOperator.like]: Op.like,
+    [FilterOperator.in]: Op.in,
+    [FilterOperator.notIn]: Op.notIn,
+    [FilterOperator.is]: Op.is,
+    [FilterOperator.lt]: Op.lt,
+    [FilterOperator.lte]: Op.lte,
+    [FilterOperator.not]: Op.not,
+};
+
+const toSequelizeSymbol = (operator: FilterOperator) => operatorToSequelizeSymbol[operator];
 
 export const makeRepository = <
     TEntity extends Id,
     TModelAttr extends Record<string, any>,
     TModel extends Model<TModelAttr | any>,
 >({
-        model,
-        fromDatabase,
-        toDatabase,
-    }: {
+    model,
+    fromDatabase,
+    toDatabase,
+}: {
     model: ModelStatic<TModel>;
     toDatabase: (entity: TEntity) => TModelAttr;
     fromDatabase: (model: TModelAttr) => TEntity;
@@ -26,7 +43,7 @@ export const makeRepository = <
         filter,
         where,
     }: FindAllArgs<TEntity> & Partial<{ where: WhereOptions<Attributes<TModel>> }>): Promise<
-        PagedList<TEntity>
+        PagedResponse<TEntity>
     > => {
         limit = limit ?? 10;
         offset = offset ?? 0;
@@ -52,7 +69,7 @@ export const makeRepository = <
         const count = await model.count({ where });
 
         const records = models.map((m) => fromDatabase(m.toJSON()));
-        return PagedList.create(limit, offset, count, records);
+        return PagedResponseImp.create(limit, offset, count, records);
     };
 
     const findById = async (id: string): Promise<TEntity> => {

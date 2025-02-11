@@ -1,18 +1,6 @@
 import { z } from 'zod';
 import { YearMonthSchema } from './year-month-schema';
 
-/**
- * @swagger
- * components:
- *  schemas:
- *   PeriodSchema:
- *    type: object
- *    properties:
- *      start:
- *       $ref: '#/components/schemas/YearMonthSchema'
- *      end:
- *        $ref: '#/components/schemas/YearMonthSchema'
- */
 export const PeriodSchema = z
     .object({
         start: YearMonthSchema,

@@ -1,7 +1,7 @@
 import HTTPStatus from 'http-status';
 
 import { jobApplicationBusiness } from './job-application-business';
-import { JobApplicationController } from './types/job-application-controller';
+import { JobApplicationController } from '../../types/job-application-controller';
 
 export const jobApplicationController: JobApplicationController = {
     findById: async ({ params: { id: jobApplicationId } }, res) => {

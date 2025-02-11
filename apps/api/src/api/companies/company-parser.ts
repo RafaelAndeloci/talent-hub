@@ -1,20 +1,19 @@
+import { Role } from '@talent-hub/shared/types';
 import _ from 'lodash';
-
-import { Role } from '../users/types/enums/role';
-import { CompanyParser } from './types/company-parser';
+import { CompanyParser } from '../../types/company-parser';
 
 export const companyParser: CompanyParser = {
     toDto: ({ company, userRole }) =>
-        userRole === Role.candidate ? _.omit(company, ['cnpj']) : company,
+        userRole === Role.Candidate ? _.omit(company, ['cnpj']) : company,
 
-    toDatabase: c => ({
+    toDatabase: (c) => ({
         ...c,
         ...c.social,
         contactPhone: c.contact.phone,
         contactEmail: c.contact.email,
     }),
 
-    fromDatabase: c => ({
+    fromDatabase: (c) => ({
         id: c.id,
         tradeName: c.tradeName,
         legalName: c.legalName,

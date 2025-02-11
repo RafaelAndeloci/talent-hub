@@ -1,10 +1,8 @@
 import { DataTypes, Model } from 'sequelize';
 import database from '../../../config/database';
-import { PositionLevel } from '../types/enums/position-level';
-import { WorkplaceType } from '../types/enums/workplace-type';
-import { EmploymentType } from '../types/enums/employment-type';
-import { CandidateProfessionalExperienceModelAttr } from './types/candidate-professional-experience-model-attr';
 import { primaryColumn } from '../../../constants/database-column.def';
+import { EmploymentType, WorkplaceType, PositionLevel } from '@talent-hub/shared/types';
+import { CandidateProfessionalExperienceModelAttr } from '../../../types/candidate-professional-experience-model-attr';
 
 export class CandidateProfessionalExperienceModel extends Model<CandidateProfessionalExperienceModelAttr> {}
 

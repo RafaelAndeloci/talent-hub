@@ -1,6 +1,6 @@
+import { Validation } from '@talent-hub/shared/types';
 import _ from 'lodash';
-import { Validation } from '../../types/validation';
-import { SkillParser } from './types/skill-parser';
+import { SkillParser } from '../../types/skill-parser';
 
 export const skillParser: SkillParser = {
     fromDatabase: (data) => ({

@@ -1,11 +1,13 @@
 import { z } from 'zod';
 
-import { JobApplicationStage } from './types/enums/job-application-stage';
-import { JobApplicationStatus } from './types/enums/job-application-status';
-import { buildQuerySchema } from '../../utils/schemas';
-import { JobApplication } from './types/job-application';
-import { FilterOperator } from '../../enums/filter-operator';
 import { ParamsSchema } from '../../schemas/params-schema';
+import {
+    JobApplication,
+    JobApplicationStatus,
+    JobApplicationStage,
+    FilterOperator,
+} from '@talent-hub/shared/types';
+import { buildQuerySchema } from '../../utils/schemas';
 
 export const CreateJobApplicationSchema = z.object({
     body: z.object({

@@ -1,15 +1,12 @@
+import { Role, JobOpeningStatus, SallaryRange } from '@talent-hub/shared/types';
 import _ from 'lodash';
 import * as uuid from 'uuid';
-
-import { JobOpeningParser } from './types/job-opening-parser';
-import { Role } from '../users/types/enums/role';
-import { JobOpeningStatus } from './types/enums/job-opening-status';
-import { SallaryRange } from '../../types/sallary-range';
-import { JobOpeningSkillProfileModelAttr } from './types/job-opening-model-attr';
+import { JobOpeningSkillProfileModelAttr } from '../../types/job-opening-model-attr';
+import { JobOpeningParser } from '../../types/job-opening-parser';
 
 export const jobOpeningParser: JobOpeningParser = {
     toDto: ({ jobOpening, role }) =>
-        role === Role.candidate ? _.omit(jobOpening, ['selectedApplicationId']) : jobOpening,
+        role === Role.Candidate ? _.omit(jobOpening, ['selectedApplicationId']) : jobOpening,
 
     newInstance: ({ payload }) => ({
         id: uuid.v4(),

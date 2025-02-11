@@ -2,16 +2,6 @@ import moment from 'moment';
 import { z } from 'zod';
 import _ from 'lodash';
 
-import { LanguageProficiency } from './types/enums/language-proficiency';
-import { AchievementType } from './types/enums/achievement-type';
-import { EmploymentType } from './types/enums/employment-type';
-import { WorkplaceType } from './types/enums/workplace-type';
-import { PositionLevel } from './types/enums/position-level';
-import { AcademicDegreeType } from './types/enums/academic-degree-type';
-import { AcademicStatus } from './types/enums/academic-status';
-import { EmploymentRegime } from './types/enums/employment-regime';
-import { Benefit } from './types/enums/benefit';
-import { Language } from '../../enums/language';
 import { AddressSchema } from '../../schemas/address-schema';
 import { ContactSchema } from '../../schemas/contact-schema';
 import { ParamsSchema } from '../../schemas/params-schema';
@@ -20,43 +10,84 @@ import { RelatedWebsiteSchema } from '../../schemas/related-websites-schema';
 import { YearMonthSchema } from '../../schemas/year-month-schema';
 import { sortModelsByPeriod, isValidModelPeriods } from '../../utils/period-utils';
 import { buildQuerySchema, buildFileSchema, DateSchema } from '../../utils/schemas';
-import { Uf } from '../../enums/uf';
 import { config } from '../../config/environment';
-import { FindAllCandidatesQuery } from './types/find-all-candidates-query';
-import { FindAllArgs } from '../../types/find-all-args';
+import {
+    AcademicDegreeType,
+    AcademicStatus,
+    AchievementType,
+    Benefit,
+    EmploymentRegime,
+    EmploymentType,
+    FilterOperator,
+    FindAllCandidatesQueryArgs,
+    Language,
+    LanguageProficiency,
+    PositionLevel,
+    Uf,
+    WorkplaceType,
+} from '@talent-hub/shared/types';
 const { fileStorage } = config;
 
-type QueryType = FindAllCandidatesQuery extends FindAllArgs<infer U> ? U : never;
 export const FindAllCandidatesSchema = z.object({
-    query: buildQuerySchema<QueryType>({
+    query: buildQuerySchema<FindAllCandidatesQueryArgs>({
         searches: [
             {
                 field: 'fullName',
-                operators: ['eq', 'like', 'iLike', 'endsWith', 'startsWith', 'substring'],
+                operators: [
+                    FilterOperator.eq,
+                    FilterOperator.like,
+                    FilterOperator.iLike,
+                    FilterOperator.endsWith,
+                    FilterOperator.startsWith,
+                    FilterOperator.substring,
+                ],
             },
-            { field: 'id', operators: ['eq'] },
+            { field: 'id', operators: [FilterOperator.eq] },
             {
                 field: 'allowThirdPartyApplications',
-                operators: ['eq'],
+                operators: [FilterOperator.eq],
                 transform: (value) => value === 'true',
             },
             {
                 field: 'isAvailableForWork',
-                operators: ['eq'],
+                operators: [FilterOperator.eq],
                 transform: (value) => value === 'true',
             },
             {
                 field: 'contactEmail',
-                operators: ['eq', 'like', 'iLike', 'endsWith', 'startsWith', 'substring'],
+                operators: [
+                    FilterOperator.eq,
+                    FilterOperator.like,
+                    FilterOperator.iLike,
+                    FilterOperator.endsWith,
+                    FilterOperator.startsWith,
+                    FilterOperator.substring,
+                ],
             },
             {
                 field: 'contactPhone',
-                operators: ['eq', 'like', 'iLike', 'endsWith', 'startsWith', 'substring'],
+                operators: [
+                    FilterOperator.eq,
+                    FilterOperator.like,
+                    FilterOperator.iLike,
+                    FilterOperator.endsWith,
+                    FilterOperator.startsWith,
+                    FilterOperator.substring,
+                ],
             },
-            { field: 'birthDate', operators: ['eq', 'gt', 'lt', 'gte', 'lte'] },
+            {
+                field: 'birthDate',
+                operators: [
+                    FilterOperator.eq,
+                    FilterOperator.gt,
+                    FilterOperator.lt,
+                    FilterOperator.gte,
+                    FilterOperator.lte,
+                ],
+            },
             {
                 field: 'salaryPreference',
-                operators: ['eq', 'gt', 'lt'],
+                operators: [FilterOperator.eq, FilterOperator.gt, FilterOperator.lt],
                 transform: (value) => Number(value),
                 validation: (value) =>
                     !Number.isNaN(value) && Number(value) >= 0
@@ -65,7 +96,7 @@ export const FindAllCandidatesSchema = z.object({
             },
             {
                 field: 'contractTypePreference',
-                operators: ['eq'],
+                operators: [FilterOperator.eq],
                 validation: (value) =>
                     Object.values(EmploymentRegime).includes(value as EmploymentRegime)
                         ? null
@@ -73,7 +104,7 @@ export const FindAllCandidatesSchema = z.object({
             },
             {
                 field: 'employmentTypePreference',
-                operators: ['eq'],
+                operators: [FilterOperator.eq],
                 validation: (value) =>
                     Object.values(EmploymentType).includes(value as EmploymentType)
                         ? null
@@ -81,7 +112,7 @@ export const FindAllCandidatesSchema = z.object({
             },
             {
                 field: 'workplaceTypePreference',
-                operators: ['eq'],
+                operators: [FilterOperator.eq],
                 validation: (value) =>
                     Object.values(WorkplaceType).includes(value as WorkplaceType)
                         ? null
@@ -89,7 +120,7 @@ export const FindAllCandidatesSchema = z.object({
             },
             {
                 field: 'positionLevelPreference',
-                operators: ['eq'],
+                operators: [FilterOperator.eq],
                 validation: (value) =>
                     Object.values(PositionLevel).includes(value as PositionLevel)
                         ? null
@@ -97,7 +128,7 @@ export const FindAllCandidatesSchema = z.object({
             },
             {
                 field: 'address.zipCode',
-                operators: ['eq'],
+                operators: [FilterOperator.eq],
                 validation: (value) =>
                     value.trim().length === 8 ? null : 'zipCode must have 8 characters',
             },

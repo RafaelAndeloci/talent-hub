@@ -2,10 +2,10 @@
 import { Request, Response, NextFunction } from 'express';
 import { ApiError } from '../types/api-error';
 import { Action } from '../enums/action';
-import { AuthContext } from '../api/users/types/auth-context';
 import { Permissions } from '../enums/permissions';
 import { Resource } from '../enums/resource';
 import { MiddlewareFactory } from '../types/middleware-factory';
+import { AuthContext } from '@talent-hub/shared/types';
 
 export const authorize: MiddlewareFactory<{ resource: Resource; action: Action }> =
     ({ resource, action }) =>

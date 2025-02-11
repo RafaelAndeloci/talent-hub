@@ -3,8 +3,6 @@ import moment from 'moment';
 
 import { userRepository } from './user-repository';
 import { config } from '../../config/environment';
-import { Role } from './types/enums/role';
-import { UserBusiness } from './types/user-business';
 import { userParser } from './user-parser';
 import { hasher } from '../../services/hasher';
 import { AppEvent } from '../../enums/app-event';
@@ -12,6 +10,8 @@ import { fileStorageService } from '../../services/file-storage-service';
 import { jobQueueService } from '../../services/job-queue-service';
 import { jwtService } from '../../services/jwt-service';
 import { ApiError } from '../../types/api-error';
+import { UserBusiness } from '../../types/user-business';
+import { Role } from '@talent-hub/shared/types';
 
 export const userBusiness: UserBusiness = {
     findById: async ({ userId }) => {
@@ -62,7 +62,7 @@ export const userBusiness: UserBusiness = {
             ApiError.throwNotFound('invalid credentials');
         }
 
-        if (user.emailConfirmation && user.role !== Role.sysAdmin) {
+        if (user.emailConfirmation && user.role !== Role.SysAdmin) {
             ApiError.throwForbidden('email not confirmed');
         }
 
@@ -183,5 +183,5 @@ export const userBusiness: UserBusiness = {
         });
     },
 
-    canCreateCandidate: ({ user }) => user.role === Role.candidate || user.role === Role.sysAdmin,
+    canCreateCandidate: ({ user }) => user.role === Role.Candidate || user.role === Role.SysAdmin,
 };

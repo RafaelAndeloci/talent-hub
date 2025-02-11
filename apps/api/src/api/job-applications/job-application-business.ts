@@ -1,14 +1,13 @@
-import { JobApplicationBusiness } from './types/job-application-business';
 import { ApiError } from '../../types/api-error';
 import { jobApplicationRepository } from './job-application-repository';
 import { candidateBusiness } from '../candidates/candidate-business';
-import { JobApplicationStatus } from './types/enums/job-application-status';
 import { jobOpeningBusiness } from '../job-openings/job-opening-business';
 import { jobApplicationParser } from './job-application-parser';
 import { jobQueueService } from '../../services/job-queue-service';
 import { AppEvent } from '../../enums/app-event';
 import _ from 'lodash';
-import { JobApplication } from './types/job-application';
+import { JobApplication, JobApplicationStatus } from '@talent-hub/shared/types';
+import { JobApplicationBusiness } from '../../types/job-application-business';
 
 const canChangeStatus = (jobApplication: JobApplication) =>
     jobApplication.status === JobApplicationStatus.applied;
@@ -39,7 +38,6 @@ export const jobApplicationBusiness: JobApplicationBusiness = {
         const candidate = await candidateBusiness.findById(payload.candidateId);
         if (!candidate) {
             ApiError.throwNotFound(`candidate with id ${payload.candidateId} not found`);
-            return null!;
         }
         candidateBusiness.validateForApplication({ userRole: context.user.role, candidate });
 

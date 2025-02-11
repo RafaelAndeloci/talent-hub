@@ -1,7 +1,7 @@
 import * as uuid from 'uuid';
 import _ from 'lodash';
+import { UserParser } from '../../types/user-parser';
 
-import { UserParser } from './types/user-parser';
 
 export const userParser: UserParser = {
     fromDatabase: (model) => ({

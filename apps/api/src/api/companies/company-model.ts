@@ -8,7 +8,7 @@ import {
     socialMediasColumns,
 } from '../../constants/database-column.def';
 import database from '../../config/database';
-import { CompanyModelAttr } from './types/company-model-attr';
+import { CompanyModelAttr } from '../../types/company-model-attr';
 
 export class CompanyModel extends Model<CompanyModelAttr> {}
 CompanyModel.init(

@@ -1,16 +1,13 @@
 import HTTPStatus from 'http-status';
 import * as uuid from 'uuid';
 
-import { SkillController } from './types/skill-controller';
-import { skillRepository } from './skill-repository';
-import { FindAllArgs } from '../../types/find-all-args';
-import { Skill } from './types/skill';
-import { skillParser } from './skill-parser';
-import { Role } from '../users/types/enums/role';
-import { SuggestionStatus } from '../../enums/suggestion-status';
-import { ApiError } from '../../types/api-error';
 import { jobQueueService } from '../../services/job-queue-service';
 import { AppEvent } from '../../enums/app-event';
+import { SkillController } from '../../types/skill-controller';
+import { skillRepository } from './skill-repository';
+import { FindAllArgs, Skill, Role, SuggestionStatus } from '@talent-hub/shared/types';
+import { ApiError } from '../../types/api-error';
+import { skillParser } from './skill-parser';
 
 export const skillController: SkillController = {
     findAll: async ({ query }, res) => {
@@ -30,12 +27,12 @@ export const skillController: SkillController = {
     },
 
     create: async ({ body: payload }, res) => {
-        const isAdmin = res.locals.user.role === Role.sysAdmin;
+        const isAdmin = res.locals.user.role === Role.SysAdmin;
 
         const skill: Skill = {
             id: uuid.v4(),
             ...payload,
-            status: isAdmin ? SuggestionStatus.approved : SuggestionStatus.pending,
+            status: isAdmin ? SuggestionStatus.Approved : SuggestionStatus.Pending,
             suggestedBy: res.locals.user.id,
             validation: isAdmin
                 ? {

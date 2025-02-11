@@ -3,16 +3,16 @@ import { Transaction } from 'sequelize';
 import * as uuid from 'uuid';
 
 import { makeRepository } from '../../services/repository';
-import { Candidate } from './types/candidate';
-import { CandidateProfessionalExperienceModelAttr } from './models/types/candidate-professional-experience-model-attr';
 import { CandidateModel } from './models';
-import { CandidateAchievementModelAttr } from './models/types/candidate-achievement-model-attr';
-import { CandidateEducationalExperienceModelAttr } from './models/types/candidate-education-experience-model-attr';
-import { CandidateLanguageModelAttr } from './models/types/candidate-language-model-attr';
-import { CandidateModelAttr } from './models/types/candidate-model-attr';
-import { CandidateReferenceModelAttr } from './models/types/candidate-reference-model-attr';
 import { candidateParser } from './candidate-parser';
 import models from '../../config/database/models';
+import { CandidateModelAttr } from '../../types/candidate-model-attr';
+import { Candidate } from '@talent-hub/shared/types';
+import { CandidateAchievementModelAttr } from '../../types/candidate-achievement-model-attr';
+import { CandidateEducationalExperienceModelAttr } from '../../types/candidate-education-experience-model-attr';
+import { CandidateLanguageModelAttr } from '../../types/candidate-language-model-attr';
+import { CandidateProfessionalExperienceModelAttr } from '../../types/candidate-professional-experience-model-attr';
+import { CandidateReferenceModelAttr } from '../../types/candidate-reference-model-attr';
 
 const baseRepo = makeRepository<Candidate, CandidateModelAttr, CandidateModel>({
     model: CandidateModel,

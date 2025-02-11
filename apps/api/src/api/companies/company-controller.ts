@@ -1,7 +1,7 @@
 import HTTPStatus from 'http-status';
 
 import { companyBusiness } from './company-business';
-import { CompanyController } from './types/company-controller';
+import { CompanyController } from '../../types/company-controller';
 
 export const companyController: CompanyController = {
     findById: async ({ params: { id: companyId } }, res) => {

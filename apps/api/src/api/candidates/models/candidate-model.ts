@@ -2,11 +2,6 @@
 import { DataTypes, Model } from 'sequelize';
 
 import database from '../../../config/database';
-import { EmploymentType } from '../types/enums/employment-type';
-import { WorkplaceType } from '../types/enums/workplace-type';
-import { PositionLevel } from '../types/enums/position-level';
-import { EmploymentRegime } from '../types/enums/employment-regime';
-import { Benefit } from '../types/enums/benefit';
 import {
     CandidateAchievementModel,
     CandidateEducationalExperienceModel,
@@ -15,13 +10,20 @@ import {
     CandidateReferenceModel,
 } from '.';
 import { UserModel } from '../../users/user-model';
-import { CandidateModelAttr } from './types/candidate-model-attr';
 import {
     addressColumn,
     phoneColumn,
     primaryColumn,
     socialMediasColumns,
 } from '../../../constants/database-column.def';
+import { CandidateModelAttr } from '../../../types/candidate-model-attr';
+import {
+    EmploymentRegime,
+    EmploymentType,
+    WorkplaceType,
+    Benefit,
+    PositionLevel,
+} from '@talent-hub/shared/types';
 
 type CandidateModelAttrInternal = Omit<
     CandidateModelAttr,

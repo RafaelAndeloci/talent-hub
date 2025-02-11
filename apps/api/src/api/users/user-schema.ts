@@ -1,9 +1,8 @@
 import { z } from 'zod';
-import { Role } from './types/enums/role';
 import { config } from '../../config/environment';
 import { ParamsSchema } from '../../schemas/params-schema';
 import { buildQuerySchema } from '../../utils/schemas';
-import { User } from './types/user';
+import { FilterOperator, Role, User } from '@talent-hub/shared/types';
 
 const passwordRule = z
     .string()
@@ -57,13 +56,34 @@ export const FindAllUsersSchema = z.object({
         searches: [
             {
                 field: 'email',
-                operators: ['eq', 'like', 'iLike', 'startsWith', 'endsWith'],
+                operators: [
+                    FilterOperator.eq,
+                    FilterOperator.like,
+                    FilterOperator.iLike,
+                    FilterOperator.startsWith,
+                    FilterOperator.endsWith,
+                ],
             },
             {
                 field: 'username',
-                operators: ['eq', 'like', 'iLike', 'startsWith', 'endsWith'],
+                operators: [
+                    FilterOperator.eq,
+                    FilterOperator.like,
+                    FilterOperator.iLike,
+                    FilterOperator.startsWith,
+                    FilterOperator.endsWith,
+                ],
             },
-            { field: 'createdAt', operators: ['eq', 'gt', 'lt', 'gte', 'lte'] },
+            {
+                field: 'createdAt',
+                operators: [
+                    FilterOperator.eq,
+                    FilterOperator.gt,
+                    FilterOperator.lt,
+                    FilterOperator.gte,
+                    FilterOperator.lte,
+                ],
+            },
         ],
         sorts: ['email', 'username', 'createdAt'],
     }),

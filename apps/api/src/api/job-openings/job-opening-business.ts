@@ -1,14 +1,13 @@
 import { jobOpeningRepository } from './job-opening-repository';
 import { companyRepository } from '../companies/company-repository';
 import { ApiError } from '../../types/api-error';
-import { JobOpeningStatus } from './types/enums/job-opening-status';
 import { jobQueueService } from '../../services/job-queue-service';
 import { AppEvent } from '../../enums/app-event';
 import { jobApplicationRepository } from '../job-applications/job-application-repository';
-import { JobApplicationStatus } from '../job-applications/types/enums/job-application-status';
-import { JobOpeningBusiness } from './types/job-opening-business';
 import { jobOpeningParser } from './job-opening-parser';
 import _ from 'lodash';
+import { JobOpeningStatus, JobApplicationStatus } from '@talent-hub/shared/types';
+import { JobOpeningBusiness } from '../../types/job-opening-business';
 
 export const jobOpeningBusiness: JobOpeningBusiness = {
     findById: async ({ jobOpeningId, context }) => {
@@ -39,7 +38,9 @@ export const jobOpeningBusiness: JobOpeningBusiness = {
             companyId: payload.companyId,
         });
         if (alreadyExists) {
-            ApiError.throwBadRequest(`job opening with position ${payload.position} already exists`);
+            ApiError.throwBadRequest(
+                `job opening with position ${payload.position} already exists`,
+            );
         }
 
         const jobOpening = jobOpeningParser.newInstance({ payload });

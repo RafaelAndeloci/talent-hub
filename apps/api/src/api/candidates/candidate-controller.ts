@@ -1,8 +1,8 @@
 import HTTPStatus from 'http-status';
 
 import { candidateBusiness } from './candidate-business';
-import { CandidateController } from './types/candidate-controller';
 import { ApiError } from '../../types/api-error';
+import { CandidateController } from '../../types/candidate-controller';
 
 export const candidateController: CandidateController = {
     findAll: async ({ query }, res) => {

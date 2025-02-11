@@ -2,19 +2,18 @@ import { Op } from 'sequelize';
 import { makeRepository } from '../../services/repository';
 import { RelatedSkillModel, SkillModel } from './skill-model';
 import { skillParser } from './skill-parser';
-import { SkillModelAttr } from './types/skill-model-attr copy';
-import { Skill } from './types/skill';
 import { ApiError } from '../../types/api-error';
 import database from '../../config/database';
 import { logger } from '../../services/logging-service';
-import { SuggestionStatus } from '../../enums/suggestion-status';
+import { Skill, SuggestionStatus } from '@talent-hub/shared/types';
+import { SkillModelAttr } from '../../types/skill-model-attr';
 
 const validateRelatedSkills = async (relatedSkills: string[]) => {
     if (relatedSkills.length) {
         const existingRelatedSkills = await skillRepository.exists({
             [Op.and]: {
                 id: { [Op.in]: relatedSkills },
-                status: SuggestionStatus.approved,
+                status: SuggestionStatus.Approved,
             },
         });
 

@@ -1,13 +1,11 @@
 import { userRepository } from '../users/user-repository';
 import { candidateRepository } from './candidate-repository';
 import { userBusiness } from '../users/user-business';
-import { Candidate } from './types/candidate';
-import { Role } from '../users/types/enums/role';
-import { CandidateBusiness } from './types/candidate-business';
 import { candidateParser } from './candidate-parser';
 import { fileStorageService } from '../../services/file-storage-service';
 import { ApiError } from '../../types/api-error';
-import { FindAllArgs } from '../../types/find-all-args';
+import { Candidate, FindAllArgs, Role } from '@talent-hub/shared/types';
+import { CandidateBusiness } from '../../types/candidate-business';
 
 export const candidateBusiness: CandidateBusiness = {
     findById: async (id) => {
@@ -124,7 +122,7 @@ export const candidateBusiness: CandidateBusiness = {
         }
 
         const thirdPartyApplicationAvailable =
-            userRole !== Role.candidate && candidate.allowThirdPartyApplications;
+            userRole !== Role.Candidate && candidate.allowThirdPartyApplications;
         if (thirdPartyApplicationAvailable) {
             ApiError.throwUnprocessableEntity(
                 `candidate ${candidate.id} does not allow third party applications`,

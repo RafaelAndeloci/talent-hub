@@ -2,20 +2,22 @@ import { Model, DataTypes, Op } from 'sequelize';
 import moment from 'moment';
 
 import database from '../../config/database';
-import { PositionLevel } from '../candidates/types/enums/position-level';
-import { WorkplaceType } from '../candidates/types/enums/workplace-type';
-import { EmploymentType } from '../candidates/types/enums/employment-type';
-import { EmploymentRegime } from '../candidates/types/enums/employment-regime';
-import { Benefit } from '../candidates/types/enums/benefit';
 import { CompanyModel } from '../companies/company-model';
-import { JobOpeningStatus } from './types/enums/job-opening-status';
 import { primaryColumn } from '../../constants/database-column.def';
-import {
-    JobOpeningModelAttr,
-    JobOpeningSkillProfileModelAttr,
-} from './types/job-opening-model-attr';
-import { Proficiency } from '../candidates/types/enums/proficiency';
 import { SkillModel } from '../skills/skill-model';
+import {
+    Proficiency,
+    JobOpeningStatus,
+    PositionLevel,
+    WorkplaceType,
+    EmploymentType,
+    EmploymentRegime,
+    Benefit,
+} from '@talent-hub/shared/types';
+import {
+    JobOpeningSkillProfileModelAttr,
+    JobOpeningModelAttr,
+} from '../../types/job-opening-model-attr';
 
 class JobOpeningSkillProfileModel extends Model<JobOpeningSkillProfileModelAttr> {}
 export class JobOpeningModel extends Model<JobOpeningModelAttr> {}
@@ -37,7 +39,7 @@ JobOpeningSkillProfileModel.init(
         },
         skill: {
             type: DataTypes.VIRTUAL,
-        }
+        },
     },
     {
         sequelize: database,
@@ -138,7 +140,7 @@ JobOpeningModel.init(
         },
         certifications: {
             type: DataTypes.ARRAY(DataTypes.STRING),
-        }
+        },
     },
     {
         sequelize: database,
@@ -197,11 +199,10 @@ JobOpeningModel.beforeFind((options) => {
                     where: {
                         id: {
                             [Op.col]: 'skill_profiles.skill_id',
-                        }
-                    }
-                }
-            ]
+                        },
+                    },
+                },
+            ],
         },
-        
     ];
 });

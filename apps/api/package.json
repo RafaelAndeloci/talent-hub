@@ -1,7 +1,6 @@
 {
     "name": "api",
     "version": "1.0.0",
-    "main": "src/index.js",
     "private": "true",
     "scripts": {
         "dev": "nodemon",
@@ -58,6 +57,7 @@
     "dependencies": {
         "@aws-sdk/client-s3": "^3.738.0",
         "@aws-sdk/client-ses": "^3.738.0",
+        "@talent-hub/shared": "workspace:*",
         "bcrypt": "^5.1.1",
         "bull": "^4.16.5",
         "dotenv": "^16.4.7",
@@ -81,5 +81,9 @@
         "commitizen": {
             "path": "./node_modules/cz-conventional-changelog"
         }
+    },
+    "packageManager": "pnpm@9.0.0",
+    "engines": {
+        "node": ">=18"
     }
 }

@@ -1,8 +1,8 @@
 import * as uuid from 'uuid';
 import moment from 'moment';
 
-import { CandidateParser } from './types/candidate-parse';
 import _ from 'lodash';
+import { CandidateParser } from '../../types/candidate-parser';
 
 export const candidateParser: CandidateParser = {
     toDatabase: (candidate) => ({

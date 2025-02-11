@@ -16,8 +16,7 @@
         "noImplicitReturns": true,
         "noFallthroughCasesInSwitch": true,
         "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "types": ["node"]
+        "experimentalDecorators": true
     },
     "include": ["src/**/*"],
     "exclude": ["node_modules", "dist"]

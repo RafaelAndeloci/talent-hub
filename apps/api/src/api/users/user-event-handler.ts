@@ -3,11 +3,11 @@ import fs from 'fs/promises';
 
 import { AppEvent } from '../../enums/app-event';
 import { logger } from '../../services/logging-service';
-import { Role } from './types/enums/role';
 import { userRepository } from './user-repository';
 import { config } from '../../config/environment';
 import moment from 'moment';
 import { emailService } from '../../services/email-service';
+import { Role } from '@talent-hub/shared/types';
 
 const emailTemplatePath = path.resolve(__dirname, '../../../static/templates/emails');
 
@@ -22,7 +22,7 @@ export const UserEventHandler = {
                 return;
             }
 
-            if (user.role === Role.sysAdmin) {
+            if (user.role === Role.SysAdmin) {
                 return;
             }
 

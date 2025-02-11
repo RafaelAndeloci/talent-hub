@@ -1,9 +1,9 @@
 import { Model, DataTypes } from 'sequelize';
 
-import { Role } from './types/enums/role';
 import { primaryColumn } from '../../constants/database-column.def';
 import database from '../../config/database';
-import { UserModelAttr } from './types/user-model-attr';
+import { UserModelAttr } from '../../types/user-model-attr';
+import { Role } from '@talent-hub/shared/types';
 
 
 export class UserModel extends Model<UserModelAttr> {}

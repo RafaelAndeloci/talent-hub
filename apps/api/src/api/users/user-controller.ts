@@ -1,6 +1,6 @@
 import HTTPStatus from 'http-status';
 import { userBusiness } from './user-business';
-import { UserController } from './types/user-controller';
+import { UserController } from '../../types/user-controller';
 
 export const userController: UserController = {
     findById: async ({ params: { id: userId } }, res) => {

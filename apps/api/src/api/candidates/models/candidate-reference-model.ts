@@ -1,7 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
 import database from '../../../config/database';
-import { CandidateReferenceModelAttr } from './types/candidate-reference-model-attr';
 import { primaryColumn } from '../../../constants/database-column.def';
+import { CandidateReferenceModelAttr } from '../../../types/candidate-reference-model-attr';
 
 export class CandidateReferenceModel extends Model<CandidateReferenceModelAttr> {}
 

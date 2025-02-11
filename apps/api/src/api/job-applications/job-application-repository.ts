@@ -1,8 +1,8 @@
+import { JobApplication } from '@talent-hub/shared/types';
 import { makeRepository } from '../../services/repository';
+import { JobApplicationModelAttr } from '../../types/job-application-model-attr';
 import { JobApplicationModel } from './job-application-model';
 import { jobApplicationParser } from './job-application-parser';
-import { JobApplication } from './types/job-application';
-import { JobApplicationModelAttr } from './types/job-application-model-attr';
 
 export const jobApplicationRepository = makeRepository<
     JobApplication,

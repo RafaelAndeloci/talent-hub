@@ -1,9 +1,7 @@
+import { Role, JobApplicationStatus, JobApplicationStage } from '@talent-hub/shared/types';
 import * as uuid from 'uuid';
+import { JobApplicationParser } from '../../types/job-application-parser';
 
-import { Role } from '../users/types/enums/role';
-import { JobApplicationStage } from './types/enums/job-application-stage';
-import { JobApplicationStatus } from './types/enums/job-application-status';
-import { JobApplicationParser } from './types/job-application-parser';
 
 export const jobApplicationParser: JobApplicationParser = {
     newInstance: ({ payload, user }) => ({
@@ -11,7 +9,7 @@ export const jobApplicationParser: JobApplicationParser = {
         candidateId: payload.candidateId,
         coverLetter: payload.coverLetter,
         jobOpeningId: payload.jobOpeningId,
-        isAutoCreated: user.role === Role.sysAdmin,
+        isAutoCreated: user.role === Role.SysAdmin,
         status: JobApplicationStatus.applied,
         stage: JobApplicationStage.screening,
         appliedBy: user.id,

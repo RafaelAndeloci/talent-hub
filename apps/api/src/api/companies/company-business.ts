@@ -2,13 +2,12 @@ import { Op } from 'sequelize';
 import * as uuid from 'uuid';
 
 import { ApiError } from '../../types/api-error';
-import { Role } from '../users/types/enums/role';
 import { companyRepository } from './company-repository';
-import { Company } from './types/company';
-import { CompanyBusiness } from './types/company-business';
 import { companyParser } from './company-parser';
 import _ from 'lodash';
 import { fileStorageService } from '../../services/file-storage-service';
+import { CompanyBusiness } from '../../types/company-business';
+import { Company, Role } from '@talent-hub/shared/types';
 
 export const companyBusiness: CompanyBusiness = {
     findById: async ({ companyId, context }) => {
@@ -44,7 +43,7 @@ export const companyBusiness: CompanyBusiness = {
 
         await companyRepository.create(company);
 
-        return companyParser.toDto({ company, userRole: Role.companyAdmin });
+        return companyParser.toDto({ company, userRole: Role.CompanyAdmin });
     },
 
     update: async ({ companyId, payload }) => {
@@ -57,7 +56,7 @@ export const companyBusiness: CompanyBusiness = {
         const updated = _.merge(company, payload);
         await companyRepository.update(updated);
 
-        return companyParser.toDto({ company: updated, userRole: Role.companyAdmin });
+        return companyParser.toDto({ company: updated, userRole: Role.CompanyAdmin });
     },
 
     remove: async ({ companyId }) => {
@@ -90,7 +89,7 @@ export const companyBusiness: CompanyBusiness = {
 
         await companyRepository.update(company);
 
-        return companyParser.toDto({ company, userRole: Role.companyAdmin });
+        return companyParser.toDto({ company, userRole: Role.CompanyAdmin });
     },
 
     setLogo: async ({ companyId, file }) => {
@@ -114,7 +113,7 @@ export const companyBusiness: CompanyBusiness = {
 
         await companyRepository.update(company);
 
-        return companyParser.toDto({ company, userRole: Role.companyAdmin });
+        return companyParser.toDto({ company, userRole: Role.CompanyAdmin });
     },
 
     setGaleryItem: async ({ companyId, picture, order }) => {
@@ -145,7 +144,7 @@ export const companyBusiness: CompanyBusiness = {
 
         await companyRepository.update(company);
 
-        return companyParser.toDto({ company, userRole: Role.companyAdmin });
+        return companyParser.toDto({ company, userRole: Role.CompanyAdmin });
     },
 
     deleteGalleryItem: async ({ companyId, order }) => {
@@ -179,6 +178,6 @@ export const companyBusiness: CompanyBusiness = {
 
         await companyRepository.update(company);
 
-        return companyParser.toDto({ company, userRole: Role.companyAdmin });
+        return companyParser.toDto({ company, userRole: Role.CompanyAdmin });
     },
 };

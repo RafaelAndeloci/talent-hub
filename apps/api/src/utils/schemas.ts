@@ -1,9 +1,8 @@
 import _ from 'lodash';
 import { z } from 'zod';
-import { Id } from '../types/id';
-import { FilterOperator, FilterOperatorValues } from '../enums/filter-operator';
 import { ApiError } from '../types/api-error';
 import moment from 'moment';
+import { Id, FilterOperator } from '@talent-hub/shared/types';
 
 export type BuildQuerySchemaArgs<T extends Id> = {
     sorts: (keyof T)[];
@@ -103,7 +102,7 @@ const FilterSchema = <T extends Id>(searches: BuildQuerySchemaArgs<T>['searches'
                 _.isArray(filters) &&
                 filters.every(
                     ({ field, operator }) =>
-                        FilterOperatorValues.includes(operator) &&
+                        Object.values(FilterOperator).includes(operator) &&
                         searches.some(
                             (sf) => sf.field === field && sf.operators.includes(operator),
                         ),

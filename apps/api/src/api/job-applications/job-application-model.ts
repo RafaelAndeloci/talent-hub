@@ -1,13 +1,12 @@
 import { DataTypes, Model } from 'sequelize';
 
 import database from '../../config/database';
-import { JobApplicationStatus } from './types/enums/job-application-status';
 import { CandidateModel } from '../candidates/models';
 import { JobOpeningModel } from '../job-openings/job-opening-model';
-import { JobApplicationStage } from './types/enums/job-application-stage';
 import { UserModel } from '../users/user-model';
 import { primaryColumn } from '../../constants/database-column.def';
-import { JobApplicationModelAttr } from './types/job-application-model-attr';
+import { JobApplicationModelAttr } from '../../types/job-application-model-attr';
+import { JobApplicationStatus, JobApplicationStage } from '@talent-hub/shared/types';
 
 export class JobApplicationModel extends Model<JobApplicationModelAttr> {}
 JobApplicationModel.init(

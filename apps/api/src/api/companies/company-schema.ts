@@ -4,11 +4,10 @@ import { isValidCnpj } from '../../utils/document-validator';
 import { RelatedWebsiteSchema } from '../../schemas/related-websites-schema';
 import { ContactSchema } from '../../schemas/contact-schema';
 import { buildQuerySchema } from '../../utils/schemas';
-import { Company } from './types/company';
 import { ParamsSchema } from '../../schemas/params-schema';
-import { Uf } from '../../enums/uf';
 import { FileImageSchema } from '../../schemas/image-file-schema';
 import { config } from '../../config/environment';
+import { Uf, Company, FilterOperator } from '@talent-hub/shared/types';
 
 export const FindCompanyByIdSchema = ParamsSchema;
 
@@ -50,40 +49,58 @@ export const DeleteCompanySchema = ParamsSchema;
 export const FindAllCompaniesSchema = z.object({
     query: buildQuerySchema<Company & { hasOpenPositions: boolean }>({
         searches: [
-            { field: 'id', operators: ['eq'] },
+            { field: 'id', operators: [FilterOperator.eq] },
             {
                 field: 'tradeName',
-                operators: ['eq', 'like', 'iLike', 'startsWith', 'endsWith'],
+                operators: [
+                    FilterOperator.eq,
+                    FilterOperator.like,
+                    FilterOperator.iLike,
+                    FilterOperator.startsWith,
+                    FilterOperator.endsWith,
+                ],
             },
             {
                 field: 'legalName',
-                operators: ['eq', 'like', 'iLike', 'startsWith', 'endsWith'],
+                operators: [
+                    FilterOperator.eq,
+                    FilterOperator.like,
+                    FilterOperator.iLike,
+                    FilterOperator.startsWith,
+                    FilterOperator.endsWith,
+                ],
             },
             {
                 field: 'cnpj',
-                operators: ['eq'],
+                operators: [FilterOperator.eq],
                 validation: (value) => (isValidCnpj({ cnpj: value }) ? null : 'Invalid CNPJ'),
             },
             {
                 field: 'employeesQuantity',
-                operators: ['eq', 'gt', 'lt'],
+                operators: [FilterOperator.eq, FilterOperator.gt, FilterOperator.lt],
                 transform: (value) => Number(value),
                 validation: (value) =>
                     Number(value) > 0 ? null : 'employeesQuantity must be greater than 0',
             },
             {
                 field: 'foundationYear',
-                operators: ['eq', 'gt', 'lt'],
+                operators: [FilterOperator.eq, FilterOperator.gt, FilterOperator.lt],
                 transform: (value) => Number(value),
                 validation: (value) => (Number(value) > 1800 ? null : 'invalid foundationYear'),
             },
             {
                 field: 'industry',
-                operators: ['eq', 'like', 'iLike', 'startsWith', 'endsWith'],
+                operators: [
+                    FilterOperator.eq,
+                    FilterOperator.like,
+                    FilterOperator.iLike,
+                    FilterOperator.startsWith,
+                    FilterOperator.endsWith,
+                ],
             },
             {
                 field: 'hasOpenPositions',
-                operators: ['eq'],
+                operators: [FilterOperator.eq],
                 validation: (value) =>
                     value === 'true' || value === 'false'
                         ? null

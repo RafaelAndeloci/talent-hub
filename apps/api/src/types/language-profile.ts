@@ -1,5 +1,4 @@
-import { LanguageProficiency } from '../api/candidates/types/enums/language-proficiency';
-import { Language } from '../enums/language';
+import { Language, LanguageProficiency } from '@talent-hub/shared/types';
 
 export interface LanguageProfile {
     language: Language;

@@ -3,20 +3,22 @@ import moment from 'moment';
 import { z } from 'zod';
 
 import { buildQuerySchema } from '../../utils/schemas';
-import { JobOpening } from './types/job-opening';
-import { FilterOperator } from '../../enums/filter-operator';
-import { PositionLevel } from '../candidates/types/enums/position-level';
-import { WorkplaceType } from '../candidates/types/enums/workplace-type';
-import { EmploymentType } from '../candidates/types/enums/employment-type';
-import { EmploymentRegime } from '../candidates/types/enums/employment-regime';
-import { Benefit } from '../candidates/types/enums/benefit';
+import {
+    JobOpening,
+    FilterOperator,
+    JobOpeningStatus,
+    PositionLevel,
+    WorkplaceType,
+    EmploymentType,
+    EmploymentRegime,
+    Benefit,
+    SkillType,
+    Proficiency,
+    AcademicDegreeType,
+    Language,
+    LanguageProficiency,
+} from '@talent-hub/shared/types';
 import { ParamsSchema } from '../../schemas/params-schema';
-import { JobOpeningStatus } from './types/enums/job-opening-status';
-import { Proficiency } from '../candidates/types/enums/proficiency';
-import { AcademicDegreeType } from '../candidates/types/enums/academic-degree-type';
-import { Language } from '../../enums/language';
-import { LanguageProficiency } from '../candidates/types/enums/language-proficiency';
-import { SkillType } from '../candidates/types/enums/skill-type';
 
 export const FindJobOpeningByIdSchema = ParamsSchema;
 

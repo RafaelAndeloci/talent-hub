@@ -1,11 +1,14 @@
 import { z } from 'zod';
 import { ParamsSchema } from '../../schemas/params-schema';
 import { buildQuerySchema } from '../../utils/schemas';
-import { Skill } from './types/skill';
-import { CreateSkillPayload } from './types/create-skill-payload';
-import { SkillType } from '../candidates/types/enums/skill-type';
-import { SkillCategory } from './types/skill-category';
-import { SuggestionStatus } from '../../enums/suggestion-status';
+import {
+    Skill,
+    CreateSkillPayload,
+    SkillType,
+    SkillCategory,
+    SuggestionStatus,
+    FilterOperator,
+} from '@talent-hub/shared/types';
 
 export const FindSkillByIdSchema = ParamsSchema;
 
@@ -14,11 +17,11 @@ export const FindAllSkillsSchema = z.object({
         searches: [
             {
                 field: 'type',
-                operators: ['eq'],
+                operators: [FilterOperator.eq],
             },
             {
                 field: 'status',
-                operators: ['eq'],
+                operators: [FilterOperator.eq],
             },
         ],
         sorts: ['name', 'status', 'type'],
@@ -44,7 +47,9 @@ export const UpdateSkillSchema = ParamsSchema.extend({
 export const DeleteSkillSchema = ParamsSchema;
 
 export const UpdateSkillStatusSchema = ParamsSchema.extend({
-    body: z.object({
-        status: z.enum([SuggestionStatus.approved, SuggestionStatus.rejected]),
-    }).strict(),
+    body: z
+        .object({
+            status: z.enum([SuggestionStatus.Approved, SuggestionStatus.Rejected]),
+        })
+        .strict(),
 });

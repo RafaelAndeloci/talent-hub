@@ -17,7 +17,7 @@ export const skillResource: ApiResource = {
         {
             path: '/',
             method: 'get',
-            action: 'read_by_id',
+            action: Action.readAll,
             schema: FindAllSkillsSchema,
             handler: skillController.findAll,
             auth: true,
@@ -25,7 +25,7 @@ export const skillResource: ApiResource = {
         {
             path: '/:id',
             method: 'get',
-            action: 'read_by_id',
+            action: Action.readById,
             schema: FindSkillByIdSchema,
             handler: skillController.findById,
             auth: true,
@@ -33,7 +33,7 @@ export const skillResource: ApiResource = {
         {
             path: '/',
             method: 'post',
-            action: 'create',
+            action: Action.create,
             schema: CreateSkillSchema,
             handler: skillController.create,
             auth: true,
@@ -41,7 +41,7 @@ export const skillResource: ApiResource = {
         {
             path: '/:id',
             method: 'put',
-            action: 'update',
+            action: Action.update,
             schema: UpdateSkillSchema,
             handler: skillController.update,
             auth: true,
@@ -49,7 +49,7 @@ export const skillResource: ApiResource = {
         {
             path: '/:id',
             method: 'delete',
-            action: 'delete',
+            action: Action.delete,
             schema: DeleteSkillSchema,
             handler: skillController.remove,
             auth: true,
@@ -60,7 +60,7 @@ export const skillResource: ApiResource = {
             action: Action.skillUpdateStatus,
             schema: UpdateSkillStatusSchema,
             handler: skillController.updateStatus,
-            auth: true
-        }
+            auth: true,
+        },
     ],
 };

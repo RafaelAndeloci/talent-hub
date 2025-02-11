@@ -2,11 +2,9 @@ import { DataTypes, Model } from 'sequelize';
 
 import database from '../../config/database';
 import { primaryColumn } from '../../constants/database-column.def';
-import { SuggestionStatus } from '../../enums/suggestion-status';
-import { SkillCategory } from './types/skill-category';
-import { SkillType } from '../candidates/types/enums/skill-type';
-import { SkillModelAttr } from './types/skill-model-attr copy';
 import { UserModel } from '../users/user-model';
+import { SkillModelAttr } from '../../types/skill-model-attr';
+import { SuggestionStatus, SkillCategory, SkillType } from '@talent-hub/shared/types';
 
 export class SkillModel extends Model<SkillModelAttr> {
     toJSON() {
