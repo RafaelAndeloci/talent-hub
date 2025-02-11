@@ -1,4 +1,4 @@
-import { Validation } from '@talent-hub/shared/types';
+import { Validation } from '@talent-hub/shared';
 import _ from 'lodash';
 import { SkillParser } from '../../types/skill-parser';
 

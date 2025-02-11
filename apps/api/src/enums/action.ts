@@ -1,21 +1,21 @@
 export enum Action {
     // CrudAction
-    create = 'create',
+    Create = 'create',
     update = 'update',
     delete = 'delete',
-    readById = 'read_by_id',
-    readAll = 'read_all',
+    ReadById = 'read_by_id',
+    ReadAll = 'read_all',
 
     // CandidateAction
     candidateUpdateCv = 'candidate_update_cv',
     candidateSetBanner = 'candidate_set_banner',
 
     // UserAction
-    userSetProfilePicture = 'user_set_profile_picture',
-    userRequestChangePasswordToken = 'user_request_password_token',
+    UserSetProfilePicture = 'user_set_profile_picture',
+    UserRequestChangePasswordToken = 'user_request_password_token',
     userChangePassword = 'user_change_password',
-    userAuth = 'user_auth',
-    userConfirmEmail = 'user_confirm_email',
+    UserAuth = 'user_auth',
+    UserConfirmEmail = 'user_confirm_email',
 
     // CompanyAction
     companySetBanner = 'company_set_banner',

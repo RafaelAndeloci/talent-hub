@@ -25,7 +25,7 @@ import {
     PositionLevel,
     Uf,
     WorkplaceType,
-} from '@talent-hub/shared/types';
+} from '@talent-hub/shared';
 const { fileStorage } = config;
 
 export const FindAllCandidatesSchema = z.object({

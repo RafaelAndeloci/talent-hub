@@ -7,7 +7,7 @@ import { buildQuerySchema } from '../../utils/schemas';
 import { ParamsSchema } from '../../schemas/params-schema';
 import { FileImageSchema } from '../../schemas/image-file-schema';
 import { config } from '../../config/environment';
-import { Uf, Company, FilterOperator } from '@talent-hub/shared/types';
+import { Uf, Company, FilterOperator } from '@talent-hub/shared';
 
 export const FindCompanyByIdSchema = ParamsSchema;
 

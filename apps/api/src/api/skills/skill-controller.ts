@@ -5,7 +5,7 @@ import { jobQueueService } from '../../services/job-queue-service';
 import { AppEvent } from '../../enums/app-event';
 import { SkillController } from '../../types/skill-controller';
 import { skillRepository } from './skill-repository';
-import { FindAllArgs, Skill, Role, SuggestionStatus } from '@talent-hub/shared/types';
+import { FindAllArgs, Skill, Role, SuggestionStatus } from '@talent-hub/shared';
 import { ApiError } from '../../types/api-error';
 import { skillParser } from './skill-parser';
 
@@ -84,7 +84,7 @@ export const skillController: SkillController = {
         await skillRepository.update(skill);
 
         await jobQueueService.enqueue({
-            event: AppEvent.skillStatusUpdated,
+            event: AppEvent.SkillStatusUpdated,
             payload: {
                 skillId: id,
             },

@@ -1,5 +1,5 @@
-import { FindAllArgs } from '../common/find-all-args';
 import { CandidateDto } from './candidate-dto';
+import { FindAllArgs } from './find-all-args';
 
 export type FindAllCandidatesQuery = CandidateDto & {
     contactEmail: string;

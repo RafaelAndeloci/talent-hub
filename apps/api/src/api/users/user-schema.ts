@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { config } from '../../config/environment';
 import { ParamsSchema } from '../../schemas/params-schema';
 import { buildQuerySchema } from '../../utils/schemas';
-import { FilterOperator, Role, User } from '@talent-hub/shared/types';
+import { FilterOperator, Role, User } from '@talent-hub/shared';
 
 const passwordRule = z
     .string()
@@ -16,7 +16,7 @@ export const CreateUserSchema = z.object({
         email: z.string().email(),
         password: passwordRule,
         username: z.string().min(3).max(20),
-        role: z.enum(Object.freeze(Object.values(Role)) as readonly [string, ...string[]]),
+        role: z.nativeEnum(Role),
     }),
 });
 

@@ -7,7 +7,7 @@ import {
     UpdateJobApplicationCoverLetterPayload,
     UpdateJobApplicationStagePayload,
     UpdateJobApplicationStatusPayload,
-} from '@talent-hub/shared/types';
+} from '@talent-hub/shared';
 
 export type JobApplicationBusiness = {
     findById: (args: { jobApplicationId: string }) => Promise<JobApplication>;

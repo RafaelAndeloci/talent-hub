@@ -5,7 +5,7 @@ import {
     FindAllCompaniesDto,
     FindAllCompaniesQuery,
     UpdateCompanyPayload,
-} from '@talent-hub/shared/types';
+} from '@talent-hub/shared';
 import { FileInput } from './file-input';
 
 export type CompanyBusiness = {

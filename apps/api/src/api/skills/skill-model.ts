@@ -4,7 +4,7 @@ import database from '../../config/database';
 import { primaryColumn } from '../../constants/database-column.def';
 import { UserModel } from '../users/user-model';
 import { SkillModelAttr } from '../../types/skill-model-attr';
-import { SuggestionStatus, SkillCategory, SkillType } from '@talent-hub/shared/types';
+import { SuggestionStatus, SkillCategory, SkillType } from '@talent-hub/shared';
 
 export class SkillModel extends Model<SkillModelAttr> {
     toJSON() {

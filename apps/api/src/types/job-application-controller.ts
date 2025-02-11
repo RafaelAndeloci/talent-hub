@@ -9,7 +9,7 @@ import {
     UpdateJobApplicationCoverLetterPayload,
     UpdateJobApplicationStagePayload,
     UpdateJobApplicationStatusPayload,
-} from '@talent-hub/shared/types';
+} from '@talent-hub/shared';
 
 export type JobApplicationController = {
     findById: RequestHandler<Id, JobApplication, void, void, AuthContext>;

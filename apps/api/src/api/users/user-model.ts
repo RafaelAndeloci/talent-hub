@@ -3,8 +3,7 @@ import { Model, DataTypes } from 'sequelize';
 import { primaryColumn } from '../../constants/database-column.def';
 import database from '../../config/database';
 import { UserModelAttr } from '../../types/user-model-attr';
-import { Role } from '@talent-hub/shared/types';
-
+import { Role } from '@talent-hub/shared';
 
 export class UserModel extends Model<UserModelAttr> {}
 UserModel.init(

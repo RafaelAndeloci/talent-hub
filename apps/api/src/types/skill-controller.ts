@@ -7,7 +7,7 @@ import {
     AuthContext,
     UpdateSkillPayload,
     UpdateSkillStatusPayload,
-} from '@talent-hub/shared/types';
+} from '@talent-hub/shared';
 import { RequestHandler } from 'express';
 
 export type SkillController = {

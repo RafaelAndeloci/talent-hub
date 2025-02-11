@@ -1,4 +1,4 @@
-import { Role } from '@talent-hub/shared/types';
+import { Role } from '@talent-hub/shared';
 
 export interface UserModelAttr {
     id: string;

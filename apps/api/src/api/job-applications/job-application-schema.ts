@@ -6,7 +6,7 @@ import {
     JobApplicationStatus,
     JobApplicationStage,
     FilterOperator,
-} from '@talent-hub/shared/types';
+} from '@talent-hub/shared';
 import { buildQuerySchema } from '../../utils/schemas';
 
 export const CreateJobApplicationSchema = z.object({

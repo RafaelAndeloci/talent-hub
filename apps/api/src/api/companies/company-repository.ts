@@ -1,4 +1,4 @@
-import { Company } from '@talent-hub/shared/types';
+import { Company } from '@talent-hub/shared';
 import { makeRepository } from '../../services/repository';
 import { CompanyModel } from './company-model';
 import { companyParser } from './company-parser';

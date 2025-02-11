@@ -1,4 +1,4 @@
-import { Role } from '@talent-hub/shared/types';
+import { Role } from '@talent-hub/shared';
 import database from '.';
 import { hasher } from '../../services/hasher';
 import { logger } from '../../services/logging-service';

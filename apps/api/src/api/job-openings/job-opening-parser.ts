@@ -1,4 +1,4 @@
-import { Role, JobOpeningStatus, SallaryRange } from '@talent-hub/shared/types';
+import { Role, JobOpeningStatus, SallaryRange } from '@talent-hub/shared';
 import _ from 'lodash';
 import * as uuid from 'uuid';
 import { JobOpeningSkillProfileModelAttr } from '../../types/job-opening-model-attr';

@@ -1,4 +1,4 @@
-import { Role } from '@talent-hub/shared/types';
+import { Role } from '@talent-hub/shared';
 import _ from 'lodash';
 import { CompanyParser } from '../../types/company-parser';
 

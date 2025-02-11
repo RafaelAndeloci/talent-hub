@@ -1,4 +1,4 @@
-import { JobApplication } from '@talent-hub/shared/types';
+import { JobApplication } from '@talent-hub/shared';
 import { makeRepository } from '../../services/repository';
 import { JobApplicationModelAttr } from '../../types/job-application-model-attr';
 import { JobApplicationModel } from './job-application-model';

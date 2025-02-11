@@ -5,7 +5,7 @@ import { skillParser } from './skill-parser';
 import { ApiError } from '../../types/api-error';
 import database from '../../config/database';
 import { logger } from '../../services/logging-service';
-import { Skill, SuggestionStatus } from '@talent-hub/shared/types';
+import { Skill, SuggestionStatus } from '@talent-hub/shared';
 import { SkillModelAttr } from '../../types/skill-model-attr';
 
 const validateRelatedSkills = async (relatedSkills: string[]) => {

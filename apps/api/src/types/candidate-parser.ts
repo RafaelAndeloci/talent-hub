@@ -1,4 +1,4 @@
-import { Candidate, CandidateDto, CreateCandidatePayload } from '@talent-hub/shared/types';
+import { Candidate, CandidateDto, CreateCandidatePayload } from '@talent-hub/shared';
 import { CandidateModelAttr } from './candidate-model-attr';
 
 export type CandidateParser = {

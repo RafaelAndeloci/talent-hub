@@ -1,4 +1,4 @@
-import { Language, LanguageProficiency } from '@talent-hub/shared/types';
+import { Language, LanguageProficiency } from '@talent-hub/shared';
 
 export interface LanguageProfile {
     language: Language;

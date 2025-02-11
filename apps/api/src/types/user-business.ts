@@ -7,7 +7,7 @@ import {
     ConfirmChangePasswordPayload,
     User,
     CreateUserPayload,
-} from '@talent-hub/shared/types';
+} from '@talent-hub/shared';
 import { FileInput } from './file-input';
 
 export type UserBusiness = {

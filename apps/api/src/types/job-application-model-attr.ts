@@ -1,4 +1,4 @@
-import { JobApplicationStatus, JobApplicationStage } from '@talent-hub/shared/types';
+import { JobApplicationStatus, JobApplicationStage } from '@talent-hub/shared';
 
 export interface JobApplicationModelAttr {
     id: string;

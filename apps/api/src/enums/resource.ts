@@ -1,12 +1,10 @@
-export const Resource = Object.freeze({
-    candidates: 'candidates',
-    users: 'users',
-    companies: 'companies',
-    jobOpenings: 'job-openings',
-    jobApplications: 'job-applications',
-    skills: 'skills'
-});
+export enum Resource {
+    Candidates = 'candidates',
+    Users = 'users',
+    Companies = 'companies',
+    JobOpenings = 'job-openings',
+    JobApplications = 'job-applications',
+    Skills = 'skills'
+}
 
 export const AllResources = Object.freeze(Object.values(Resource)) as Resource[];
-
-export type Resource = (typeof Resource)[keyof typeof Resource];

@@ -8,6 +8,12 @@ import { PositionLevel } from './position-level';
 import { WorkplaceType } from './workplace-type';
 import { Id } from './id';
 import { Location } from './location';
+import { Address } from './address';
+import { Contact } from './contact';
+import { Period } from './period';
+import { LanguageProfile } from './language-profile';
+import { RelatedWebsites } from './related-websites';
+import { YearMonth } from './year-month';
 
 export interface CandidateReference {
     name: string;

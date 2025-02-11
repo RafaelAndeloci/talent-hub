@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { z } from 'zod';
 import { ApiError } from '../types/api-error';
 import moment from 'moment';
-import { Id, FilterOperator } from '@talent-hub/shared/types';
+import { Id, FilterOperator } from '@talent-hub/shared';
 
 export type BuildQuerySchemaArgs<T extends Id> = {
     sorts: (keyof T)[];

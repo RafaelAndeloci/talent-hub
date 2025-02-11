@@ -5,7 +5,7 @@ import {
     EmploymentType,
     PositionLevel,
     WorkplaceType,
-} from '@talent-hub/shared/types';
+} from '@talent-hub/shared';
 import { CandidateAchievementModelAttr } from './candidate-achievement-model-attr';
 import { CandidateEducationalExperienceModelAttr } from './candidate-education-experience-model-attr';
 import { CandidateLanguageModelAttr } from './candidate-language-model-attr';

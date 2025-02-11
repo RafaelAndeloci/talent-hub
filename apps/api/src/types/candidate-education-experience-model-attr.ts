@@ -1,4 +1,4 @@
-import { AcademicDegreeType, AcademicStatus } from '@talent-hub/shared/types';
+import { AcademicDegreeType, AcademicStatus } from '@talent-hub/shared';
 
 export interface CandidateEducationalExperienceModelAttr {
     id?: string;

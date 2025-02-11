@@ -7,7 +7,7 @@ import {
     UpdateJobOpeningPayload,
     FillJobApplicationPayload,
     JobOpening,
-} from '@talent-hub/shared/types';
+} from '@talent-hub/shared';
 
 export type JobOpeningBusiness = {
     findById(args: { jobOpeningId: string; context: AuthContext }): Promise<JobOpeningDto>;

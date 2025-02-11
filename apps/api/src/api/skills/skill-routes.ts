@@ -12,12 +12,12 @@ import {
 } from './skill-schema';
 
 export const skillResource: ApiResource = {
-    resource: Resource.skills,
+    resource: Resource.Skills,
     routes: [
         {
             path: '/',
             method: 'get',
-            action: Action.readAll,
+            action: Action.ReadAll,
             schema: FindAllSkillsSchema,
             handler: skillController.findAll,
             auth: true,
@@ -25,7 +25,7 @@ export const skillResource: ApiResource = {
         {
             path: '/:id',
             method: 'get',
-            action: Action.readById,
+            action: Action.ReadById,
             schema: FindSkillByIdSchema,
             handler: skillController.findById,
             auth: true,
@@ -33,7 +33,7 @@ export const skillResource: ApiResource = {
         {
             path: '/',
             method: 'post',
-            action: Action.create,
+            action: Action.Create,
             schema: CreateSkillSchema,
             handler: skillController.create,
             auth: true,

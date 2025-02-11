@@ -1,4 +1,4 @@
-import { Company, CompanyDto, Role } from '@talent-hub/shared/types';
+import { Company, CompanyDto, Role } from '@talent-hub/shared';
 import { CompanyModelAttr } from './company-model-attr';
 
 export type CompanyParser = {

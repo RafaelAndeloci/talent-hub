@@ -8,7 +8,7 @@ import {
     SkillCategory,
     SuggestionStatus,
     FilterOperator,
-} from '@talent-hub/shared/types';
+} from '@talent-hub/shared';
 
 export const FindSkillByIdSchema = ParamsSchema;
 

@@ -1,4 +1,4 @@
-import { Role } from '@talent-hub/shared/types';
+import { Role } from '@talent-hub/shared';
 import { Action } from './action';
 import { AllResources, Resource } from './resource';
 
@@ -15,40 +15,40 @@ export const Permissions = Object.freeze([
         role: Role.Candidate,
         actionsPerResource: [
             {
-                resource: Resource.candidates,
+                resource: Resource.Candidates,
                 actions: [
-                    Action.create,
+                    Action.Create,
                     Action.update,
-                    Action.readById,
+                    Action.ReadById,
                     Action.candidateSetBanner,
                     Action.candidateUpdateCv,
                 ],
             },
             {
-                resource: Resource.users,
+                resource: Resource.Users,
                 actions: [
-                    Action.create,
-                    Action.userRequestChangePasswordToken,
-                    Action.userAuth,
-                    Action.userConfirmEmail,
-                    Action.userSetProfilePicture,
+                    Action.Create,
+                    Action.UserRequestChangePasswordToken,
+                    Action.UserAuth,
+                    Action.UserConfirmEmail,
+                    Action.UserSetProfilePicture,
                 ],
             },
             {
-                resource: Resource.companies,
-                actions: [Action.readById, Action.readAll],
+                resource: Resource.Companies,
+                actions: [Action.ReadById, Action.ReadAll],
             },
             {
-                resource: Resource.jobOpenings,
-                actions: [Action.readAll, Action.readById],
+                resource: Resource.JobOpenings,
+                actions: [Action.ReadAll, Action.ReadById],
             },
             {
-                resource: Resource.jobApplications,
-                actions: [Action.create, Action.readAll, Action.readById],
+                resource: Resource.JobApplications,
+                actions: [Action.Create, Action.ReadAll, Action.ReadById],
             },
             {
-                resource: Resource.skills,
-                actions: [Action.readAll, Action.readById, Action.create],
+                resource: Resource.Skills,
+                actions: [Action.ReadAll, Action.ReadById, Action.Create],
             },
         ],
     },

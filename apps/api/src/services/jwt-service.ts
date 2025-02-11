@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { config } from '../config/environment';
-import { UserDto, AuthDto } from '@talent-hub/shared/types';
+import { UserDto, AuthDto } from '@talent-hub/shared';
 
 const {
     security: { secret, issuer, audience, expiresIn },

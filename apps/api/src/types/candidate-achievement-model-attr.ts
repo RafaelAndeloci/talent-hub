@@ -1,4 +1,4 @@
-import { AchievementType } from '@talent-hub/shared/types';
+import { AchievementType } from '@talent-hub/shared';
 
 export interface CandidateAchievementModelAttr {
     id?: string;

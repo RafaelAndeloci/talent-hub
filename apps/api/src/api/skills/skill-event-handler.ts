@@ -4,7 +4,7 @@ import { userRepository } from '../users/user-repository';
 import { skillRepository } from './skill-repository';
 
 export const SkillEventHandler = {
-    [AppEvent.skillStatusUpdated]: async ({ skillId }: { skillId: string }) => {
+    [AppEvent.SkillStatusUpdated]: async ({ skillId }: { skillId: string }) => {
         const skill = await skillRepository.findById(skillId);
         if (!skill.suggestedBy) {
             return;

@@ -3,7 +3,7 @@ import { Op } from 'sequelize';
 import { UserModel } from './user-model';
 import { userParser } from './user-parser';
 import { makeRepository } from '../../services/repository';
-import { User } from '@talent-hub/shared/types';
+import { User } from '@talent-hub/shared';
 import { UserModelAttr } from '../../types/user-model-attr';
 
 const makedRepository = makeRepository<User, UserModelAttr, UserModel>({

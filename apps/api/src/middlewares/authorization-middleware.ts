@@ -5,7 +5,7 @@ import { Action } from '../enums/action';
 import { Permissions } from '../enums/permissions';
 import { Resource } from '../enums/resource';
 import { MiddlewareFactory } from '../types/middleware-factory';
-import { AuthContext } from '@talent-hub/shared/types';
+import { AuthContext } from '@talent-hub/shared';
 
 export const authorize: MiddlewareFactory<{ resource: Resource; action: Action }> =
     ({ resource, action }) =>

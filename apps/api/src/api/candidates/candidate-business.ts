@@ -4,7 +4,7 @@ import { userBusiness } from '../users/user-business';
 import { candidateParser } from './candidate-parser';
 import { fileStorageService } from '../../services/file-storage-service';
 import { ApiError } from '../../types/api-error';
-import { Candidate, FindAllArgs, Role } from '@talent-hub/shared/types';
+import { Candidate, FindAllArgs, Role } from '@talent-hub/shared';
 import { CandidateBusiness } from '../../types/candidate-business';
 
 export const candidateBusiness: CandidateBusiness = {

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Id, FindAllArgs, PagedResponse, FilterOperator } from '@talent-hub/shared/types';
+import { Id, FindAllArgs, PagedResponse, FilterOperator } from '@talent-hub/shared';
 import { Attributes, Model, ModelStatic, Op, Order, WhereOptions } from 'sequelize';
 import { ApiError } from '../types/api-error';
 import { PagedResponseImp } from '../types/paged-response';

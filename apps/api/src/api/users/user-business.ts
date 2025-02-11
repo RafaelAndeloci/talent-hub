@@ -11,7 +11,7 @@ import { jobQueueService } from '../../services/job-queue-service';
 import { jwtService } from '../../services/jwt-service';
 import { ApiError } from '../../types/api-error';
 import { UserBusiness } from '../../types/user-business';
-import { Role } from '@talent-hub/shared/types';
+import { Role } from '@talent-hub/shared';
 
 export const userBusiness: UserBusiness = {
     findById: async ({ userId }) => {
@@ -49,7 +49,7 @@ export const userBusiness: UserBusiness = {
         await userRepository.create(user);
 
         await jobQueueService.enqueue({
-            event: AppEvent.userCreated,
+            event: AppEvent.UserCreated,
             payload: { userId: user.id },
         });
 
@@ -117,7 +117,7 @@ export const userBusiness: UserBusiness = {
         await userRepository.update(user);
 
         await jobQueueService.enqueue({
-            event: AppEvent.userPasswordResetTokenRequested,
+            event: AppEvent.UserPasswordResetTokenRequested,
             payload: { userId: user.id },
         });
     },
@@ -154,7 +154,7 @@ export const userBusiness: UserBusiness = {
         await userRepository.update(user);
 
         await jobQueueService.enqueue({
-            event: AppEvent.userPasswordChanged,
+            event: AppEvent.UserPasswordChanged,
             payload: { userId: user.id },
         });
     },
@@ -178,7 +178,7 @@ export const userBusiness: UserBusiness = {
         await userRepository.update(user);
 
         await jobQueueService.enqueue({
-            event: AppEvent.userEmailConfirmed,
+            event: AppEvent.UserEmailConfirmed,
             payload: { userId: user.id },
         });
     },

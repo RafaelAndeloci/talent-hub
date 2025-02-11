@@ -1,7 +1,7 @@
 import { Model, DataTypes } from 'sequelize';
 import database from '../../../config/database';
 import { primaryColumn } from '../../../constants/database-column.def';
-import { Language, LanguageProficiency } from '@talent-hub/shared/types';
+import { Language, LanguageProficiency } from '@talent-hub/shared';
 import { CandidateLanguageModelAttr } from '../../../types/candidate-language-model-attr';
 
 export class CandidateLanguageModel extends Model<CandidateLanguageModelAttr> {}

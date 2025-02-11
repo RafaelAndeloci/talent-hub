@@ -13,14 +13,14 @@ import { jobApplicationController } from './job-application-controller';
 import { ApiResource } from '../../types/api-resource';
 
 export const jobApplicationRoutes: ApiResource = {
-    resource: Resource.jobApplications,
+    resource: Resource.JobApplications,
     routes: [
         {
             method: 'get',
             path: '/',
             auth: true,
             schema: FindAllJobApplicationsSchema,
-            action: Action.readAll,
+            action: Action.ReadAll,
             handler: jobApplicationController.findAll,
         },
         {
@@ -28,7 +28,7 @@ export const jobApplicationRoutes: ApiResource = {
             path: '/:id',
             auth: true,
             schema: FindJobApplicationByIdSchema,
-            action: Action.readById,
+            action: Action.ReadById,
             handler: jobApplicationController.findById,
         },
         {
@@ -36,7 +36,7 @@ export const jobApplicationRoutes: ApiResource = {
             path: '/',
             auth: true,
             schema: CreateJobApplicationSchema,
-            action: Action.create,
+            action: Action.Create,
             handler: jobApplicationController.create,
         },
         {
@@ -53,7 +53,7 @@ export const jobApplicationRoutes: ApiResource = {
             auth: true,
             schema: UpdateJobApplicationStageSchema,
             action: Action.jobApplicationUpdateStage,
-            handler: jobApplicationController.updateStage
+            handler: jobApplicationController.updateStage,
         },
         {
             method: 'patch',

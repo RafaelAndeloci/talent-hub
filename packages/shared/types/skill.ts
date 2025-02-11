@@ -1,8 +1,8 @@
-import { SuggestionStatus } from '../common/suggestion-status';
 import { SkillCategory } from './skill-category';
 import { SkillType } from './skill-type';
 import { Id } from './id';
 import { Validation } from './validation';
+import { SuggestionStatus } from './suggestion-status';
 
 /**
  * Habilitades são habilidades técnicas ou comportamentais que um candidato ou um perfil de vaga pode ter

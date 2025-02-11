@@ -12,14 +12,14 @@ import { jobOpeningController } from './job-opening-controller';
 import { ApiResource } from '../../types/api-resource';
 
 export const jobOpeningRoutes: ApiResource = {
-    resource: Resource.jobOpenings,
+    resource: Resource.JobOpenings,
     routes: [
         {
             method: 'get',
             path: '/',
             auth: true,
             schema: FindAllJobOpeningsSchema,
-            action: Action.readAll,
+            action: Action.ReadAll,
             handler: jobOpeningController.findAll,
         },
         {
@@ -27,7 +27,7 @@ export const jobOpeningRoutes: ApiResource = {
             path: '/:id',
             auth: true,
             schema: FindJobOpeningByIdSchema,
-            action: Action.readById,
+            action: Action.ReadById,
             handler: jobOpeningController.findById,
         },
         {
@@ -35,7 +35,7 @@ export const jobOpeningRoutes: ApiResource = {
             path: '/',
             auth: true,
             schema: CreateJobOpeningSchema,
-            action: Action.create,
+            action: Action.Create,
             handler: jobOpeningController.create,
         },
         {

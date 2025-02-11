@@ -1,4 +1,4 @@
-import { Skill, SkillDto } from '@talent-hub/shared/types';
+import { Skill, SkillDto } from '@talent-hub/shared';
 import { SkillModelAttr } from './skill-model-attr';
 
 export type SkillParser = {

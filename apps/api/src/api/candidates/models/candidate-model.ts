@@ -23,7 +23,7 @@ import {
     WorkplaceType,
     Benefit,
     PositionLevel,
-} from '@talent-hub/shared/types';
+} from '@talent-hub/shared';
 
 type CandidateModelAttrInternal = Omit<
     CandidateModelAttr,

@@ -6,7 +6,7 @@ import { AppEvent } from '../../enums/app-event';
 import { jobApplicationRepository } from '../job-applications/job-application-repository';
 import { jobOpeningParser } from './job-opening-parser';
 import _ from 'lodash';
-import { JobOpeningStatus, JobApplicationStatus } from '@talent-hub/shared/types';
+import { JobOpeningStatus, JobApplicationStatus } from '@talent-hub/shared';
 import { JobOpeningBusiness } from '../../types/job-opening-business';
 
 export const jobOpeningBusiness: JobOpeningBusiness = {
@@ -47,7 +47,7 @@ export const jobOpeningBusiness: JobOpeningBusiness = {
         await jobOpeningRepository.create(jobOpening);
 
         await jobQueueService.enqueue({
-            event: AppEvent.jobOpeningCreated,
+            event: AppEvent.JobOpeningCreated,
             payload: {
                 jobOpeningId: jobOpening.id,
             },
@@ -79,7 +79,7 @@ export const jobOpeningBusiness: JobOpeningBusiness = {
         await jobOpeningRepository.update(updatedJobOpening);
 
         await jobQueueService.enqueue({
-            event: AppEvent.jobOpeningUpdated,
+            event: AppEvent.JobOpeningUpdated,
             payload: {
                 jobOpeningId: updatedJobOpening.id,
             },
@@ -104,7 +104,7 @@ export const jobOpeningBusiness: JobOpeningBusiness = {
         await jobOpeningRepository.update(jobOpening);
 
         await jobQueueService.enqueue({
-            event: AppEvent.jobOpeningClosed,
+            event: AppEvent.JobOpeningClosed,
             payload: {
                 jobOpeningId: jobOpening.id,
             },
@@ -129,7 +129,7 @@ export const jobOpeningBusiness: JobOpeningBusiness = {
         await jobOpeningRepository.update(jobOpening);
 
         await jobQueueService.enqueue({
-            event: AppEvent.jobOpeningOpened,
+            event: AppEvent.JobOpeningOpened,
             payload: {
                 jobOpeningId: jobOpening.id,
             },
@@ -155,7 +155,7 @@ export const jobOpeningBusiness: JobOpeningBusiness = {
         await jobOpeningRepository.update(jobOpening);
 
         await jobQueueService.enqueue({
-            event: AppEvent.jobOpeningFilled,
+            event: AppEvent.JobOpeningFilled,
             payload: {
                 jobOpeningId: jobOpening.id,
             },
@@ -200,7 +200,7 @@ export const jobOpeningBusiness: JobOpeningBusiness = {
         }
 
         await jobQueueService.enqueue({
-            event: AppEvent.jobOpeningRemoved,
+            event: AppEvent.JobOpeningRemoved,
             payload: {
                 jobOpeningId: jobOpening.id,
             },

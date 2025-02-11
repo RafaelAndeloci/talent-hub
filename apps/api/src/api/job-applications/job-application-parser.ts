@@ -1,7 +1,6 @@
-import { Role, JobApplicationStatus, JobApplicationStage } from '@talent-hub/shared/types';
+import { Role, JobApplicationStatus, JobApplicationStage } from '@talent-hub/shared';
 import * as uuid from 'uuid';
 import { JobApplicationParser } from '../../types/job-application-parser';
-
 
 export const jobApplicationParser: JobApplicationParser = {
     newInstance: ({ payload, user }) => ({
@@ -29,9 +28,9 @@ export const jobApplicationParser: JobApplicationParser = {
         rejection:
             model.rejectedBy && model.rejectionReason
                 ? {
-                    rejectedBy: model.rejectedBy,
-                    reason: model.rejectionReason,
-                }
+                      rejectedBy: model.rejectedBy,
+                      reason: model.rejectionReason,
+                  }
                 : null,
         appliedBy: model.appliedBy,
         createdAt: model.createdAt,

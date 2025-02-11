@@ -1,4 +1,4 @@
-import { JobOpeningSkillProfile, JobOpening, LanguageProfile } from '@talent-hub/shared/types';
+import { JobOpeningSkillProfile, JobOpening, LanguageProfile } from '@talent-hub/shared';
 import { SkillModelAttr } from './skill-model-attr';
 
 export type JobOpeningSkillProfileModelAttr = Omit<

@@ -1,27 +1,25 @@
 /**
  * Enumerador de tipos de emprego
  */
-export const EmploymentType = Object.freeze({
+export enum EmploymentType {
     /** Período integral
      *  Full-time é um termo que descreve um empregado que trabalha o número de horas padrão em uma empresa.
      * Normalmente, é de 40 horas por semana em regime CLT.
      */
-    fullTime: 'full_time',
+    FullTime = 'full_time',
 
     /** Meio período */
-    partTime: 'part_time',
+    PartTime = 'part_time',
 
     /** Estágio */
-    internship: 'internship',
+    Internship = 'internship',
 
     /** Temporário */
-    temporary: 'temporary',
+    Temporary = 'temporary',
 
     /** Contrato */
-    contract: 'contract',
+    Contract = 'contract',
 
     /** Freelancer */
-    volunteer: 'volunteer',
-});
-
-export type EmploymentType = (typeof EmploymentType)[keyof typeof EmploymentType];
+    Volunteer = 'volunteer',
+}

@@ -1,4 +1,4 @@
-import { EmploymentType, PositionLevel, WorkplaceType, Location } from '@talent-hub/shared/types';
+import { EmploymentType, PositionLevel, WorkplaceType, Location } from '@talent-hub/shared';
 
 export interface CandidateProfessionalExperienceModelAttr {
     id?: string;

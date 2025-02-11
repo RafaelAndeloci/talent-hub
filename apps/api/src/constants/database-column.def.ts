@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DataTypes, ModelAttributeColumnOptions } from 'sequelize';
 import { ApiError } from '../types/api-error';
-import { Address, Uf } from '@talent-hub/shared/types';
+import { Address, Uf } from '@talent-hub/shared';
 
 export const primaryColumn: ModelAttributeColumnOptions = {
     type: DataTypes.UUID,

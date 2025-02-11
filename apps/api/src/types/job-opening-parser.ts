@@ -1,4 +1,4 @@
-import { JobOpening, Role, JobOpeningDto, CreateJobOpeningPayload } from '@talent-hub/shared/types';
+import { JobOpening, Role, JobOpeningDto, CreateJobOpeningPayload } from '@talent-hub/shared';
 import { JobOpeningModelAttr } from './job-opening-model-attr';
 
 export type JobOpeningParser = {

@@ -3,9 +3,7 @@
  * @property {string} Hard - Habilidades técnicas
  * @property {string} Soft - Habilidades comportamentais
  */
-export const SkillType = Object.freeze({
-    Hard: 'hard',
-    Soft: 'soft',
-});
-
-export type SkillType = (typeof SkillType)[keyof typeof SkillType];
+export enum SkillType {
+    Hard = 'hard',
+    Soft = 'soft',
+}

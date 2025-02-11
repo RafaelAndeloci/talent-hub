@@ -7,7 +7,7 @@ import {
     CreateJobOpeningPayload,
     UpdateJobOpeningPayload,
     FillJobApplicationPayload,
-} from '@talent-hub/shared/types';
+} from '@talent-hub/shared';
 import { RequestHandler } from 'express';
 
 export type JobOpeningController = {

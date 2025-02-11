@@ -6,7 +6,7 @@ import {
     UpdateCandidatePayload,
     FindAllCandidatesDto,
     FindAllCandidatesQuery,
-} from '@talent-hub/shared/types';
+} from '@talent-hub/shared';
 import { RequestHandler } from 'express';
 
 export type CandidateController = {

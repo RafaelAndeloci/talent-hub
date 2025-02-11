@@ -7,17 +7,17 @@ import { userRepository } from './user-repository';
 import { config } from '../../config/environment';
 import moment from 'moment';
 import { emailService } from '../../services/email-service';
-import { Role } from '@talent-hub/shared/types';
+import { Role } from '@talent-hub/shared';
 
 const emailTemplatePath = path.resolve(__dirname, '../../../static/templates/emails');
 
 export const UserEventHandler = {
-    [AppEvent.userCreated]: async ({ userId }: { userId: string }) => {
+    [AppEvent.UserCreated]: async ({ userId }: { userId: string }) => {
         try {
             const user = await userRepository.findById(userId);
             if (!user) {
                 logger.info(
-                    `Cannot process event ${AppEvent.userCreated}: user ${userId} not found`,
+                    `Cannot process event ${AppEvent.UserCreated}: user ${userId} not found`,
                 );
                 return;
             }
@@ -58,15 +58,15 @@ export const UserEventHandler = {
 
             logger.info(`Confirmation email sent to user ${user.username}`);
         } catch (error) {
-            logger.error(`Error processing event ${AppEvent.userCreated}: ${error}`);
+            logger.error(`Error processing event ${AppEvent.UserCreated}: ${error}`);
         }
     },
 
-    [AppEvent.userPasswordChanged]: async ({ userId }: { userId: string }) => {
+    [AppEvent.UserPasswordChanged]: async ({ userId }: { userId: string }) => {
         try {
             const user = await userRepository.findById(userId);
             if (!user) {
-                logger.info(`cannot process event ${AppEvent.userPasswordChanged}: user not found`);
+                logger.info(`cannot process event ${AppEvent.UserPasswordChanged}: user not found`);
                 return;
             }
 
@@ -84,28 +84,28 @@ export const UserEventHandler = {
             });
         } catch (e) {
             logger.error(
-                `Error processing event ${AppEvent.userPasswordChanged}: ${(e as unknown as Error).message}`,
+                `Error processing event ${AppEvent.UserPasswordChanged}: ${(e as unknown as Error).message}`,
             );
         }
     },
 
-    [AppEvent.userPasswordResetTokenRequested]: async ({ userId }: { userId: string }) => {
+    [AppEvent.UserPasswordResetTokenRequested]: async ({ userId }: { userId: string }) => {
         logger.info(
-            `processing event: ${AppEvent.userPasswordResetTokenRequested} for user ${userId}`,
+            `processing event: ${AppEvent.UserPasswordResetTokenRequested} for user ${userId}`,
         );
 
         try {
             const user = await userRepository.findById(userId);
             if (!user) {
                 logger.error(
-                    `cannot process event: ${AppEvent.userPasswordResetTokenRequested} for user ${userId}`,
+                    `cannot process event: ${AppEvent.UserPasswordResetTokenRequested} for user ${userId}`,
                 );
                 return;
             }
 
             if (!user!.passwordReset) {
                 logger.error(
-                    `cannot process event: ${AppEvent.userPasswordResetTokenRequested} for user ${userId} because password reset info is missing`,
+                    `cannot process event: ${AppEvent.UserPasswordResetTokenRequested} for user ${userId} because password reset info is missing`,
                 );
                 return;
             }
@@ -113,7 +113,7 @@ export const UserEventHandler = {
             const isExpired = moment.unix(user!.passwordReset.expiration).isBefore(moment());
             if (isExpired) {
                 logger.error(
-                    `cannot process event: ${AppEvent.userPasswordResetTokenRequested} for user ${userId} because password reset token is expired`,
+                    `cannot process event: ${AppEvent.UserPasswordResetTokenRequested} for user ${userId} because password reset token is expired`,
                 );
                 return;
             }
@@ -140,13 +140,13 @@ export const UserEventHandler = {
             });
         } catch (error) {
             logger.error(
-                `error processing event: ${AppEvent.userPasswordResetTokenRequested}`,
+                `error processing event: ${AppEvent.UserPasswordResetTokenRequested}`,
                 error,
             );
         }
     },
 
-    [AppEvent.userEmailConfirmed]: (id: string) => {
+    [AppEvent.UserEmailConfirmed]: (id: string) => {
         console.log(`User ${id} password reset`);
     },
 };

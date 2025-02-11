@@ -1,7 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
 import database from '../../../config/database';
 import { primaryColumn } from '../../../constants/database-column.def';
-import { AchievementType } from '@talent-hub/shared/types';
+import { AchievementType } from '@talent-hub/shared';
 import { CandidateAchievementModelAttr } from '../../../types/candidate-achievement-model-attr';
 
 export class CandidateAchievementModel extends Model<CandidateAchievementModelAttr> {}

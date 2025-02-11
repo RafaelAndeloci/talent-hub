@@ -7,7 +7,7 @@ import { companyParser } from './company-parser';
 import _ from 'lodash';
 import { fileStorageService } from '../../services/file-storage-service';
 import { CompanyBusiness } from '../../types/company-business';
-import { Company, Role } from '@talent-hub/shared/types';
+import { Company, Role } from '@talent-hub/shared';
 
 export const companyBusiness: CompanyBusiness = {
     findById: async ({ companyId, context }) => {

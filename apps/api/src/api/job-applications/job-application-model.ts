@@ -6,7 +6,7 @@ import { JobOpeningModel } from '../job-openings/job-opening-model';
 import { UserModel } from '../users/user-model';
 import { primaryColumn } from '../../constants/database-column.def';
 import { JobApplicationModelAttr } from '../../types/job-application-model-attr';
-import { JobApplicationStatus, JobApplicationStage } from '@talent-hub/shared/types';
+import { JobApplicationStatus, JobApplicationStage } from '@talent-hub/shared';
 
 export class JobApplicationModel extends Model<JobApplicationModelAttr> {}
 JobApplicationModel.init(

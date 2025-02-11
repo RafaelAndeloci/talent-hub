@@ -1,4 +1,4 @@
-import { Location } from '@talent-hub/shared/types';
+import { Location } from '@talent-hub/shared';
 
 export interface CompanyModelAttr {
     id: string;

@@ -16,14 +16,14 @@ import { ApiResource } from '../../types/api-resource';
 import { singleFileUpload } from '../../middlewares/file-upload-middleware';
 
 export const companyRoutes: ApiResource = {
-    resource: Resource.companies,
+    resource: Resource.Companies,
     routes: [
         {
             method: 'get',
             path: '/',
             auth: true,
             schema: FindAllCompaniesSchema,
-            action: Action.readAll,
+            action: Action.ReadAll,
             handler: companyController.findAll,
         },
         {
@@ -31,7 +31,7 @@ export const companyRoutes: ApiResource = {
             path: '/:id',
             auth: true,
             schema: FindCompanyByIdSchema,
-            action: Action.readById,
+            action: Action.ReadById,
             handler: companyController.findById,
         },
         {
@@ -39,7 +39,7 @@ export const companyRoutes: ApiResource = {
             path: '/',
             auth: true,
             schema: CreateCompanySchema,
-            action: Action.create,
+            action: Action.Create,
             handler: companyController.create,
         },
         {
@@ -92,6 +92,6 @@ export const companyRoutes: ApiResource = {
             action: Action.companyDeleteGallery,
             schema: RemoveGalleryItemSchema,
             handler: companyController.deleteGalleryItem,
-        }
-    ],  
+        },
+    ],
 };

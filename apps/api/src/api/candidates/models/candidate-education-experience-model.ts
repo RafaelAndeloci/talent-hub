@@ -1,7 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
 import database from '../../../config/database';
 import { primaryColumn } from '../../../constants/database-column.def';
-import { AcademicStatus, AcademicDegreeType } from '@talent-hub/shared/types';
+import { AcademicStatus, AcademicDegreeType } from '@talent-hub/shared';
 import { CandidateEducationalExperienceModelAttr } from '../../../types/candidate-education-experience-model-attr';
 
 export class CandidateEducationalExperienceModel extends Model<CandidateEducationalExperienceModelAttr> {}

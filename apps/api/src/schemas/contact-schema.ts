@@ -1,4 +1,4 @@
-import { Contact } from '@talent-hub/shared/types/contact';
+import { Contact } from '@talent-hub/shared';
 import { z } from 'zod';
 
 export const ContactSchema: z.ZodType<Contact> = z.object({

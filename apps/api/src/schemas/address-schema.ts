@@ -1,4 +1,4 @@
-import { Address, Uf } from '@talent-hub/shared/types';
+import { Address, Uf } from '@talent-hub/shared';
 import { z } from 'zod';
 
 export const AddressSchema: z.ZodType<Address> = z.object({

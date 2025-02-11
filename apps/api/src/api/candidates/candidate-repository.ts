@@ -7,7 +7,7 @@ import { CandidateModel } from './models';
 import { candidateParser } from './candidate-parser';
 import models from '../../config/database/models';
 import { CandidateModelAttr } from '../../types/candidate-model-attr';
-import { Candidate } from '@talent-hub/shared/types';
+import { Candidate } from '@talent-hub/shared';
 import { CandidateAchievementModelAttr } from '../../types/candidate-achievement-model-attr';
 import { CandidateEducationalExperienceModelAttr } from '../../types/candidate-education-experience-model-attr';
 import { CandidateLanguageModelAttr } from '../../types/candidate-language-model-attr';

@@ -1,4 +1,4 @@
-import { PagedMeta, PagedResponse } from '@talent-hub/shared/types';
+import { PagedMeta, PagedResponse } from '@talent-hub/shared';
 
 export class PagedResponseImp<T> implements PagedResponse<T> {
     meta: PagedMeta;

@@ -1,4 +1,4 @@
-import { Period, YearMonth } from '@talent-hub/shared/types';
+import { Period, YearMonth } from '@talent-hub/shared';
 
 export interface ModelWithPeriod {
     period: Period;

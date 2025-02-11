@@ -17,7 +17,7 @@ import {
     AcademicDegreeType,
     Language,
     LanguageProficiency,
-} from '@talent-hub/shared/types';
+} from '@talent-hub/shared';
 import { ParamsSchema } from '../../schemas/params-schema';
 
 export const FindJobOpeningByIdSchema = ParamsSchema;

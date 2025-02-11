@@ -5,7 +5,7 @@ import {
     FindAllCandidatesQuery,
     Role,
     UpdateCandidatePayload,
-} from '@talent-hub/shared/types';
+} from '@talent-hub/shared';
 import { FileInput } from './file-input';
 
 export type CandidateBusiness = {

@@ -6,7 +6,7 @@ import {
     FindAllCompaniesQuery,
     Id,
     UpdateCompanyPayload,
-} from '@talent-hub/shared/types';
+} from '@talent-hub/shared';
 import { RequestHandler } from 'express';
 
 export type CompanyController = {

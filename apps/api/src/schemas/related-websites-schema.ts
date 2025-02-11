@@ -1,4 +1,4 @@
-import { RelatedWebsites } from '@talent-hub/shared/types/related-websites';
+import { RelatedWebsites } from '@talent-hub/shared';
 import { z } from 'zod';
 
 export const RelatedWebsiteSchema: z.ZodType<RelatedWebsites> = z.object({

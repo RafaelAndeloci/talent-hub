@@ -6,7 +6,7 @@ import { jobApplicationParser } from './job-application-parser';
 import { jobQueueService } from '../../services/job-queue-service';
 import { AppEvent } from '../../enums/app-event';
 import _ from 'lodash';
-import { JobApplication, JobApplicationStatus } from '@talent-hub/shared/types';
+import { JobApplication, JobApplicationStatus } from '@talent-hub/shared';
 import { JobApplicationBusiness } from '../../types/job-application-business';
 
 const canChangeStatus = (jobApplication: JobApplication) =>
@@ -50,7 +50,7 @@ export const jobApplicationBusiness: JobApplicationBusiness = {
         await jobApplicationRepository.create(jobApplication);
 
         await jobQueueService.enqueue({
-            event: AppEvent.jobApplicationCreated,
+            event: AppEvent.JobApplicationCreated,
             payload: {
                 jobApplicationId: jobApplication.id,
             },
@@ -69,7 +69,7 @@ export const jobApplicationBusiness: JobApplicationBusiness = {
         await jobApplicationRepository.deleteById(jobApplicationId);
 
         await jobQueueService.enqueue({
-            event: AppEvent.jobApplicationRemoved,
+            event: AppEvent.JobApplicationRemoved,
             payload: {
                 jobApplicationId,
             },
@@ -100,7 +100,7 @@ export const jobApplicationBusiness: JobApplicationBusiness = {
         await jobApplicationRepository.update(jobApplication);
 
         await jobQueueService.enqueue({
-            event: AppEvent.jobApplicationStageUpdated,
+            event: AppEvent.JobApplicationStageUpdated,
             payload: {
                 jobApplicationId: jobApplication.id,
             },
@@ -140,7 +140,7 @@ export const jobApplicationBusiness: JobApplicationBusiness = {
         await jobApplicationRepository.update(jobApplication);
 
         await jobQueueService.enqueue({
-            event: AppEvent.jobApplicationStatusUpdated,
+            event: AppEvent.JobApplicationStatusUpdated,
             payload: {
                 jobApplicationId: jobApplication.id,
             },

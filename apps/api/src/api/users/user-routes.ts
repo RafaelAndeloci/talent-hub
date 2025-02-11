@@ -16,14 +16,14 @@ import { singleFileUpload } from '../../middlewares/file-upload-middleware';
 import { ApiResource } from '../../types/api-resource';
 
 export const userRoutes: ApiResource = {
-    resource: Resource.users,
+    resource: Resource.Users,
     routes: [
         {
             method: 'get',
             path: '/:id',
             auth: true,
             schema: FindUserByIdSchema,
-            action: Action.readById,
+            action: Action.ReadById,
             handler: userController.findById,
         },
         {
@@ -31,21 +31,21 @@ export const userRoutes: ApiResource = {
             path: '/',
             auth: true,
             schema: FindAllUsersSchema,
-            action: Action.readAll,
+            action: Action.ReadAll,
             handler: userController.findAll,
         },
         {
             method: 'post',
             path: '/',
             schema: CreateUserSchema,
-            action: Action.create,
+            action: Action.Create,
             handler: userController.create,
         },
         {
             method: 'post',
             path: '/auth',
             schema: AuthSchema,
-            action: Action.userAuth,
+            action: Action.UserAuth,
             handler: userController.auth,
         },
 
@@ -61,14 +61,14 @@ export const userRoutes: ApiResource = {
             method: 'post',
             path: '/change-password',
             schema: SendPasswordChangeTokenSchema,
-            action: Action.userRequestChangePasswordToken,
+            action: Action.UserRequestChangePasswordToken,
             handler: userController.sendChangePasswordToken,
         },
         {
             method: 'post',
             path: '/:id/confirm-email',
             schema: ConfirmEmailSchema,
-            action: Action.userConfirmEmail,
+            action: Action.UserConfirmEmail,
             handler: userController.confirmEmail,
         },
         {
@@ -83,7 +83,7 @@ export const userRoutes: ApiResource = {
             path: '/:id/profile-picture',
             auth: true,
             schema: UpdateUserProfilePictureSchema,
-            action: Action.userSetProfilePicture,
+            action: Action.UserSetProfilePicture,
             handler: userController.updateProfilePicture,
             middlewares: [singleFileUpload],
         },

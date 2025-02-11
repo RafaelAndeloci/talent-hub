@@ -1,4 +1,4 @@
-import { User, Role, UserDto } from '@talent-hub/shared/types';
+import { User, Role, UserDto } from '@talent-hub/shared';
 import { UserModelAttr } from './user-model-attr';
 
 export type UserParser = {

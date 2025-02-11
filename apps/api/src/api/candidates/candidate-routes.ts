@@ -14,13 +14,13 @@ import { Action } from '../../enums/action';
 import { ApiResource } from '../../types/api-resource';
 
 export const candidateRoutes: ApiResource = {
-    resource: Resource.candidates,
+    resource: Resource.Candidates,
     routes: [
         {
             method: 'get',
             path: '/',
             auth: true,
-            action: Action.readAll,
+            action: Action.ReadAll,
             schema: FindAllCandidatesSchema,
             handler: candidateController.findAll,
         },
@@ -28,7 +28,7 @@ export const candidateRoutes: ApiResource = {
             method: 'get',
             path: '/:id',
             auth: true,
-            action: Action.readById,
+            action: Action.ReadById,
             schema: FindCandidateByIdSchema,
             handler: candidateController.findById,
         },
@@ -36,7 +36,7 @@ export const candidateRoutes: ApiResource = {
             method: 'post',
             path: '/',
             auth: true,
-            action: Action.create,
+            action: Action.Create,
             schema: CreateCandidateSchema,
             handler: candidateController.create,
         },

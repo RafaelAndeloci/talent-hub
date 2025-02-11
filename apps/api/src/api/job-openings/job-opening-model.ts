@@ -13,7 +13,7 @@ import {
     EmploymentType,
     EmploymentRegime,
     Benefit,
-} from '@talent-hub/shared/types';
+} from '@talent-hub/shared';
 import {
     JobOpeningSkillProfileModelAttr,
     JobOpeningModelAttr,

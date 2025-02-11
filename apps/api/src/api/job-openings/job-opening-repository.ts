@@ -2,7 +2,7 @@ import { Op } from 'sequelize';
 import { makeRepository } from '../../services/repository';
 import { JobOpeningModel } from './job-opening-model';
 import { jobOpeningParser } from './job-opening-parser';
-import { JobOpening, JobOpeningStatus } from '@talent-hub/shared/types';
+import { JobOpening, JobOpeningStatus } from '@talent-hub/shared';
 import { JobOpeningModelAttr } from '../../types/job-opening-model-attr';
 
 export const jobOpeningRepositoryBase = makeRepository<
