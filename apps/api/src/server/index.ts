@@ -1,5 +1,6 @@
 import express from 'express';
 import methodOverride from 'method-override';
+import cors from 'cors';
 
 import { logger } from '../services/logging-service';
 import { buildApiRouter } from './routes';
@@ -17,6 +18,9 @@ async function startServer() {
 
     app.use([
         getStaticFilesRouter(),
+        cors({
+            origin: '*',
+        }),
         express.json({ strict: true }),
         express.urlencoded({ extended: true }),
         methodOverride(),
