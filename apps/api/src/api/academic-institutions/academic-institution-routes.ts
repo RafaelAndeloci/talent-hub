@@ -46,7 +46,7 @@ export const AcademicInstitutionRoutes: ApiResource = {
             schema: UpdateSchema,
         },
         {
-            action: Action.delete,
+            action: Action.Delete,
             method: 'delete',
             auth: true,
             path: '/:id',

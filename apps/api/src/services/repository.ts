@@ -72,13 +72,12 @@ export const makeRepository = <
         return PagedResponseImp.create(limit, offset, count, records);
     };
 
-    const findById = async (id: string): Promise<TEntity> => {
+    const findById = async (id: string): Promise<TEntity | null> => {
         const modelInstance = await model.findByPk(id as any);
-        if (!modelInstance) {
-            ApiError.throwNotFound('resource not found');
-            return null!;
+        if (!modelInstance) { 
+            return null;
         }
-
+        
         const raw = modelInstance.toJSON();
         return fromDatabase(raw);
     };

@@ -55,7 +55,7 @@ export const companyRoutes: ApiResource = {
             path: '/:id',
             auth: true,
             schema: DeleteCompanySchema,
-            action: Action.delete,
+            action: Action.Delete,
             handler: companyController.remove,
         },
         {

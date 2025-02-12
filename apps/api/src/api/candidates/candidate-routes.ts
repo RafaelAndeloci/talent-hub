@@ -52,7 +52,7 @@ export const candidateRoutes: ApiResource = {
             method: 'delete',
             path: '/:id',
             auth: true,
-            action: Action.delete,
+            action: Action.Delete,
             schema: DeleteCandidateSchema,
             handler: candidateController.remove,
         },

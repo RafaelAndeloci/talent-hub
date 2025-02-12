@@ -54,7 +54,7 @@ export const userRoutes: ApiResource = {
             path: '/:id',
             auth: true,
             schema: RemoveUserSchema,
-            action: Action.delete,
+            action: Action.Delete,
             handler: userController.remove,
         },
         {

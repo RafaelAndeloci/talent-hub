@@ -1,3 +1,4 @@
+//types
 export * from './types/academic-degree-type';
 export * from './types/academic-status';
 export * from './types/achievement-type';
@@ -78,3 +79,10 @@ export * from './types/academic-institution';
 export * from './types/create-academic-institution-payload';
 export * from './types/academic-institution-dto';
 export * from './types/update-academic-institution-payload';
+export * from './types/course';
+export * from './types/course-dto';
+export * from './types/create-course-payload';
+export * from './types/update-course-payload';
+
+//utils
+export * from './utils/uuid';

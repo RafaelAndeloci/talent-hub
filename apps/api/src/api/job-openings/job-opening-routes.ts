@@ -83,7 +83,7 @@ export const jobOpeningRoutes: ApiResource = {
             path: '/:id',
             auth: true,
             schema: FindJobOpeningByIdSchema,
-            action: Action.delete,
+            action: Action.Delete,
             handler: jobOpeningController.remove,
         },
     ],

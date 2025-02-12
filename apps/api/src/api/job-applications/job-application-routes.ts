@@ -68,7 +68,7 @@ export const jobApplicationRoutes: ApiResource = {
             path: '/:id',
             auth: true,
             schema: DeleteJobApplicationSchema,
-            action: Action.delete,
+            action: Action.Delete,
             handler: jobApplicationController.remove,
         },
     ],

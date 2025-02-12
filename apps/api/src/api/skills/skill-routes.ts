@@ -49,7 +49,7 @@ export const skillResource: ApiResource = {
         {
             path: '/:id',
             method: 'delete',
-            action: Action.delete,
+            action: Action.Delete,
             schema: DeleteSkillSchema,
             handler: skillController.remove,
             auth: true,

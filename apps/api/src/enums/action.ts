@@ -2,7 +2,7 @@ export enum Action {
     // CrudAction
     Create = 'create',
     Update = 'update',
-    delete = 'delete',
+    Delete = 'delete',
     ReadById = 'read_by_id',
     ReadAll = 'read_all',
 
