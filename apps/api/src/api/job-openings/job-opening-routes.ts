@@ -43,7 +43,7 @@ export const jobOpeningRoutes: ApiResource = {
             path: '/:id',
             auth: true,
             schema: UpdateJobOpeningSchema,
-            action: Action.update,
+            action: Action.Update,
             handler: jobOpeningController.update,
         },
         {
@@ -51,7 +51,7 @@ export const jobOpeningRoutes: ApiResource = {
             path: `/:id/open`,
             auth: true,
             schema: UpdateJobOpeningStatusSchema,
-            action: Action.update,
+            action: Action.Update,
             handler: jobOpeningController.open,
         },
         {
@@ -59,7 +59,7 @@ export const jobOpeningRoutes: ApiResource = {
             path: '/:id/close',
             auth: true,
             schema: UpdateJobOpeningStatusSchema,
-            action: Action.update,
+            action: Action.Update,
             handler: jobOpeningController.close,
         },
         {
@@ -67,7 +67,7 @@ export const jobOpeningRoutes: ApiResource = {
             path: '/:id/draft',
             auth: true,
             schema: UpdateJobOpeningStatusSchema,
-            action: Action.update,
+            action: Action.Update,
             handler: jobOpeningController.toDraft,
         },
         {
@@ -75,7 +75,7 @@ export const jobOpeningRoutes: ApiResource = {
             path: '/:id/fill',
             auth: true,
             schema: FillJobOpeningSchema,
-            action: Action.update,
+            action: Action.Update,
             handler: jobOpeningController.fill,
         },
         {

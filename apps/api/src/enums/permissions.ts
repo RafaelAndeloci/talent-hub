@@ -18,7 +18,7 @@ export const Permissions = Object.freeze([
                 resource: Resource.Candidates,
                 actions: [
                     Action.Create,
-                    Action.update,
+                    Action.Update,
                     Action.ReadById,
                     Action.candidateSetBanner,
                     Action.candidateUpdateCv,

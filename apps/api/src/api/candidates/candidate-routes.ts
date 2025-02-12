@@ -44,7 +44,7 @@ export const candidateRoutes: ApiResource = {
             method: 'put',
             path: '/:id',
             auth: true,
-            action: Action.update,
+            action: Action.Update,
             schema: UpdateCandidateSchema,
             handler: candidateController.update,
         },

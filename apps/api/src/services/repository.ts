@@ -42,7 +42,7 @@ export const makeRepository = <
         sort,
         filter,
         where,
-    }: FindAllArgs<TEntity> & Partial<{ where: WhereOptions<Attributes<TModel>> }>): Promise<
+    }: FindAllArgs<TEntity> & Partial<{ where?: WhereOptions<Attributes<TModel>> }>): Promise<
         PagedResponse<TEntity>
     > => {
         limit = limit ?? 10;

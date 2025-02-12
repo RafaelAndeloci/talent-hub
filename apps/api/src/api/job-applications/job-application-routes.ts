@@ -1,5 +1,6 @@
 import { Resource } from '../../enums/resource';
 import { Action } from '../../enums/action';
+import { ApiResource } from '../../types/api-resource';
 import {
     CreateJobApplicationSchema,
     DeleteJobApplicationSchema,
@@ -10,7 +11,6 @@ import {
     UpdateJobApplicationStatusSchema,
 } from './job-application-schema';
 import { jobApplicationController } from './job-application-controller';
-import { ApiResource } from '../../types/api-resource';
 
 export const jobApplicationRoutes: ApiResource = {
     resource: Resource.JobApplications,

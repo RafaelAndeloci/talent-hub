@@ -41,7 +41,7 @@ export const skillResource: ApiResource = {
         {
             path: '/:id',
             method: 'put',
-            action: Action.update,
+            action: Action.Update,
             schema: UpdateSkillSchema,
             handler: skillController.update,
             auth: true,

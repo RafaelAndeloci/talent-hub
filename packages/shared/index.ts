@@ -74,3 +74,7 @@ export * from './types/validation';
 export * from './types/workplace-type';
 export * from './types/year-month';
 export * from './types/paged-response';
+export * from './types/academic-institution';
+export * from './types/create-academic-institution-payload';
+export * from './types/academic-institution-dto';
+export * from './types/update-academic-institution-payload';

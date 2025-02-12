@@ -47,7 +47,7 @@ export const companyRoutes: ApiResource = {
             path: '/:id',
             auth: true,
             schema: UpdateCompanySchema,
-            action: Action.update,
+            action: Action.Update,
             handler: companyController.update,
         },
         {

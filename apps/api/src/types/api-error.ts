@@ -1,4 +1,5 @@
 import HTTPStatus from 'http-status';
+
 export class ApiError extends Error {
     public readonly expose: boolean = true;
     public code: number;

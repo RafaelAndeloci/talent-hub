@@ -4,7 +4,8 @@ export enum Resource {
     Companies = 'companies',
     JobOpenings = 'job-openings',
     JobApplications = 'job-applications',
-    Skills = 'skills'
+    Skills = 'skills',
+    AcademicInstitutions = "academic-institutions"
 }
 
 export const AllResources = Object.freeze(Object.values(Resource)) as Resource[];
