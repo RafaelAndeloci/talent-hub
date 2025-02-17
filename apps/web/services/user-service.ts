@@ -1,22 +1,23 @@
-import { apiClient } from "./api-client";
 import {
   AuthDto,
-  AuthPayload, ConfirmUserEmailPayload,
+  AuthPayload,
+  ConfirmUserEmailPayload,
   CreateUserPayload,
   Filter,
   FindAllUsersQuery,
   SendChangePasswordPayload,
   Sort,
   User,
-  UserDto
+  UserDto,
 } from "@talent-hub/shared";
+import { apiClient } from "./api-client";
 
 export const userService = {
   findById: (id: string) => apiClient.get(`/api/users/${id}`),
   findAll: (query: FindAllUsersQuery) => {
     const queryString = new URLSearchParams();
-    queryString.set("limit", query.limit.toString());
-    queryString.set("offset", query.offset.toString());
+    // queryString.set("limit", query.limit.toString());
+    // queryString.set("offset", query.offset.toString());
     query.sort.forEach((sort: Sort<User>) => {
       queryString.append("sort", `${sort.field}:${sort.order}`);
     });
