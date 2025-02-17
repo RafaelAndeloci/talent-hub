@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "title": "Desenvolvedor Frontend",
+    "company": "TechCorp",
+    "location": "São Paulo, SP",
+    "type": "Tempo Integral",
+    "salary": "R$90,000 - R$120,000"
+  },
+  {
+    "id": 2,
+    "title": "Designer UX",
+    "company": "DesignHub",
+    "location": "São Paulo, SP",
+    "type": "Contrato",
+    "salary": "R$70 - R$90 por hora"
+  },
+  {
+    "id": 3,
+    "title": "Cientista de Dados",
+    "company": "AI Innovations",
+    "location": "Remoto",
+    "type": "Tempo Integral",
+    "salary": "R$110,000 - R$150,000"
+  },
+  {
+    "id": 4,
+    "title": "Gerente de Produto",
+    "company": "StartupX",
+    "location": "Remoto",
+    "type": "Tempo Integral",
+    "salary": "R$100,000 - R$130,000"
+  },
+  {
+    "id": 5,
+    "title": "Engenheiro DevOps",
+    "company": "CloudSystems",
+    "location": "São Paulo, SP",
+    "type": "Tempo Integral",
+    "salary": "R$95,000 - R$140,000"
+  }
+]

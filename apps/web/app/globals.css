@@ -61,9 +61,10 @@
 
 @layer base {
   * {
-    @apply border-border font-default custom-scrollbar;
+    @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
   }
 }
+
