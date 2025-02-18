@@ -34,8 +34,12 @@ export default function Header() {
           </Link>
         </nav>
         <div className="flex space-x-2">
-          <Button variant="outline">Login</Button>
-          <Button>Cadastrar</Button>
+          <Button variant="outline" asChild>
+            <Link href="/login">Login</Link>
+          </Button>
+          <Button asChild>
+            <Link href="/register">Cadastrar</Link>
+          </Button>
         </div>
       </div>
     </header>
