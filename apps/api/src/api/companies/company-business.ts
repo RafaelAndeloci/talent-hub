@@ -1,105 +1,117 @@
-import { Op } from 'sequelize';
-import * as uuid from 'uuid';
+import {
+    Company,
+    CompanyDto,
+    CompanyPayload,
+    PagedResponse,
+    QueryArgs,
+    UserDto,
+} from '@talent-hub/shared';
+import { CompanyRepository } from './company-repository';
+import ApiError from '../../utils/api-error';
+import { CompanyParser } from './company-parser';
+import Role from '@talent-hub/shared/types/role';
+import FileStorageService from '../../services/file-storage-service';
+import { InputFile } from '../../types/input-file';
 
-import { ApiError } from '../../types/api-error';
-import { companyRepository } from './company-repository';
-import { companyParser } from './company-parser';
-import _ from 'lodash';
-import { fileStorageService } from '../../services/file-storage-service';
-import { CompanyBusiness } from '../../types/company-business';
-import { Company, Role } from '@talent-hub/shared';
+export class CompanyBusiness {
+    public constructor(private companyRepository = new CompanyRepository()) {}
 
-export const companyBusiness: CompanyBusiness = {
-    findById: async ({ companyId, context }) => {
-        const company = await companyRepository.findById(companyId);
+    public findById: (args: { companyId: string; user: UserDto }) => Promise<CompanyDto> = async ({
+        companyId,
+        user,
+    }) => {
+        const company = await this.companyRepository.findById(companyId);
         if (!company) {
             ApiError.throwNotFound(`company with id ${company} not found`);
-            return null!;
         }
 
-        return companyParser.toDto({ company, userRole: context.user.role });
-    },
+        return CompanyParser.toDto({ company, userRole: user.role });
+    };
 
-    findAll: async ({ query, context }) => {
-        const companies = await companyRepository.findAll(query);
-        return companies.parse((company) =>
-            companyParser.toDto({ company, userRole: context.user.role }),
-        );
-    },
+    public findAll: (args: {
+        query: QueryArgs<Company>;
+        user: UserDto;
+    }) => Promise<PagedResponse<CompanyDto>> = async ({ query, user }) => {
+        const companies = await this.companyRepository.findAll(query);
+        return companies.parse((company) => CompanyParser.toDto({ company, userRole: user.role }));
+    };
 
-    create: async ({ payload }) => {
-        const existing = await companyRepository.exists({
-            [Op.or]: [{ cnpj: payload.cnpj }, { legalName: payload.legalName }],
+    public create: (args: { payload: Company }) => Promise<CompanyDto> = async ({ payload }) => {
+        const existing = await this.companyRepository.existsBy({
+            legalName: payload.legalName,
+            cnpj: payload.cnpj,
         });
         if (existing) {
             ApiError.throwConflict('company already exists');
         }
 
-        const company: Company = {
-            id: uuid.v4(),
-            ...payload,
-            gallery: [],
+        const company = CompanyParser.newInstance(payload);
+        await this.companyRepository.create({ entity: company });
+
+        return CompanyParser.toDto({ company, userRole: Role.SysAdmin });
+    };
+
+    public update: (args: { companyId: string; payload: CompanyPayload }) => Promise<CompanyDto> =
+        async ({ companyId, payload }) => {
+            const company = await this.companyRepository.findById(companyId);
+            if (!company) {
+                ApiError.throwNotFound(`company with id ${companyId} not found`);
+            }
+
+            const updated = CompanyParser.merge({
+                original: company,
+                changes: payload,
+            });
+            await this.companyRepository.update({ entity: updated });
+
+            return CompanyParser.toDto({ company: updated, userRole: Role.SysAdmin });
         };
 
-        await companyRepository.create(company);
-
-        return companyParser.toDto({ company, userRole: Role.CompanyAdmin });
-    },
-
-    update: async ({ companyId, payload }) => {
-        const company = await companyRepository.findById(companyId);
-        if (!company) {
-            ApiError.throwNotFound(`company with id ${companyId} not found`);
-            return null!;
-        }
-
-        const updated = _.merge(company, payload);
-        await companyRepository.update(updated);
-
-        return companyParser.toDto({ company: updated, userRole: Role.CompanyAdmin });
-    },
-
-    remove: async ({ companyId }) => {
-        const company = await companyRepository.findById(companyId);
+    public remove: (args: { companyId: string }) => Promise<void> = async ({ companyId }) => {
+        const company = await this.companyRepository.findById(companyId);
         if (!company) {
             ApiError.throwNotFound(`company with id ${companyId} not found`);
         }
 
-        await companyRepository.deleteById(companyId);
-    },
+        await this.companyRepository.deleteById({ id: companyId });
+    };
 
-    setBanner: async ({ companyId, file }) => {
-        const company = await companyRepository.findById(companyId);
-        if (!company) {
-            ApiError.throwNotFound(`company with id ${companyId} not found`);
-        }
+    public setBanner: (args: { companyId: string; file: InputFile }) => Promise<CompanyDto> =
+        async ({ companyId, file }) => {
+            const company = await this.companyRepository.findById(companyId);
+            if (!company) {
+                ApiError.throwNotFound(`company with id ${companyId} not found`);
+            }
 
-        const key = `company-${companyId}-banner.${file.mimetype.split('/')[1]}`;
-        const url = await fileStorageService.upload({
-            key,
-            file: file.content,
-            contentType: file.mimetype,
-        });
+            const key = `company-${companyId}-banner.${file.mimetype.split('/')[1]}`;
+            const url = await FileStorageService.upload({
+                key,
+                file: file.content,
+                contentType: file.mimetype,
+            });
 
-        if (!url) {
-            ApiError.throwInternalServerError('failed to upload file');
-        }
+            if (!url) {
+                ApiError.throwInternalServerError('failed to upload file');
+            }
 
-        company.bannerUrl = url;
+            company.banner = url;
 
-        await companyRepository.update(company);
+            await this.companyRepository.update({ entity: company });
 
-        return companyParser.toDto({ company, userRole: Role.CompanyAdmin });
-    },
+            return CompanyParser.toDto({ company, userRole: Role.SysAdmin });
+        };
 
-    setLogo: async ({ companyId, file }) => {
-        const company = await companyRepository.findById(companyId);
+    public setLogo: (args: { companyId: string; file: InputFile }) => Promise<CompanyDto> = async ({
+        companyId,
+        file,
+    }) => {
+        const company = await this.companyRepository.findById(companyId);
         if (!company) {
             ApiError.throwNotFound(`company with id ${companyId} not found`);
         }
 
         const key = `company-${companyId}-logo.${file.mimetype.split('/')[1]}`;
-        const url = await fileStorageService.upload({
+        const url = await FileStorageService.upload({
             key,
             file: file.content,
             contentType: file.mimetype,
@@ -109,21 +121,25 @@ export const companyBusiness: CompanyBusiness = {
             ApiError.throwInternalServerError('failed to upload file');
         }
 
-        company.logoUrl = url;
+        company.logo = url;
 
-        await companyRepository.update(company);
+        await this.companyRepository.update({ entity: company });
 
-        return companyParser.toDto({ company, userRole: Role.CompanyAdmin });
-    },
+        return CompanyParser.toDto({ company, userRole: Role.SysAdmin });
+    };
 
-    setGaleryItem: async ({ companyId, picture, order }) => {
-        const company = await companyRepository.findById(companyId);
+    public setGalleryItem: (args: {
+        companyId: string;
+        picture: InputFile;
+        order: number;
+    }) => Promise<CompanyDto> = async ({ companyId, picture, order }) => {
+        const company = await this.companyRepository.findById(companyId);
         if (!company) {
             ApiError.throwNotFound(`company with id ${companyId} not found`);
         }
 
         const key = `company-${companyId}-gallery-${order}.${picture.mimetype.split('/')[1]}`;
-        const url = await fileStorageService.upload({
+        const url = await FileStorageService.upload({
             key,
             file: picture.content,
             contentType: picture.mimetype,
@@ -142,42 +158,43 @@ export const companyBusiness: CompanyBusiness = {
 
         company.gallery = company.gallery.sort((a, b) => a.order - b.order);
 
-        await companyRepository.update(company);
+        await this.companyRepository.update({ entity: company });
 
-        return companyParser.toDto({ company, userRole: Role.CompanyAdmin });
-    },
+        return CompanyParser.toDto({ company, userRole: Role.SysAdmin });
+    };
 
-    deleteGalleryItem: async ({ companyId, order }) => {
-        const company = await companyRepository.findById(companyId);
-        if (!company) {
-            ApiError.throwNotFound(`company with id ${companyId} not found`);
-        }
-
-        if (order) {
-            const index = company.gallery.findIndex((item) => item.order === order);
-            if (index === -1) {
-                ApiError.throwNotFound('gallery item not found');
+    public deleteGalleryItem: (args: { companyId: string; order?: number }) => Promise<CompanyDto> =
+        async ({ companyId, order }) => {
+            const company = await this.companyRepository.findById(companyId);
+            if (!company) {
+                ApiError.throwNotFound(`company with id ${companyId} not found`);
             }
 
-            await fileStorageService.deleteFile({
-                key: company.gallery[index].url,
-            });
+            if (order) {
+                const index = company.gallery.findIndex((item) => item.order === order);
+                if (index === -1) {
+                    ApiError.throwNotFound('gallery item not found');
+                }
 
-            company.gallery = company.gallery.filter((item) => item.order !== order);
-        } else {
-            await Promise.all(
-                company.gallery.map(async (item) => {
-                    await fileStorageService.deleteFile({
-                        key: item.url,
-                    });
-                }),
-            );
+                await FileStorageService.deleteFile({
+                    key: company.gallery[index].url,
+                });
 
-            company.gallery = [];
-        }
+                company.gallery = company.gallery.filter((item) => item.order !== order);
+            } else {
+                await Promise.all(
+                    company.gallery.map(async (item) => {
+                        await FileStorageService.deleteFile({
+                            key: item.url,
+                        });
+                    }),
+                );
 
-        await companyRepository.update(company);
+                company.gallery = [];
+            }
 
-        return companyParser.toDto({ company, userRole: Role.CompanyAdmin });
-    },
-};
+            await this.companyRepository.update({ entity: company });
+
+            return CompanyParser.toDto({ company, userRole: Role.SysAdmin });
+        };
+}

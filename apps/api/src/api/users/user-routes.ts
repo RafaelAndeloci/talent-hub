@@ -1,28 +1,19 @@
-import { userController } from './user-controller';
-import {
-    AuthSchema,
-    ConfirmEmailSchema,
-    ConfirmPasswordChangeSchema,
-    CreateUserSchema,
-    FindAllUsersSchema,
-    FindUserByIdSchema,
-    RemoveUserSchema,
-    SendPasswordChangeTokenSchema,
-    UpdateProfilePictureSchema as UpdateUserProfilePictureSchema,
-} from './user-schema';
 import { Resource } from '../../enums/resource';
 import { Action } from '../../enums/action';
 import { singleFileUpload } from '../../middlewares/file-upload-middleware';
-import { ApiResource } from '../../types/api-resource';
+import { UserApiSchema } from '@talent-hub/shared';
+import UserController from './user-controller';
 
-export const userRoutes: ApiResource = {
+const userController = new UserController();
+
+export const userRoutes = {
     resource: Resource.Users,
     routes: [
         {
             method: 'get',
             path: '/:id',
             auth: true,
-            schema: FindUserByIdSchema,
+            schema: UserApiSchema.FindById,
             action: Action.ReadById,
             handler: userController.findById,
         },
@@ -30,21 +21,21 @@ export const userRoutes: ApiResource = {
             method: 'get',
             path: '/',
             auth: true,
-            schema: FindAllUsersSchema,
+            schema: UserApiSchema.FindAll,
             action: Action.ReadAll,
             handler: userController.findAll,
         },
         {
             method: 'post',
             path: '/',
-            schema: CreateUserSchema,
+            schema: UserApiSchema.Create,
             action: Action.Create,
             handler: userController.create,
         },
         {
             method: 'post',
             path: '/auth',
-            schema: AuthSchema,
+            schema: UserApiSchema.Auth,
             action: Action.UserAuth,
             handler: userController.auth,
         },
@@ -53,28 +44,28 @@ export const userRoutes: ApiResource = {
             method: 'delete',
             path: '/:id',
             auth: true,
-            schema: RemoveUserSchema,
+            schema: UserApiSchema.Remove,
             action: Action.Delete,
             handler: userController.remove,
         },
         {
             method: 'post',
             path: '/change-password',
-            schema: SendPasswordChangeTokenSchema,
+            schema: UserApiSchema.SendChangePasswordToken,
             action: Action.UserRequestChangePasswordToken,
             handler: userController.sendChangePasswordToken,
         },
         {
             method: 'post',
             path: '/:id/confirm-email',
-            schema: ConfirmEmailSchema,
+            schema: UserApiSchema.ConfirmEmail,
             action: Action.UserConfirmEmail,
             handler: userController.confirmEmail,
         },
         {
             method: 'post',
             path: '/:id/change-password/confirm',
-            schema: ConfirmPasswordChangeSchema,
+            schema: UserApiSchema.ConfirmChangePassword,
             action: Action.userChangePassword,
             handler: userController.confirmChangePassword,
         },
@@ -82,7 +73,7 @@ export const userRoutes: ApiResource = {
             method: 'put',
             path: '/:id/profile-picture',
             auth: true,
-            schema: UpdateUserProfilePictureSchema,
+            schema: UserApiSchema.SetProfilePicture,
             action: Action.UserSetProfilePicture,
             handler: userController.updateProfilePicture,
             middlewares: [singleFileUpload],

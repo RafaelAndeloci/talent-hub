@@ -75,7 +75,6 @@
         "redis": "^4.7.0",
         "reflect-metadata": "^0.2.2",
         "sql-formatter": "^15.4.10",
-        "uuid": "^11.0.5",
         "winston": "^3.17.0",
         "zod": "^3.24.1"
     },

@@ -1,59 +1,52 @@
-import {
-    Course,
-    CourseDto,
-    CreateCoursePayload,
-    generateUUID,
-    Role,
-    SuggestionStatus,
-    User,
-    UserDto,
-} from '@talent-hub/shared';
-import _ from 'lodash';
-import { CourseModelAttr } from '../../types/course-model-attr';
+import { Course, CoursePayload, SuggestionStatus, UserDto } from '@talent-hub/shared';
+import { CourseModelAttr } from './course-model';
+import * as uuid from 'uuid';
+import { Role } from '@talent-hub/shared/types/role';
+import moment from 'moment';
 
-export const toDto = (c: Course): CourseDto => _.omit(c, ['validation']);
+type CourseParser = {
+    fromDatabase: (course: CourseModelAttr) => Course;
+    toDatabase: (course: Course) => CourseModelAttr;
+    newInstance: (args: { payload: CoursePayload; user: UserDto }) => Course;
+};
 
-export const fromDatabase = (c: CourseModelAttr): Course => ({
-    ...c,
-    validation:
-        c.validatedAt && c.validatedBy
-            ? {
-                  by: c.validatedBy,
-                  at: c.validatedAt,
-              }
-            : null,
-    institution: {
-        id: c.institutionId,
-        name: c.institutionName!,
-    },
-});
-
-export const toDatabase = (c: Course): CourseModelAttr => ({
-    ...c,
-    institutionId: c.institution.id,
-    validatedBy: c.validation?.by ?? null,
-    validatedAt: c.validation?.at ?? null,
-});
-
-export const newInstance = ({
-    payload,
-    user,
-}: {
-    payload: CreateCoursePayload;
-    user: User | UserDto;
-}): Course => ({
-    id: generateUUID(),
-    ...payload,
-    ...(user.role === Role.SysAdmin
-        ? {
-              validation: {
-                  by: user.id,
-                  at: new Date(),
-              },
-              status: SuggestionStatus.Approved,
-          }
-        : {
-              validation: null,
-              status: SuggestionStatus.Pending,
-          }),
-});
+export const CourseParser: CourseParser = {
+    fromDatabase: (course) => ({
+        id: course.id,
+        name: course.name,
+        degreeType: course.degreeType,
+        suggestion: {
+            validation:
+                course.validatedAt && course.validatedBy
+                    ? {
+                          by: course.validatedBy,
+                          at: course.validatedAt,
+                      }
+                    : null,
+            status: course.status,
+        },
+    }),
+    toDatabase: (course) => ({
+        id: course.id,
+        name: course.name,
+        degreeType: course.degreeType,
+        validatedBy: course.suggestion.validation?.by || null,
+        validatedAt: course.suggestion.validation?.at || null,
+        status: course.suggestion.status,
+    }),
+    newInstance: ({ payload, user }) => ({
+        id: uuid.v4(),
+        name: payload.name,
+        degreeType: payload.degreeType,
+        suggestion:
+            user.role === Role.SysAdmin
+                ? {
+                      status: SuggestionStatus.Approved,
+                      validation: { by: user.id, at: moment() },
+                  }
+                : {
+                      status: SuggestionStatus.Pending,
+                      validation: null,
+                  },
+    }),
+};

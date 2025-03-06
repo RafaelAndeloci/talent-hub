@@ -1,19 +1,11 @@
 import { Resource } from '../../enums/resource';
 import { Action } from '../../enums/action';
-import {
-    CreateCompanySchema,
-    DeleteCompanySchema,
-    FindAllCompaniesSchema,
-    FindCompanyByIdSchema,
-    RemoveGalleryItemSchema,
-    SetBannerSchema,
-    SetGaleryItemSchema,
-    SetLogoSchema,
-    UpdateCompanySchema,
-} from './company-schema';
-import { companyController } from './company-controller';
 import { ApiResource } from '../../types/api-resource';
 import { singleFileUpload } from '../../middlewares/file-upload-middleware';
+import { CompanyController } from './company-controller';
+import { CompanyApiSchema } from '@talent-hub/shared';
+
+const companyController = new CompanyController();
 
 export const companyRoutes: ApiResource = {
     resource: Resource.Companies,
@@ -22,7 +14,7 @@ export const companyRoutes: ApiResource = {
             method: 'get',
             path: '/',
             auth: true,
-            schema: FindAllCompaniesSchema,
+            schema: CompanyApiSchema.FindAll,
             action: Action.ReadAll,
             handler: companyController.findAll,
         },
@@ -30,7 +22,7 @@ export const companyRoutes: ApiResource = {
             method: 'get',
             path: '/:id',
             auth: true,
-            schema: FindCompanyByIdSchema,
+            schema: CompanyApiSchema.FindById,
             action: Action.ReadById,
             handler: companyController.findById,
         },
@@ -38,7 +30,7 @@ export const companyRoutes: ApiResource = {
             method: 'post',
             path: '/',
             auth: true,
-            schema: CreateCompanySchema,
+            schema: CompanyApiSchema.Create,
             action: Action.Create,
             handler: companyController.create,
         },
@@ -46,7 +38,7 @@ export const companyRoutes: ApiResource = {
             method: 'put',
             path: '/:id',
             auth: true,
-            schema: UpdateCompanySchema,
+            schema: CompanyApiSchema.Update,
             action: Action.Update,
             handler: companyController.update,
         },
@@ -54,7 +46,7 @@ export const companyRoutes: ApiResource = {
             method: 'delete',
             path: '/:id',
             auth: true,
-            schema: DeleteCompanySchema,
+            schema: CompanyApiSchema.Remove,
             action: Action.Delete,
             handler: companyController.remove,
         },
@@ -63,7 +55,7 @@ export const companyRoutes: ApiResource = {
             path: '/:id/banner',
             auth: true,
             action: Action.companySetBanner,
-            schema: SetBannerSchema,
+            schema: CompanyApiSchema.SetBanner,
             middlewares: [singleFileUpload],
             handler: companyController.setBanner,
         },
@@ -72,7 +64,7 @@ export const companyRoutes: ApiResource = {
             path: '/:id/logo',
             auth: true,
             action: Action.companySetLogo,
-            schema: SetLogoSchema,
+            schema: CompanyApiSchema.SetLogo,
             middlewares: [singleFileUpload],
             handler: companyController.setLogo,
         },
@@ -81,7 +73,7 @@ export const companyRoutes: ApiResource = {
             path: '/:id/gallery/:order',
             auth: true,
             action: Action.companySetGallery,
-            schema: SetGaleryItemSchema,
+            schema: CompanyApiSchema.SetGalleryItem,
             middlewares: [singleFileUpload],
             handler: companyController.setGalleryItem,
         },
@@ -90,7 +82,7 @@ export const companyRoutes: ApiResource = {
             path: '/:id/gallery/:order?',
             auth: true,
             action: Action.companyDeleteGallery,
-            schema: RemoveGalleryItemSchema,
+            schema: CompanyApiSchema.RemoveGalleryItem,
             handler: companyController.deleteGalleryItem,
         },
     ],

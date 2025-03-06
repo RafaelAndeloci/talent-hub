@@ -1,33 +1,33 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import './models';
-import { logger } from '../../services/logging-service';
+import { Logger } from '../../services/logging-service';
 import { formatSql } from '../../utils/sql-formatter';
 import database from '.';
 
 const actionMap = Object.freeze({
     drop: async () => {
-        logger.info('dropping tables');
+        Logger.info('dropping tables');
         await database.drop({
             cascade: true,
-            logging: (sql) => logger.info(formatSql(sql)),
+            logging: (sql) => Logger.info(formatSql(sql)),
         });
     },
 
     migrate: async () => {
-        logger.info('syncing database');
+        Logger.info('syncing database');
         await database.sync({
             force: false,
             alter: true,
-            logging: (sql) => logger.info(formatSql(sql)),
+            logging: (sql) => Logger.info(formatSql(sql)),
         });
     },
 
     truncate: async () => {
-        logger.info('truncating tables');
+        Logger.info('truncating tables');
         await database.truncate({
             force: true,
             cascade: true,
-            logging: (sql) => logger.info(formatSql(sql)),
+            logging: (sql) => Logger.info(formatSql(sql)),
         });
     },
 });
@@ -36,15 +36,15 @@ const performDatabaseAction = async () => {
     const type = process.argv[2];
 
     try {
-        logger.info('init database authentication');
+        Logger.info('init database authentication');
         await database.authenticate({
-            logging: (sql) => logger.info(formatSql(sql)),
+            logging: (sql) => Logger.info(formatSql(sql)),
         });
-        logger.info('database authentication success');
+        Logger.info('database authentication success');
 
         const handler = (actionMap as any)[type];
         if (!handler) {
-            logger.error('invalid action type');
+            Logger.error('invalid action type');
             process.exit(1);
         }
 
@@ -52,7 +52,7 @@ const performDatabaseAction = async () => {
 
         process.exit(0);
     } catch (e) {
-        logger.error(e);
+        Logger.error(e);
         process.exit(1);
     }
 };

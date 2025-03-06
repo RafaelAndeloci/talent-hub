@@ -1,50 +1,45 @@
 import jwt from 'jsonwebtoken';
 import { config } from '../config/environment';
-import { UserDto, AuthDto } from '@talent-hub/shared';
+import { UserDto } from '@talent-hub/shared';
 
 const {
     security: { secret, issuer, audience, expiresIn },
 } = config;
 
-const authenticateToken = (token: string) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const decoded: any = jwt.verify(token, secret, {
-        issuer,
-        audience,
-        algorithms: ['HS256'],
-    });
+export default class JwtService {
+    private static readonly tokenExpirationSeconds = expiresIn * 60 * 60;
 
-    return {
-        id: decoded.id,
-        username: decoded.username,
-        email: decoded.email,
-        role: decoded.role,
-        profilePictureUrl: decoded.profilePictureUrl,
-    } as UserDto;
-};
+    public static authenticateToken = (token: string) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const decoded: any = jwt.verify(token, secret, {
+            issuer,
+            audience,
+            algorithms: ['HS256'],
+        });
 
-const generateToken = (user: UserDto) => {
-    const seconds = expiresIn * 60 * 60;
-
-    const token = jwt.sign(user, secret, {
-        issuer,
-        audience,
-        expiresIn: seconds,
-        algorithm: 'HS256',
-    });
-
-    const unixEpochExpiration = Math.floor(Date.now() / 1000) + seconds;
-
-    const authToken: AuthDto = {
-        accessToken: token,
-        tokenType: 'Bearer',
-        expiresIn: unixEpochExpiration,
+        return {
+            id: decoded.id,
+            username: decoded.username,
+            email: decoded.email,
+            role: decoded.role,
+            profilePictureUrl: decoded.profilePictureUrl,
+        } as UserDto;
     };
 
-    return authToken;
-};
+    public static generateToken = (user: UserDto) => {
+        const token = jwt.sign(user, secret, {
+            issuer,
+            audience,
+            expiresIn: `${JwtService.tokenExpirationSeconds}s`,
+            algorithm: 'HS256',
+        });
 
-export const jwtService = {
-    authenticateToken,
-    generateToken,
-};
+        const unixEpochExpiration = Math.floor(Date.now() / 1000) + JwtService.tokenExpirationSeconds;
+
+        return {
+            accessToken: token,
+            tokenType: 'Bearer',
+            expiresIn: unixEpochExpiration,
+        };
+    };
+}

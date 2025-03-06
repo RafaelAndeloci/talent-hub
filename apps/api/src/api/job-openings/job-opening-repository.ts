@@ -30,7 +30,7 @@ export const jobOpeningRepository = {
                 { position },
                 {
                     status: {
-                        [Op.not]: [JobOpeningStatus.closed, JobOpeningStatus.filled],
+                        [Op.not]: [JobOpeningStatus.Closed, JobOpeningStatus.Filled],
                     },
                 },
             ],

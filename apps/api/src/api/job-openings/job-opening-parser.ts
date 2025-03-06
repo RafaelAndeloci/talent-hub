@@ -12,7 +12,7 @@ export const jobOpeningParser: JobOpeningParser = {
         id: uuid.v4(),
         position: payload.position,
         description: payload.description,
-        status: JobOpeningStatus.draft,
+        status: JobOpeningStatus.Draft,
         companyId: payload.companyId,
         selectedApplicationId: null,
         positionLevel: payload.positionLevel,

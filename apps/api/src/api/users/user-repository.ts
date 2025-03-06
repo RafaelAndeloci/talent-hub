@@ -1,25 +1,28 @@
 import { Op } from 'sequelize';
 
-import { UserModel } from './user-model';
-import { userParser } from './user-parser';
-import { makeRepository } from '../../services/repository';
 import { User } from '@talent-hub/shared';
-import { UserModelAttr } from '../../types/user-model-attr';
 
-const makedRepository = makeRepository<User, UserModelAttr, UserModel>({
-    model: UserModel,
-    toDatabase: userParser.toDatabase,
-    fromDatabase: userParser.fromDatabase,
-});
+import { UserModel, UserModelAttr } from './user-model';
+import { userParser } from './user-parser';
+import { Repository } from '../../services/repository';
 
-export const userRepository = {
-    ...makedRepository,
-    findByEmailOrUserName(usernameOrEmail: string) {
-        return makedRepository.findUnique({
+export default class UserRepository extends Repository<User, UserModelAttr, UserModel> {
+    constructor() {
+        super(UserModel, userParser);
+    }
+
+    async findBy({
+        email,
+        username,
+    }: {
+        email?: string;
+        username?: string;
+    }): Promise<User | null> {
+        return this.findUnique({
             [Op.or]: {
-                email: usernameOrEmail,
-                username: usernameOrEmail,
+                ...(email ? { email } : {}),
+                ...(username ? { username } : {}),
             },
         });
-    },
-};
+    }
+}

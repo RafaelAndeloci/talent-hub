@@ -2,7 +2,7 @@
 import { Sequelize, Transaction } from 'sequelize';
 import * as uuid from 'uuid';
 
-import { logger } from '../../services/logging-service';
+import { Logger } from '../../services/logging-service';
 import { config } from '../environment';
 import { formatSql } from '../../utils/sql-formatter';
 
@@ -11,7 +11,7 @@ const {
 } = config;
 
 const logQuery = (query: string) => {
-    logger.info(formatSql(query));
+    Logger.info(formatSql(query));
 };
 
 const database = new Sequelize(name, user, password, {

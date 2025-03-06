@@ -1,17 +1,11 @@
-import {
-    CreateCandidateSchema,
-    DeleteCandidateSchema,
-    FindAllCandidatesSchema,
-    FindCandidateByIdSchema,
-    UpdateCandidateBannerSchema,
-    UpdateCandidateCvSchema,
-    UpdateCandidateSchema,
-} from './candidate-schema';
-import { candidateController } from './candidate-controller';
 import { singleFileUpload } from '../../middlewares/file-upload-middleware';
 import { Resource } from '../../enums/resource';
 import { Action } from '../../enums/action';
 import { ApiResource } from '../../types/api-resource';
+import { CandidateApiSchema } from '@talent-hub/shared';
+import { CandidateController } from './candidate-controller';
+
+const candidateController = new CandidateController();
 
 export const candidateRoutes: ApiResource = {
     resource: Resource.Candidates,
@@ -21,7 +15,7 @@ export const candidateRoutes: ApiResource = {
             path: '/',
             auth: true,
             action: Action.ReadAll,
-            schema: FindAllCandidatesSchema,
+            schema: CandidateApiSchema.FindAll,
             handler: candidateController.findAll,
         },
         {
@@ -29,7 +23,7 @@ export const candidateRoutes: ApiResource = {
             path: '/:id',
             auth: true,
             action: Action.ReadById,
-            schema: FindCandidateByIdSchema,
+            schema: CandidateApiSchema.FindById,
             handler: candidateController.findById,
         },
         {
@@ -37,7 +31,7 @@ export const candidateRoutes: ApiResource = {
             path: '/',
             auth: true,
             action: Action.Create,
-            schema: CreateCandidateSchema,
+            schema: CandidateApiSchema.Create,
             handler: candidateController.create,
         },
         {
@@ -45,7 +39,7 @@ export const candidateRoutes: ApiResource = {
             path: '/:id',
             auth: true,
             action: Action.Update,
-            schema: UpdateCandidateSchema,
+            schema: CandidateApiSchema.Update,
             handler: candidateController.update,
         },
         {
@@ -53,7 +47,7 @@ export const candidateRoutes: ApiResource = {
             path: '/:id',
             auth: true,
             action: Action.Delete,
-            schema: DeleteCandidateSchema,
+            schema: CandidateApiSchema.Remove,
             handler: candidateController.remove,
         },
         {
@@ -61,7 +55,7 @@ export const candidateRoutes: ApiResource = {
             path: '/:id/cv',
             auth: true,
             action: Action.candidateUpdateCv,
-            schema: UpdateCandidateCvSchema,
+            schema: CandidateApiSchema.SetCv,
             handler: candidateController.updateCv,
             middlewares: [singleFileUpload],
         },
@@ -70,7 +64,7 @@ export const candidateRoutes: ApiResource = {
             path: '/:id/banner',
             auth: true,
             action: Action.candidateSetBanner,
-            schema: UpdateCandidateBannerSchema,
+            schema: CandidateApiSchema.SetBanner,
             handler: candidateController.updateBanner,
             middlewares: [singleFileUpload],
         },

@@ -3,7 +3,7 @@ import { ZodError } from 'zod';
 import { ErrorRequestHandler } from 'express';
 import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import { ApiError } from '../types/api-error';
-import { logger } from '../services/logging-service';
+import { Logger } from '../services/logging-service';
 
 export const errorHandler: ErrorRequestHandler = (err, _, res, next) => {
     if (err instanceof ApiError && err.expose) {
@@ -51,7 +51,7 @@ export const errorHandler: ErrorRequestHandler = (err, _, res, next) => {
         return;
     }
 
-    logger.error('Unhandled error:', err);
+    Logger.error('Unhandled error:', err);
 
     res.status(HTTPStatus.INTERNAL_SERVER_ERROR).json({
         status: HTTPStatus['500_NAME'],

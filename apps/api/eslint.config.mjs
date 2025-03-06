@@ -22,7 +22,7 @@ export default [
     {
         env: {
             node: true,
-            jest: true
+            jest: true,
         },
         rules: {
             'no-console': 'error',
@@ -90,6 +90,7 @@ export default [
             'prefer-template': 'error',
             'rest-spread-spacing': ['error', 'never'],
             'template-curly-spacing': ['error', 'never'],
+            '@typescript-eslint/no-explicit-any': 'error',
         },
     },
 ];

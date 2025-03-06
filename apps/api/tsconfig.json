@@ -18,6 +18,6 @@
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true
     },
-    "include": ["src/**/*"],
+    "include": ["src/**/*", "../../packages/shared/schemas/schema-builder.ts"],
     "exclude": ["node_modules", "dist"]
 }

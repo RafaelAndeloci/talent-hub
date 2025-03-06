@@ -1,7 +1,7 @@
 import { Role } from '@talent-hub/shared';
 import database from '.';
 import { hasher } from '../../services/hasher';
-import { logger } from '../../services/logging-service';
+import { Logger } from '../../services/logging-service';
 import { config } from '../environment';
 import models from './models';
 
@@ -15,17 +15,17 @@ export const initDatabase = async ({
     alter: boolean;
 }) => {
     try {
-        logger.info('connecting to database...');
+        Logger.info('connecting to database...');
         await database.authenticate();
-        logger.info('database connected!');
+        Logger.info('database connected!');
 
         if (sync) {
-            logger.info('syncing database...');
+            Logger.info('syncing database...');
             await database.sync({
                 force,
                 alter,
             });
-            logger.info('database synced!');
+            Logger.info('database synced!');
         }
 
         await models.User.upsert({
@@ -38,11 +38,11 @@ export const initDatabase = async ({
             createdAt: new Date(),
         });
 
-        logger.info('database up!');
+        Logger.info('database up!');
     } catch (error) {
-        logger.error('database down!', error);
+        Logger.error('database down!', error);
 
-        logger.error('Exiting application...');
+        Logger.error('Exiting application...');
         process.exit(1);
     }
 };

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { logger } from '../services/logging-service';
+import { Logger } from '../services/logging-service';
 import { fileStorageService } from '../services/file-storage-service';
 import { validate } from '../middlewares/validation-middleware';
 import { Router } from 'express';
@@ -32,7 +32,7 @@ export const getStaticFilesRouter = () => {
                 stream.pipe(res);
 
                 stream.on('error', (error) => {
-                    logger.error(error);
+                    Logger.error(error);
                     res.status(500).send('Internal server error');
                 });
 

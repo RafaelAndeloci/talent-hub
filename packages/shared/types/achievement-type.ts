@@ -1,4 +1,4 @@
-export enum AchievementType {
+enum AchievementType {
     /** Curso, treinamento */
     TrainingCertificate = 'training_certificate',
     /** Participação em evento */
@@ -10,3 +10,5 @@ export enum AchievementType {
     /** Realização */
     Achievement = 'achievement',
 }
+
+export default AchievementType;

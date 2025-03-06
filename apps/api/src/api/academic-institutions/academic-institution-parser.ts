@@ -1,53 +1,45 @@
 import {
     AcademicInstitution,
     AcademicInstitutionDto,
-    CreateAcademicInstitutionPayload,
-    Role,
-    SuggestionStatus,
+    AcademicInstitutionPayload,
+    newUUID,
+    UserDto,
 } from '@talent-hub/shared';
-import { AcademicInstitutionModelAttr } from '../../types/academic-institution-model-attr';
-import _ from 'lodash';
-import * as uuid from 'uuid';
+import DbParser from '@talent-hub/shared/types/db-parser';
+import { AcademicInstitutionModelAttr } from './academic-institution-model';
+import {
+    fromPlainSuggestion,
+    makeSuggestionForUser,
+    plainSuggestion,
+} from '../../utils/suggestion-util';
 
-export const AcademicInstitutionParser = {
-    toDatabase: (academicInstitution: AcademicInstitution): AcademicInstitutionModelAttr => {
-        const { validation, ...rest } = academicInstitution;
-        return {
-            ...rest,
-            validatedBy: validation?.by ?? null,
-            validatedAt: validation?.at ?? null,
-        };
-    },
+type AcademicInstitutionParser = DbParser<AcademicInstitution, AcademicInstitutionModelAttr> & {
+    newInstance: (args: {
+        payload: AcademicInstitutionPayload;
+        user: UserDto;
+    }) => AcademicInstitution;
+    toDto: (a: AcademicInstitution) => AcademicInstitutionDto;
+};
 
-    fromDatabase: (academicInstitutionModel: AcademicInstitutionModelAttr): AcademicInstitution => {
-        const { validatedBy, validatedAt, ...rest } = academicInstitutionModel;
-        return {
-            ...rest,
-            validation:
-                validatedAt && validatedBy
-                    ? {
-                          by: validatedBy,
-                          at: validatedAt,
-                      }
-                    : null,
-        };
-    },
-
-    newInstance: ({
-        payload,
-        userRole,
-    }: {
-        payload: CreateAcademicInstitutionPayload;
-        userRole: Role;
-    }): AcademicInstitution => {
-        return {
-            id: uuid.v4(),
-            ...payload,
-            status:
-                userRole === Role.SysAdmin ? SuggestionStatus.Approved : SuggestionStatus.Pending,
-            validation: null,
-        };
-    },
-
-    toDto: (a: AcademicInstitution) => _.omit(a, ['validation']) as AcademicInstitutionDto,
+export const AcademicInstitutionParser: AcademicInstitutionParser = {
+    newInstance: ({ payload, user }) => ({
+        id: newUUID(),
+        ...payload,
+        suggestion: makeSuggestionForUser(user),
+    }),
+    toDto: ({ suggestion, ...rest }) => ({ ...rest, status: suggestion.status }),
+    toDb: (entity) => ({
+        ...entity,
+        ...plainSuggestion(entity.suggestion),
+    }),
+    fromDb: ({ suggestedAt, suggestedBy, status, validatedAt, validatedBy, ...rest }) => ({
+        ...rest,
+        suggestion: fromPlainSuggestion({
+            suggestedAt,
+            suggestedBy,
+            status,
+            validatedAt,
+            validatedBy,
+        }),
+    }),
 };

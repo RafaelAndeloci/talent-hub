@@ -2,21 +2,23 @@ import path from 'path';
 import fs from 'fs/promises';
 
 import { AppEvent } from '../../enums/app-event';
-import { logger } from '../../services/logging-service';
-import { userRepository } from './user-repository';
+import { Logger } from '../../services/logging-service';
 import { config } from '../../config/environment';
 import moment from 'moment';
-import { emailService } from '../../services/email-service';
-import { Role } from '@talent-hub/shared';
+import UserRepository from './user-repository';
+import Role from '@talent-hub/shared/types/role';
+import EmailService from '../../services/email-service';
 
 const emailTemplatePath = path.resolve(__dirname, '../../../static/templates/emails');
+
+const userRepository = new UserRepository();
 
 export const UserEventHandler = {
     [AppEvent.UserCreated]: async ({ userId }: { userId: string }) => {
         try {
             const user = await userRepository.findById(userId);
             if (!user) {
-                logger.info(
+                Logger.info(
                     `Cannot process event ${AppEvent.UserCreated}: user ${userId} not found`,
                 );
                 return;
@@ -27,7 +29,7 @@ export const UserEventHandler = {
             }
 
             if (!user.emailConfirmation || user.emailConfirmation.sentAt) {
-                logger.info(`confirmation email already sent to user ${user.username}`);
+                Logger.info(`confirmation email already sent to user ${user.username}`);
                 return;
             }
 
@@ -46,19 +48,19 @@ export const UserEventHandler = {
                 )
                 .replace('@currYear', moment().format('YYYY'));
 
-            await emailService.send({
+            await EmailService.send({
                 to: user.email,
                 subject: `${user.username}, bem-vindo ao Talent Hub! Confirme seu e-mail`,
                 body: emailContent,
                 isHtml: true,
             });
 
-            user.emailConfirmation.sentAt = new Date();
-            await userRepository.update(user);
+            user.emailConfirmation.sentAt = moment();
+            await userRepository.update({ entity: user });
 
-            logger.info(`Confirmation email sent to user ${user.username}`);
+            Logger.info(`Confirmation email sent to user ${user.username}`);
         } catch (error) {
-            logger.error(`Error processing event ${AppEvent.UserCreated}: ${error}`);
+            Logger.error(`Error processing event ${AppEvent.UserCreated}: ${error}`);
         }
     },
 
@@ -66,7 +68,7 @@ export const UserEventHandler = {
         try {
             const user = await userRepository.findById(userId);
             if (!user) {
-                logger.info(`cannot process event ${AppEvent.UserPasswordChanged}: user not found`);
+                Logger.info(`cannot process event ${AppEvent.UserPasswordChanged}: user not found`);
                 return;
             }
 
@@ -74,7 +76,7 @@ export const UserEventHandler = {
 
             const emailBody = await fs.readFile(templatePath, 'utf8');
 
-            await emailService.send({
+            await EmailService.send({
                 to: user.email,
                 subject: 'Password changed',
                 body: emailBody
@@ -83,36 +85,36 @@ export const UserEventHandler = {
                 isHtml: true,
             });
         } catch (e) {
-            logger.error(
+            Logger.error(
                 `Error processing event ${AppEvent.UserPasswordChanged}: ${(e as unknown as Error).message}`,
             );
         }
     },
 
     [AppEvent.UserPasswordResetTokenRequested]: async ({ userId }: { userId: string }) => {
-        logger.info(
+        Logger.info(
             `processing event: ${AppEvent.UserPasswordResetTokenRequested} for user ${userId}`,
         );
 
         try {
             const user = await userRepository.findById(userId);
             if (!user) {
-                logger.error(
+                Logger.error(
                     `cannot process event: ${AppEvent.UserPasswordResetTokenRequested} for user ${userId}`,
                 );
                 return;
             }
 
             if (!user!.passwordReset) {
-                logger.error(
+                Logger.error(
                     `cannot process event: ${AppEvent.UserPasswordResetTokenRequested} for user ${userId} because password reset info is missing`,
                 );
                 return;
             }
 
-            const isExpired = moment.unix(user!.passwordReset.expiration).isBefore(moment());
+            const isExpired = user!.passwordReset.expiresAt.isBefore(moment());
             if (isExpired) {
-                logger.error(
+                Logger.error(
                     `cannot process event: ${AppEvent.UserPasswordResetTokenRequested} for user ${userId} because password reset token is expired`,
                 );
                 return;
@@ -132,20 +134,21 @@ export const UserEventHandler = {
                 .replace('@resetPasswordUrl', resetTokenUrl)
                 .replace('@currYear', moment().format('YYYY'));
 
-            await emailService.send({
+            await EmailService.send({
                 to: user.email,
                 subject: 'Password reset',
                 body: emailBody,
                 isHtml: true,
             });
         } catch (error) {
-            logger.error(
+            Logger.error(
                 `error processing event: ${AppEvent.UserPasswordResetTokenRequested}`,
                 error,
             );
         }
     },
 
+    //TODO
     [AppEvent.UserEmailConfirmed]: (id: string) => {
         console.log(`User ${id} password reset`);
     },

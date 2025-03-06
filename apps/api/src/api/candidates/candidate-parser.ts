@@ -1,182 +1,386 @@
-import * as uuid from 'uuid';
-import moment from 'moment';
+import { Candidate, CandidateDto, CandidatePayload, newUUID } from '@talent-hub/shared';
+import { CandidateModelAttr } from './candidate-model';
+import { DbParser } from '@talent-hub/shared/types/db-parser';
 
-import _ from 'lodash';
-import { CandidateParser } from '../../types/candidate-parser';
+type CandidateParser = DbParser<Candidate, CandidateModelAttr> & {
+    toDto: (candidate: Candidate) => CandidateDto;
 
-export const candidateParser: CandidateParser = {
-    toDatabase: (candidate) => ({
-        ...candidate,
-        contactEmail: candidate.contact.email,
-        contactPhone: candidate.contact.phone,
-        ...candidate.social,
-        salaryPreference: candidate.preferences.salary,
-        employmentRegimePreference: candidate.preferences.employmentRegime,
-        employmentTypePreference: candidate.preferences.employmentType,
-        workplaceTypePreference: candidate.preferences.workplaceType,
-        benefitsPreference: candidate.preferences.benefits,
-        positionLevelPreference: candidate.preferences.positionLevel,
-        educationalExperiences: candidate.experiences.education.map((education) => ({
-            ...education,
-            startYear: education.period.start.year,
-            startMonth: education.period.start.month,
-            endYear: education.period.end?.year ?? null,
-            endMonth: education.period.end?.month ?? null,
-            gradePointAverage: Number(education.gradePointAverage),
-            expectedGraduationYear: education.expectedGraduation?.year ?? null,
-            expectedGraduationMonth: education.expectedGraduation?.month ?? null,
-        })),
-        professionalExperiences: candidate.experiences.professional.map((experience) => ({
-            ...experience,
-            startYear: experience.period.start.year,
-            startMonth: experience.period.start.month,
-            endYear: experience.period.end?.year ?? null,
-            endMonth: experience.period.end?.month ?? null,
-        })),
-    }),
+    newInstance: ({ userId, payload }: { userId: string; payload: CandidatePayload }) => Candidate;
 
-    fromDatabase: (model) => ({
-        id: model.id,
-        userId: model.userId,
-        fullName: model.fullName,
-        birthDate: moment(model.birthDate.toString(), true).format('YYYY-MM-DD'),
-        contact: {
-            email: model.contactEmail,
-            phone: model.contactPhone,
-        },
-        address: model.address,
-        cvUrl: model.cvUrl,
-        about: model.about,
-        professionalHeadline: model.professionalHeadline,
-        bannerUrl: model.bannerUrl,
-        hobbies: model.hobbies,
+    merge: (args: { original: Candidate; changes: CandidatePayload }) => Candidate;
+};
+
+export const CandidateParser: CandidateParser = {
+    fromDb: ({
+        employmentRegimePreference,
+        employmentTypePreference,
+        workplaceTypePreference,
+        benefitsPreference,
+        positionLevelPreference,
+        contactEmail,
+        contactPhone,
+        linkedin,
+        github,
+        website,
+        facebook,
+        instagram,
+        medium,
+        twitter,
+        youtube,
+        salaryExpectation,
+        academicBackgrounds,
+        professionalExperiences,
+        languages,
+        references,
+        achievements,
+        skills,
+        ...rest
+    }) => ({
+        ...rest,
+        contact: { email: contactEmail, phone: contactPhone },
         social: {
-            linkedin: model.linkedin,
-            github: model.github,
-            twitter: model.twitter,
-            facebook: model.facebook,
-            instagram: model.instagram,
-            youtube: model.youtube,
-            medium: model.medium,
-            website: model.website,
+            linkedin,
+            github,
+            website,
+            facebook,
+            instagram,
+            medium,
+            twitter,
+            youtube,
         },
-        isAvailableForWork: model.isAvailableForWork,
-        allowThirdPartyApplications: model.allowThirdPartyApplications,
         preferences: {
-            salary: Number(model.salaryPreference),
-            employmentRegime: model.employmentRegimePreference,
-            employmentType: model.employmentTypePreference,
-            workplaceType: model.workplaceTypePreference,
-            benefits: model.benefitsPreference,
-            positionLevel: model.positionLevelPreference,
+            employmentRegime: employmentRegimePreference,
+            employmentType: employmentTypePreference,
+            workplaceType: workplaceTypePreference,
+            benefits: benefitsPreference,
+            positionLevel: positionLevelPreference,
+            salary: salaryExpectation,
         },
-        experiences: {
-            education: model.educationalExperiences.map((e) => ({
-                degree: e.degree,
-                fieldOfStudy: e.fieldOfStudy,
-                status: e.status,
-                type: e.type,
-                institution: e.institution,
-                institutionWebsite: e.institutionWebsite,
-                description: e.description,
-                period: {
-                    start: {
-                        year: e.startYear,
-                        month: e.startMonth,
-                    },
-                    end: e.endYear
-                        ? {
-                              year: e.endYear,
-                              month: e.endMonth!,
-                          }
-                        : null,
-                },
-                isCurrent: e.isCurrent,
-                semesters: e.semesters,
-                currentSemester: e.currentSemester,
-                institutionRegistrationNumber: e.institutionRegistrationNumber,
-                gradePointAverage: Number(e.gradePointAverage),
-                expectedGraduation: e.expectedGraduationYear
-                    ? {
-                          year: e.expectedGraduationYear,
-                          month: e.expectedGraduationMonth!,
-                      }
-                    : null,
-            })),
-            professional: model.professionalExperiences.map((p) => ({
-                position: p.position,
-                description: p.description,
-                company: p.company,
-                employmentType: p.employmentType,
-                workplaceType: p.workplaceType,
-                positionLevel: p.positionLevel,
-                isCurrent: p.isCurrent,
-                period: {
-                    start: {
-                        year: p.startYear,
-                        month: p.startMonth,
-                    },
-                    end: p.isCurrent
-                        ? null
-                        : {
-                              year: p.endYear!,
-                              month: p.endMonth!,
-                          },
-                },
-                location: p.location,
-                relatedSkills: p.relatedSkills,
-                responsibilities: p.responsibilities,
-            })),
-        },
-        references: model.references.map((r) => ({
-            name: r.name,
-            position: r.position,
-            phone: r.phone,
-            email: r.email,
-            relationship: r.relationship,
-            company: r.company,
+        academicBackgrounds: academicBackgrounds.map(
+            ({ course, institution, candidateId, periodEnd, periodStart, ...rest }) => ({
+                ...rest,
+                course,
+                institution,
+                candidate: { id: candidateId },
+                period: { start: periodStart, end: periodEnd },
+            }),
+        ),
+        professionalExperiences: professionalExperiences.map(
+            ({ candidateId, periodEnd, periodStart, ...rest }) => ({
+                ...rest,
+                candidate: { id: candidateId },
+                period: { start: periodStart, end: periodEnd },
+            }),
+        ),
+        languages: languages.map(({ candidateId, ...rest }) => ({
+            ...rest,
+            candidate: { id: candidateId },
         })),
-        languages: model.languages.map((l) => ({
-            language: l.language,
-            writtenLevel: l.writtenLevel,
-            spokenLevel: l.spokenLevel,
-            readingLevel: l.readingLevel,
-            listeningLevel: l.listeningLevel,
+        references: references.map(({ candidateId, contactEmail, contactPhone, ...rest }) => ({
+            ...rest,
+            candidate: { id: candidateId },
+            contact: { email: contactEmail, phone: contactPhone },
         })),
-        achievements: model.achievements.map((a) => ({
-            name: a.name,
-            type: a.type,
-            issuer: a.issuer,
-            issueDate: a.issueDate,
-            workload: a.workload,
-            expirationDate: a.expirationDate,
-            credentialId: a.credentialId,
-            credentialUrl: a.credentialUrl,
-            relatedSkills: a.relatedSkills,
+        achievements: achievements.map(({ candidateId, credentialId, credentialUrl, ...rest }) => ({
+            ...rest,
+            candidate: { id: candidateId },
+            credential: { id: credentialId, url: credentialUrl },
+        })),
+        skills: skills.map(({ candidateId, skill, ...rest }) => ({
+            ...rest,
+            candidate: { id: candidateId },
+            skill,
         })),
     }),
 
-    newInstance: ({ userId, payload }) => ({
-        id: uuid.v4(),
+    toDb: ({
+        contact,
+        social,
+        preferences,
+        academicBackgrounds,
+        professionalExperiences,
+        languages,
+        references,
+        achievements,
+        skills,
+        ...rest
+    }) => ({
+        ...rest,
+        contactEmail: contact.email,
+        contactPhone: contact.phone,
+        linkedin: social.linkedin,
+        github: social.github,
+        website: social.website,
+        facebook: social.facebook,
+        instagram: social.instagram,
+        medium: social.medium,
+        twitter: social.twitter,
+        youtube: social.youtube,
+        salaryExpectation: preferences.salary,
+        employmentRegimePreference: preferences.employmentRegime,
+        employmentTypePreference: preferences.employmentType,
+        workplaceTypePreference: preferences.workplaceType,
+        benefitsPreference: preferences.benefits,
+        positionLevelPreference: preferences.positionLevel,
+        academicBackgrounds: academicBackgrounds.map(
+            ({ course, institution, candidate, period, ...rest }) => ({
+                ...rest,
+                course,
+                courseId: course.id,
+                institution,
+                institutionId: institution.id,
+                candidateId: candidate.id,
+                periodStart: period.start,
+                periodEnd: period.end,
+            }),
+        ),
+        professionalExperiences: professionalExperiences.map(({ candidate, period, ...rest }) => ({
+            ...rest,
+            candidateId: candidate.id,
+            periodStart: period.start,
+            periodEnd: period.end,
+        })),
+        languages: languages.map(({ candidate, ...rest }) => ({
+            ...rest,
+            candidateId: candidate.id,
+        })),
+        references: references.map(({ candidate, contact, ...rest }) => ({
+            ...rest,
+            candidateId: candidate.id,
+            contactEmail: contact.email,
+            contactPhone: contact.phone,
+        })),
+        achievements: achievements.map(({ candidate, credential, ...rest }) => ({
+            ...rest,
+            candidateId: candidate.id,
+            credentialId: credential.id,
+            credentialUrl: credential.url,
+        })),
+        skills: skills.map(({ candidate, skill, ...rest }) => ({
+            ...rest,
+            candidateId: candidate.id,
+            skillId: skill.id,
+            skill,
+        })),
+    }),
+
+    toDto: ({ userId, ...dto }) => dto,
+
+    newInstance: ({
         userId,
-        fullName: payload.fullName,
-        birthDate: payload.birthDate,
-        professionalHeadline: payload.professionalHeadline,
-        contact: payload.contact,
-        address: payload.address,
-        cvUrl: null,
-        about: payload.about,
-        bannerUrl: null,
-        hobbies: payload.hobbies,
-        social: payload.social,
-        isAvailableForWork: payload.isAvailableForWork,
-        allowThirdPartyApplications: payload.allowThirdPartyApplications,
-        preferences: payload.preferences,
-        experiences: payload.experiences,
-        languages: payload.languages,
-        references: payload.references,
-        achievements: payload.achievements,
-    }),
+        payload: {
+            academicBackgrounds,
+            achievements,
+            professionalExperiences,
+            references,
+            languages,
+            skills,
+            ...rest
+        },
+    }) => {
+        const candidateId = newUUID();
+        return {
+            id: candidateId,
+            cvUrl: null,
+            bannerUrl: null,
+            userId,
+            ...rest,
+            academicBackgrounds: academicBackgrounds.map(
+                ({ course, institution, ...academicBackground }) => ({
+                    ...academicBackground,
+                    id: newUUID(),
+                    candidate: {
+                        id: candidateId,
+                    },
+                    course: {
+                        id: course.id,
+                        name: null,
+                        degreeType: null,
+                    },
+                    institution: {
+                        id: institution.id,
+                        name: null,
+                    },
+                }),
+            ),
+            achievements: achievements.map((achievement) => ({
+                ...achievement,
+                id: newUUID(),
+                candidate: {
+                    id: candidateId,
+                },
+            })),
+            professionalExperiences: professionalExperiences.map((professionalExperience) => ({
+                ...professionalExperience,
+                id: newUUID(),
+                candidate: {
+                    id: candidateId,
+                },
+            })),
+            references: references.map((reference) => ({
+                ...reference,
+                id: newUUID(),
+                candidate: {
+                    id: candidateId,
+                },
+            })),
+            languages: languages.map((language) => ({
+                ...language,
+                id: newUUID(),
+                candidate: {
+                    id: candidateId,
+                },
+            })),
+            skills: skills.map(({ skill, ...candidateSkill }) => ({
+                ...candidateSkill,
+                id: newUUID(),
+                candidate: {
+                    id: candidateId,
+                },
+                skill: {
+                    id: skill.id,
+                    name: null,
+                    type: null,
+                },
+            })),
+        };
+    },
 
-    toDto: ({ candidate }) => _.omit(candidate, 'userId'),
+    merge: ({
+        original,
+        changes: {
+            academicBackgrounds,
+            achievements,
+            professionalExperiences,
+            references,
+            languages,
+            skills,
+            ...changes
+        },
+    }) => ({
+        id: original.id,
+        cvUrl: original.cvUrl,
+        bannerUrl: original.bannerUrl,
+        userId: original.userId,
+        ...changes,
+        academicBackgrounds: academicBackgrounds.map(
+            ({ course, institution, ...academicBackground }) => {
+                const existing = original.academicBackgrounds.find(
+                    (a) => course.id === a.course.id && a.institution.id === institution.id,
+                );
+
+                return existing
+                    ? {
+                          ...existing,
+                          ...academicBackground,
+                      }
+                    : {
+                          ...academicBackground,
+                          id: newUUID(),
+                          candidate: {
+                              id: original.id,
+                          },
+                          course: {
+                              id: course.id,
+                              name: null,
+                              degreeType: null,
+                          },
+                          institution: {
+                              id: institution.id,
+                              name: null,
+                          },
+                      };
+            },
+        ),
+        achievements: achievements.map((achievement) => {
+            const existing = original.achievements.find((a) => a.name === achievement.name);
+
+            return existing
+                ? {
+                      ...existing,
+                      ...achievement,
+                  }
+                : {
+                      ...achievement,
+                      id: newUUID(),
+                      candidate: {
+                          id: original.id,
+                      },
+                  };
+        }),
+        professionalExperiences: professionalExperiences.map((professionalExperience) => {
+            const existing = original.professionalExperiences.find(
+                (pe) =>
+                    pe.position === professionalExperience.position &&
+                    pe.company === professionalExperience.company,
+            );
+
+            return existing
+                ? {
+                      ...existing,
+                      ...professionalExperience,
+                  }
+                : {
+                      ...professionalExperience,
+                      id: newUUID(),
+                      candidate: {
+                          id: original.id,
+                      },
+                  };
+        }),
+        references: references.map((reference) => {
+            const existing = original.references.find((r) => r.name === reference.name);
+
+            return existing
+                ? {
+                      ...existing,
+                      ...reference,
+                  }
+                : {
+                      ...reference,
+                      id: newUUID(),
+                      candidate: {
+                          id: original.id,
+                      },
+                  };
+        }),
+        languages: languages.map((language) => {
+            const existing = original.languages.find((l) => l.language === language.language);
+
+            return existing
+                ? {
+                      ...existing,
+                      ...language,
+                  }
+                : {
+                      ...language,
+                      id: newUUID(),
+                      candidate: {
+                          id: original.id,
+                      },
+                  };
+        }),
+
+        skills: skills.map(({ skill, ...candidateSkill }) => {
+            const existing = original.skills.find((s) => s.skill.id === skill.id);
+
+            return existing
+                ? {
+                      ...existing,
+                      ...candidateSkill,
+                  }
+                : {
+                      ...candidateSkill,
+                      id: newUUID(),
+                      candidate: {
+                          id: original.id,
+                      },
+                      skill: {
+                          id: skill.id,
+                          name: null,
+                          type: null,
+                      },
+                  };
+        }),
+    }),
 };

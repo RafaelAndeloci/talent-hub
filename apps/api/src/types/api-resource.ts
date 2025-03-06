@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { z } from 'zod';
 import { Action } from '../enums/action';
 import { Resource } from '../enums/resource';

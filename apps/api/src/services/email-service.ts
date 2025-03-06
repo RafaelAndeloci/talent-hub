@@ -2,8 +2,6 @@ import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 import HTTPStatus from 'http-status';
 
 import { config } from '../config/environment';
-import { logger } from './logging-service';
-import { EmailService } from './types/email-service';
 
 const {
     aws: {
@@ -22,8 +20,18 @@ const sesClient = new SESClient({
     },
 });
 
-export const emailService: EmailService = {
-    send: async ({ body, isHtml, to, subject }) => {
+export default class EmailService {
+    public static async send({
+        body,
+        isHtml,
+        to,
+        subject,
+    }: {
+        body: string;
+        isHtml?: boolean;
+        to: string;
+        subject: string;
+    }) {
         try {
             const command = new SendEmailCommand({
                 Destination: {
@@ -46,11 +54,11 @@ export const emailService: EmailService = {
             });
             const response = await sesClient.send(command);
             if (response.$metadata.httpStatusCode !== HTTPStatus.OK) {
-                logger.error('Error sending email', response);
+                console.log('Error sending email', response);
             }
         } catch (error) {
-            logger.error('Error sending email', error);
+            console.log('Error sending email', error);
             throw error;
         }
-    },
-};
+    }
+}

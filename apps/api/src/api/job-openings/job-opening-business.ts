@@ -99,7 +99,7 @@ export const jobOpeningBusiness: JobOpeningBusiness = {
             ApiError.throwBadRequest('job opening cannot be closed');
         }
 
-        jobOpening.status = JobOpeningStatus.closed;
+        jobOpening.status = JobOpeningStatus.Closed;
 
         await jobOpeningRepository.update(jobOpening);
 
@@ -120,11 +120,11 @@ export const jobOpeningBusiness: JobOpeningBusiness = {
             return null!;
         }
 
-        if (jobOpening.status !== JobOpeningStatus.draft) {
+        if (jobOpening.status !== JobOpeningStatus.Draft) {
             ApiError.throwBadRequest('job opening cannot be opened');
         }
 
-        jobOpening.status = JobOpeningStatus.open;
+        jobOpening.status = JobOpeningStatus.Open;
 
         await jobOpeningRepository.update(jobOpening);
 
@@ -145,11 +145,11 @@ export const jobOpeningBusiness: JobOpeningBusiness = {
             return null!;
         }
 
-        if (jobOpening.status !== JobOpeningStatus.open) {
+        if (jobOpening.status !== JobOpeningStatus.Open) {
             ApiError.throwBadRequest('job opening cannot be filled');
         }
 
-        jobOpening.status = JobOpeningStatus.filled;
+        jobOpening.status = JobOpeningStatus.Filled;
         jobOpening.selectedApplicationId = payload.selectedJobApplicationId;
 
         await jobOpeningRepository.update(jobOpening);
@@ -171,7 +171,7 @@ export const jobOpeningBusiness: JobOpeningBusiness = {
             return null!;
         }
 
-        if (jobOpening.status !== JobOpeningStatus.open) {
+        if (jobOpening.status !== JobOpeningStatus.Open) {
             ApiError.throwBadRequest('job opening cannot be set to draft');
         }
 
@@ -185,7 +185,7 @@ export const jobOpeningBusiness: JobOpeningBusiness = {
             );
         }
 
-        jobOpening.status = JobOpeningStatus.draft;
+        jobOpening.status = JobOpeningStatus.Draft;
 
         await jobOpeningRepository.update(jobOpening);
 
@@ -216,7 +216,7 @@ export const jobOpeningBusiness: JobOpeningBusiness = {
             return null!;
         }
 
-        const acceptNewApplications = jobOpening.status === JobOpeningStatus.open;
+        const acceptNewApplications = jobOpening.status === JobOpeningStatus.Open;
         if (!acceptNewApplications) {
             ApiError.throwUnprocessableEntity(
                 `job opening ${jobOpeningId} is not accepting applications`,
@@ -228,8 +228,8 @@ export const jobOpeningBusiness: JobOpeningBusiness = {
 
     canBeClosed: ({ jobOpening }) => {
         const closableStatuses: JobOpeningStatus[] = [
-            JobOpeningStatus.open,
-            JobOpeningStatus.draft,
+            JobOpeningStatus.Open,
+            JobOpeningStatus.Draft,
         ];
         return closableStatuses.includes(jobOpening.status);
     },

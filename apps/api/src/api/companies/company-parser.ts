@@ -1,44 +1,66 @@
-import { Role } from '@talent-hub/shared';
-import _ from 'lodash';
-import { CompanyParser } from '../../types/company-parser';
+import { Company, CompanyDto, CompanyPayload, DbParser, newUUID } from '@talent-hub/shared';
+import { CompanyModelAttr } from './company-model';
+import Role from '@talent-hub/shared/types/role';
 
-export const companyParser: CompanyParser = {
-    toDto: ({ company, userRole }) =>
-        userRole === Role.Candidate ? _.omit(company, ['cnpj']) : company,
+type CompanyParser = DbParser<Company, CompanyModelAttr> & {
+    toDto: (args: { company: Company; userRole: Role }) => CompanyDto;
 
-    toDatabase: (c) => ({
+    newInstance: (company: CompanyPayload) => Company;
+
+    merge: (args: { original: Company; changes: CompanyPayload }) => Company;
+};
+
+export const CompanyParser: CompanyParser = {
+    toDb: (c) => ({
         ...c,
         ...c.social,
         contactPhone: c.contact.phone,
         contactEmail: c.contact.email,
     }),
 
-    fromDatabase: (c) => ({
-        id: c.id,
-        tradeName: c.tradeName,
-        legalName: c.legalName,
-        cnpj: c.cnpj,
-        employeesQuantity: c.employeesQuantity,
-        foundationYear: c.foundationYear,
+    fromDb: ({
+        youtube,
+        linkedin,
+        github,
+        instagram,
+        facebook,
+        twitter,
+        medium,
+        website,
+        contactPhone,
+        contactEmail,
+        ...rest
+    }) => ({
+        ...rest,
         social: {
-            linkedin: c.linkedin,
-            github: c.github,
-            instagram: c.instagram,
-            facebook: c.facebook,
-            twitter: c.twitter,
-            youtube: c.youtube,
-            medium: c.medium,
-            website: c.website,
+            youtube,
+            linkedin,
+            github,
+            instagram,
+            facebook,
+            twitter,
+            medium,
+            website,
         },
-        about: c.about,
-        contact: { phone: c.contactPhone, email: c.contactEmail },
-        location: c.location,
-        bannerUrl: c.bannerUrl,
-        logoUrl: c.logoUrl,
-        mission: c.mission,
-        vision: c.vision,
-        values: c.values,
-        industry: c.industry,
-        gallery: c.gallery,
+        contact: { phone: contactPhone, email: contactEmail },
+    }),
+
+    toDto: ({ company: { cnpj, ...rest }, userRole }) =>
+        userRole === Role.Candidate ? { ...rest } : { ...rest, cnpj },
+
+    newInstance: (payload) => ({
+        id: newUUID(),
+        ...payload,
+        gallery: [],
+        banner: null,
+        logo: null,
+    }),
+
+    merge: ({ original, changes }) => ({
+        id: original.id,
+        ...changes,
+        gallery: original.gallery,
+        banner: original.banner,
+        logo: original.logo,
     }),
 };

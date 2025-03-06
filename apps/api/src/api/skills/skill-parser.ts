@@ -1,34 +1,42 @@
-import { Validation } from '@talent-hub/shared';
+import { newUUID, Skill, SkillDto, SkillPayload, UserDto } from '@talent-hub/shared';
+import DbParser from '@talent-hub/shared/types/db-parser';
 import _ from 'lodash';
-import { SkillParser } from '../../types/skill-parser';
+import { SkillModelAttr } from './skill-model';
+import {
+    fromPlainSuggestion,
+    makeSuggestionForUser,
+    plainSuggestion,
+} from '../../utils/suggestion-util';
 
-export const skillParser: SkillParser = {
-    fromDatabase: (data) => ({
+type SkillParser = DbParser<Skill, SkillModelAttr> & {
+    toDto: (data: Skill) => SkillDto;
+    newInstance: (args: { payload: SkillPayload; user: UserDto }) => Skill;
+};
+
+export const SkillParser: SkillParser = {
+    fromDb: (data) => ({
         id: data.id,
         name: data.name,
-        status: data.status,
         categories: data.categories,
         type: data.type,
         tags: data.tags,
-        relatedSkills: (data as any).relatedSkills,
-        validation: data.validatedAt
-            ? ({ by: data.validatedBy!, at: data.validatedAt! } as Validation)
-            : null,
-        suggestedBy: data.suggestedBy,
+        suggestion: fromPlainSuggestion(data),
     }),
 
-    toDatabase: (data) => ({
+    toDb: (data) => ({
         id: data.id,
         name: data.name,
-        status: data.status,
         categories: data.categories,
         type: data.type,
         tags: data.tags,
-        suggestedBy: data.suggestedBy,
-        relatedSkills: data.relatedSkills,
-        validatedAt: data.validation?.at ?? null,
-        validatedBy: data.validation?.by ?? null,
+        ...plainSuggestion(data.suggestion),
     }),
 
-    toDto: (data) => _.omit(data, ['validation', 'suggestedBy']),
+    toDto: ({ suggestion: { status }, ...rest }) => ({ ...rest, status }),
+
+    newInstance: ({ payload, user }) => ({
+        id: newUUID(),
+        ...payload,
+        suggestion: makeSuggestionForUser(user),
+    }),
 };

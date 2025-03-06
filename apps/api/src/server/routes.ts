@@ -5,7 +5,7 @@ import { AnyRequestHandler, ApiResource, Route } from '../types/api-resource';
 import { authorize } from '../middlewares/authorization-middleware';
 import { validate } from '../middlewares/validation-middleware';
 import { Resource } from '../enums/resource';
-import { logger } from '../services/logging-service';
+import { Logger } from '../services/logging-service';
 import { config } from '../config/environment';
 import { authenticate } from '../middlewares/authentication-middleware';
 
@@ -30,12 +30,12 @@ const buildActionPipe = (
 
     middlewarePipe.push(async (req, res, next) => {
         try {
-            const timer = logger.startTimer();
-            logger.info(`Resource[${resource}]: ${action} stated ${timer.start}`);
+            const timer = Logger.startTimer();
+            Logger.info(`Resource[${resource}]: ${action} stated ${timer.start}`);
             await handler(req, res, next);
             timer.done({ message: `Resource[${resource}]: ${action} completed in ` });
         } catch (e) {
-            logger.error(`Resource[${resource}]: ${action} failed`, e);
+            Logger.error(`Resource[${resource}]: ${action} failed`, e);
             next(e);
         }
     });

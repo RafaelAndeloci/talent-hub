@@ -1,56 +1,89 @@
 import HTTPStatus from 'http-status';
-import { userBusiness } from './user-business';
-import { UserController } from '../../types/user-controller';
+import UserBusiness from './user-business';
+import { RequestHandler } from 'express';
+import {
+    User,
+    AuthResult,
+    AuthPayload,
+    ConfirmEmailPayload,
+    ConfirmPasswordChangePayload,
+    CreateUserPayload,
+    SendChangePasswordTokenPayload,
+    PagedResponse,
+    QueryArgs,
+    UserDto,
+} from '@talent-hub/shared';
 
-export const userController: UserController = {
-    findById: async ({ params: { id: userId } }, res) => {
-        const userDto = await userBusiness.findById({ userId });
-        res.status(HTTPStatus.OK).json(userDto);
-    },
+export default class UserController {
+    constructor(private userBusiness: UserBusiness = new UserBusiness()) {}
 
-    findAll: async ({ query }, res) => {
-        const usersDto = await userBusiness.findAll({ query });
-        res.status(HTTPStatus.OK).json(usersDto);
-    },
+    findById: RequestHandler<{ id: string }, UserDto, void, void, UserDto> = async (req, res) => {
+        const { id } = req.params;
+        const user = await this.userBusiness.findById({ userId: id });
+        res.json(user);
+    };
 
-    create: async ({ body }, res) => {
-        const userDto = await userBusiness.create({ payload: body });
-        res.status(HTTPStatus.CREATED).json(userDto);
-    },
-
-    auth: async ({ body }, res) => {
-        const authDto = await userBusiness.auth({ payload: body });
-        res.status(HTTPStatus.OK).json(authDto);
-    },
-
-    updateProfilePicture: async (
-        { params: { id: userId }, file: { buffer, mimetype } = {} },
+    findAll: RequestHandler<void, PagedResponse<UserDto>, void, QueryArgs<User>, UserDto> = async (
+        req,
         res,
     ) => {
-        const userDto = await userBusiness.updateProfilePicture({
-            userId,
-            file: { content: buffer!, mimetype: mimetype! },
+        const users = await this.userBusiness.findAll({ query: req.query });
+        res.json(users);
+    };
+
+    create: RequestHandler<void, UserDto, CreateUserPayload, void, UserDto> = async (req, res) => {
+        const user = await this.userBusiness.create({ payload: req.body });
+        res.status(HTTPStatus.CREATED).json(user);
+    };
+
+    auth: RequestHandler<void, AuthResult, AuthPayload, void, {}> = async (req, res) => {
+        const { identifier, password } = req.body;
+        const token = await this.userBusiness.auth({ payload: { identifier, password } });
+        res.json(token);
+    };
+
+    updateProfilePicture: RequestHandler<{ id: string }, UserDto, void, void> = async (
+        req,
+        res,
+    ) => {
+        const { id } = req.params;
+        const { buffer, mimetype } = req.file!;
+        const user = await this.userBusiness.updateProfilePicture({
+            userId: id,
+            file: { content: buffer, mimetype },
         });
-        res.status(HTTPStatus.OK).json(userDto);
-    },
+        res.json(user);
+    };
 
-    remove: async ({ params: { id: userId } }, res) => {
-        await userBusiness.remove({ userId });
+    remove: RequestHandler<{ id: string }, void, void, void> = async (req, res) => {
+        const { id } = req.params;
+        await this.userBusiness.remove({ userId: id });
         res.status(HTTPStatus.NO_CONTENT).end();
-    },
+    };
 
-    sendChangePasswordToken: async ({ body }, res) => {
-        await userBusiness.sendChangePasswordToken(body);
-        res.status(HTTPStatus.OK).end();
-    },
+    sendChangePasswordToken: RequestHandler<void, void, SendChangePasswordTokenPayload, void> =
+        async (req, res) => {
+            await this.userBusiness.sendChangePasswordToken(req.body);
+            res.status(HTTPStatus.OK).end();
+        };
 
-    confirmChangePassword: async ({ body: payload, params: { id: userId } }, res) => {
-        await userBusiness.confirmChangePassword({ userId, payload });
+    confirmChangePassword: RequestHandler<
+        { id: string },
+        void,
+        ConfirmPasswordChangePayload,
+        void
+    > = async (req, res) => {
+        const { id } = req.params;
+        await this.userBusiness.confirmChangePassword({ userId: id, payload: req.body });
         res.status(HTTPStatus.OK).end();
-    },
+    };
 
-    confirmEmail: async ({ params: { id: userId }, body: { token } }, res) => {
-        await userBusiness.confirmEmail({ token, userId });
+    confirmEmail: RequestHandler<{ id: string }, void, ConfirmEmailPayload, void> = async (
+        req,
+        res,
+    ) => {
+        const { id } = req.params;
+        await this.userBusiness.confirmEmail({ userId: id, token: req.body.token });
         res.status(HTTPStatus.OK).end();
-    },
-};
+    };
+}

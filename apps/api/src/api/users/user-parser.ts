@@ -1,19 +1,26 @@
-import * as uuid from 'uuid';
 import _ from 'lodash';
-import { UserParser } from '../../types/user-parser';
+import DbParser from '@talent-hub/shared/types/db-parser';
+import { CreateUserPayload, newUUID, User, UserDto } from '@talent-hub/shared';
+import { UserModelAttr } from './user-model';
+import Role from '@talent-hub/shared/types/role';
+import moment from 'moment';
 
+type UserParser = DbParser<User, UserModelAttr> & {
+    newInstance: (args: { payload: CreateUserPayload; hashedPassword: string }) => User;
+    toDto: (user: User) => UserDto;
+};
 
 export const userParser: UserParser = {
-    fromDatabase: (model) => ({
+    fromDb: (model) => ({
         id: model.id,
         username: model.username,
         email: model.email,
         hashedPassword: model.hashedPassword,
         passwordReset:
-            model.passwordResetExpiration && model.passwordResetToken
+            model.passwordResetExpiresAt && model.passwordResetToken
                 ? {
-                      expiration: model.passwordResetExpiration,
-                      token: model.passwordResetToken,
+                      expiresAt: model.passwordResetExpiresAt!,
+                      token: model.passwordResetToken!,
                   }
                 : null,
         emailConfirmation: model.emailConfirmationToken
@@ -29,14 +36,14 @@ export const userParser: UserParser = {
         updatedAt: model.updatedAt,
     }),
 
-    toDatabase: (user) => ({
+    toDb: (user) => ({
         id: user.id,
         username: user.username,
         email: user.email,
         hashedPassword: user.hashedPassword,
         role: user.role,
         profilePictureUrl: user.profilePictureUrl,
-        passwordResetExpiration: user.passwordReset?.expiration || null,
+        passwordResetExpiresAt: user.passwordReset?.expiresAt || null,
         passwordResetToken: user.passwordReset?.token || null,
         emailConfirmationToken: user.emailConfirmation?.token || null,
         emailConfirmationTokenSentAt: user.emailConfirmation?.sentAt || null,
@@ -45,23 +52,22 @@ export const userParser: UserParser = {
         updatedAt: user.updatedAt,
     }),
 
-    newInstance: ({ username, role, email, hashedPassword, emailConfirmationToken }) => ({
-        id: uuid.v4(),
-        username,
-        email,
-        hashedPassword,
+    newInstance: ({ payload, hashedPassword }) => ({
+        id: newUUID(),
+        username: payload.username,
+        email: payload.email,
+        hashedPassword: hashedPassword,
         passwordReset: null,
         profilePictureUrl: null,
-        role,
+        role: payload.role,
         emailConfirmation: {
-            token: emailConfirmationToken,
+            token: payload.role === Role.SysAdmin ? null : newUUID(),
             sentAt: null,
             confirmedAt: null,
         },
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: moment(),
+        updatedAt: moment(),
     }),
 
-    toDto: ({ user }) =>
-        _.omit(user, ['hashedPassword', 'emailConfirmation', 'passwordReset']),
+    toDto: (user) => _.omit(user, ['hashedPassword', 'emailConfirmation', 'passwordReset']),
 };

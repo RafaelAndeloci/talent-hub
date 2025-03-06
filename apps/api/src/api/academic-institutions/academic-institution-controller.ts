@@ -1,105 +1,143 @@
+import { RequestHandler } from 'express';
+import HttpStatus from 'http-status';
+
 import {
     AcademicInstitution,
     AcademicInstitutionDto,
-    AuthContext,
-    CreateAcademicInstitutionPayload,
-    Filter,
-    FindAllArgs,
-    Id,
     PagedResponse,
-    UpdateAcademicInstitutionPayload,
+    QueryArgs,
+    UpdateAcademicInstitutionStatusPayload,
+    UserDto,
 } from '@talent-hub/shared';
-import { RequestHandler } from 'express';
-import { academicInstitutionRepository } from './academic-institution-repository';
+
+import AcademicInstitutionRepository from './academic-institution-repository';
 import { AcademicInstitutionParser } from './academic-institution-parser';
-import { ApiError } from '../../types/api-error';
-import HttpStatus from 'http-status';
-import _ from 'lodash';
 
-export const findById: RequestHandler<Id, AcademicInstitutionDto, void, void, AuthContext> = async (
-    req,
-    res,
-) => {
-    const { id } = req.params;
-    const academicInstitution = await academicInstitutionRepository.findById(id);
-    res.json(AcademicInstitutionParser.toDto(academicInstitution));
-};
+export default class AcademicInstitutionController {
+    constructor(private academicInstitutionRepository = new AcademicInstitutionRepository()) {}
 
-export const findAll: RequestHandler<
-    void,
-    PagedResponse<AcademicInstitutionDto>,
-    void,
-    FindAllArgs<AcademicInstitutionDto>,
-    AuthContext
-> = async (req, res) => {
-    const { limit, offset, sort, filter } = req.query;
+    findById: RequestHandler<
+        { id: string },
+        AcademicInstitutionDto,
+        void,
+        void,
+        { user: UserDto }
+    > = async (req, res) => {
+        const { id } = req.params;
+        const academicInstitution = await this.academicInstitutionRepository.findById(id);
+        if (!academicInstitution) {
+            res.sendStatus(HttpStatus.NOT_FOUND);
+            return;
+        }
 
-    const academicInstitutions = await academicInstitutionRepository.findAll({
-        limit,
-        offset,
-        sort,
-        filter: filter as unknown as Filter<AcademicInstitution>[],
-    });
+        res.json(AcademicInstitutionParser.toDto(academicInstitution));
+    };
 
-    res.json(academicInstitutions.parse(AcademicInstitutionParser.toDto));
-};
+    findAll: RequestHandler<
+        void,
+        PagedResponse<AcademicInstitutionDto>,
+        void,
+        QueryArgs<AcademicInstitution>,
+        UserDto
+    > = async (req, res) => {
+        const { limit, offset, sort, filter } = req.query;
 
-export const create: RequestHandler<
-    void,
-    AcademicInstitutionDto,
-    CreateAcademicInstitutionPayload,
-    void,
-    AuthContext
-> = async (req, res) => {
-    const alreadyExists = await academicInstitutionRepository.exists({
-        name: req.body.name,
-    });
-    if (alreadyExists) {
-        ApiError.throwConflict('academic institution already exists.');
-    }
+        const academicInstitutions = await this.academicInstitutionRepository.findAll({
+            limit,
+            offset,
+            sort,
+            filter: filter,
+        });
 
-    const academicInstitution = AcademicInstitutionParser.newInstance({
-        payload: req.body,
-        userRole: res.locals.user.role,
-    });
+        res.json(academicInstitutions.parse(AcademicInstitutionParser.toDto));
+    };
 
-    await academicInstitutionRepository.create(academicInstitution);
+    create: RequestHandler<void, AcademicInstitutionDto, AcademicInstitution, void, UserDto> =
+        async (req, res) => {
+            const alreadyExists = await this.academicInstitutionRepository.exists({
+                name: req.body.name,
+            });
+            if (alreadyExists) {
+                res.sendStatus(HttpStatus.CONFLICT);
+                return;
+            }
 
-    res.status(HttpStatus.CREATED).json(academicInstitution);
-};
+            const academicInstitution = AcademicInstitutionParser.newInstance({
+                payload: req.body,
+                user: res.locals,
+            });
 
-export const update: RequestHandler<
-    Id,
-    AcademicInstitutionDto,
-    UpdateAcademicInstitutionPayload,
-    void,
-    AuthContext
-> = async (req, res) => {
-    const alreadyExists = await academicInstitutionRepository.exists({
-        name: req.body.name,
-    });
-    if (alreadyExists) {
-        ApiError.throwConflict('academic institution already exists.');
-    }
+            await this.academicInstitutionRepository.create({
+                entity: academicInstitution,
+            });
 
-    let academicInstitution = await academicInstitutionRepository.findById(req.params.id);
-    academicInstitution = _.merge(academicInstitution, req.body);
+            res.status(HttpStatus.CREATED).json(
+                AcademicInstitutionParser.toDto(academicInstitution),
+            );
+        };
 
-    await academicInstitutionRepository.update(academicInstitution);
+    update: RequestHandler<
+        { id: string },
+        AcademicInstitutionDto,
+        AcademicInstitution,
+        void,
+        UserDto
+    > = async (req, res) => {
+        const alreadyExists = await this.academicInstitutionRepository.exists({
+            name: req.body.name,
+        });
+        if (alreadyExists) {
+            res.sendStatus(HttpStatus.CONFLICT);
+            return;
+        }
 
-    res.status(HttpStatus.OK).json(academicInstitution);
-};
+        let academicInstitution = await this.academicInstitutionRepository.findById(req.params.id);
+        if (!academicInstitution) {
+            res.sendStatus(HttpStatus.NOT_FOUND);
+            return;
+        }
 
-export const remove: RequestHandler<Id, void, void, void, AuthContext> = async (req, res) => {
-    if (
-        !(await academicInstitutionRepository.exists({
+        academicInstitution = { ...academicInstitution, ...req.body };
+
+        await this.academicInstitutionRepository.update({
+            entity: academicInstitution,
+        });
+
+        res.status(HttpStatus.OK).json(AcademicInstitutionParser.toDto(academicInstitution));
+    };
+
+    remove: RequestHandler<{ id: string }, void, void, void, UserDto> = async (req, res) => {
+        if (!(await this.academicInstitutionRepository.exists({ id: req.params.id }))) {
+            res.sendStatus(HttpStatus.NOT_FOUND);
+            return;
+        }
+
+        await this.academicInstitutionRepository.deleteById({
             id: req.params.id,
-        }))
-    ) {
-        ApiError.throwNotFound('academic institution not found')
-    }
+        });
 
-    await academicInstitutionRepository.deleteById(req.params.id);
+        res.sendStatus(HttpStatus.OK);
+    };
 
-    res.sendStatus(HttpStatus.OK)
-};
+    updateStatus: RequestHandler<
+        { id: string },
+        AcademicInstitutionDto,
+        UpdateAcademicInstitutionStatusPayload,
+        void,
+        UserDto
+    > = async (req, res) => {
+        let academicInstitution = await this.academicInstitutionRepository.findById(req.params.id);
+        if (!academicInstitution) {
+            res.sendStatus(HttpStatus.NOT_FOUND);
+            return;
+        }
+
+        academicInstitution.suggestion.status = req.body.status;
+
+        await this.academicInstitutionRepository.update({
+            entity: academicInstitution,
+        });
+
+        res.status(HttpStatus.OK).json(AcademicInstitutionParser.toDto(academicInstitution));
+    };
+}

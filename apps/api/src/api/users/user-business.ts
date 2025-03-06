@@ -1,63 +1,75 @@
-import { Op } from 'sequelize';
+import {
+    CreateUserPayload,
+    newUUID,
+    PagedResponse,
+    QueryArgs,
+    User,
+    UserDto,
+} from '@talent-hub/shared';
+
+import { userParser } from './user-parser';
+import UserRepository from './user-repository';
+import ApiError from '../../utils/api-error';
+import Hasher from '../../services/hasher';
+import JobQueueService from '../../services/job-queue-service';
+import { AppEvent } from '../../enums/app-event';
+import Role from '@talent-hub/shared/types/role';
+import JwtService from '../../services/jwt-service';
+import FileStorageService from '../../services/file-storage-service';
 import moment from 'moment';
 
-import { userRepository } from './user-repository';
-import { config } from '../../config/environment';
-import { userParser } from './user-parser';
-import { hasher } from '../../services/hasher';
-import { AppEvent } from '../../enums/app-event';
-import { fileStorageService } from '../../services/file-storage-service';
-import { jobQueueService } from '../../services/job-queue-service';
-import { jwtService } from '../../services/jwt-service';
-import { ApiError } from '../../types/api-error';
-import { UserBusiness } from '../../types/user-business';
-import { Role } from '@talent-hub/shared';
+export default class UserBusiness {
+    constructor(private userRepository: UserRepository = new UserRepository()) {}
 
-export const userBusiness: UserBusiness = {
-    findById: async ({ userId }) => {
-        const user = await userRepository.findById(userId);
+    findById = async ({ userId }: { userId: string }): Promise<UserDto> => {
+        const user = await this.userRepository.findById(userId);
         if (!user) {
             ApiError.throwNotFound(`user with id ${userId}`);
         }
 
-        return userParser.toDto({ user });
-    },
+        return userParser.toDto(user);
+    };
 
-    findAll: async ({ query }) => {
-        const users = await userRepository.findAll(query);
-        return users.parse((user) => userParser.toDto({ user }));
-    },
+    findAll = async ({ query }: { query: QueryArgs<User> }): Promise<PagedResponse<UserDto>> => {
+        const users = await this.userRepository.findAll(query);
+        return users.parse(userParser.toDto);
+    };
 
-    create: async ({ payload }) => {
-        if (
-            await userRepository.exists({
-                [Op.or]: [{ email: payload.email }, { username: payload.username }],
-            })
-        ) {
+    create = async ({ payload }: { payload: CreateUserPayload }): Promise<UserDto> => {
+        const existingUser = await this.userRepository.findBy({
+            email: payload.email,
+            username: payload.username,
+        });
+        if (existingUser) {
             ApiError.throwConflict('cannot create user');
         }
 
-        const hashedPassword = await hasher.hash(payload.password);
-        const emailConfirmationToken = await hasher.genRandomToken();
+        const hashedPassword = await Hasher.hash(payload.plainPassword);
 
         const user = userParser.newInstance({
-            ...payload,
             hashedPassword,
-            emailConfirmationToken,
+            payload,
         });
 
-        await userRepository.create(user);
+        await this.userRepository.create({ entity: user });
 
-        await jobQueueService.enqueue({
+        await JobQueueService.enqueue({
             event: AppEvent.UserCreated,
             payload: { userId: user.id },
         });
 
-        return userParser.toDto({ user });
-    },
+        return userParser.toDto(user);
+    };
 
-    auth: async ({ payload }) => {
-        const user = await userRepository.findByEmailOrUserName(payload.identifier);
+    auth = async ({
+        payload: { identifier, password },
+    }: {
+        payload: { identifier: string; password: string };
+    }) => {
+        const user = await this.userRepository.findBy({
+            email: identifier,
+            username: identifier,
+        });
         if (!user) {
             ApiError.throwNotFound('invalid credentials');
         }
@@ -66,22 +78,28 @@ export const userBusiness: UserBusiness = {
             ApiError.throwForbidden('email not confirmed');
         }
 
-        if (!(await hasher.compare(payload.password, user.hashedPassword))) {
+        if (!(await Hasher.compare(password, user.hashedPassword))) {
             ApiError.throwUnauthorized('invalid credentials');
         }
 
-        const dto = userParser.toDatabase(user);
-        return jwtService.generateToken(dto);
-    },
+        const dto = userParser.toDto(user);
+        return JwtService.generateToken(dto);
+    };
 
-    updateProfilePicture: async ({ userId, file }) => {
-        const user = await userRepository.findById(userId);
+    updateProfilePicture = async ({
+        userId,
+        file,
+    }: {
+        userId: string;
+        file: { content: Buffer; mimetype: string };
+    }) => {
+        const user = await this.userRepository.findById(userId);
         if (!user) {
             ApiError.throwNotFound('user not found');
         }
 
         const key = `user-${userId}-profile-picture.${file.mimetype.split('/')[1]}`;
-        const url = await fileStorageService.upload({
+        const url = await FileStorageService.upload({
             key,
             file: file.content,
             contentType: file.mimetype,
@@ -89,41 +107,50 @@ export const userBusiness: UserBusiness = {
 
         user.profilePictureUrl = url;
 
-        await userRepository.update(user);
+        await this.userRepository.update({ entity: user });
 
-        return userParser.toDto({ user });
-    },
+        return userParser.toDto(user);
+    };
 
-    remove: async ({ userId }) => {
-        const user = await userRepository.findById(userId);
+    remove = async ({ userId }: { userId: string }) => {
+        const user = await this.userRepository.findById(userId);
         if (!user) {
             ApiError.throwNotFound('user not found');
         }
 
-        await userRepository.deleteById(userId);
-    },
+        await this.userRepository.deleteById({ id: userId });
+    };
 
-    sendChangePasswordToken: async ({ identifier }) => {
-        const user = await userRepository.findByEmailOrUserName(identifier);
+    sendChangePasswordToken = async ({ identifier }: { identifier: string }) => {
+        const user = await this.userRepository.findBy({
+            email: identifier,
+            username: identifier,
+        });
         if (!user) {
             ApiError.throwNotFound('user not found');
         }
 
         user.passwordReset = {
-            token: await hasher.genRandomToken(),
-            expiration: moment().add(config.security.password.resetExpiration, 'hours').unix(),
+            token: newUUID(),
+            expiresAt: moment().add(1, 'week'),
         };
 
-        await userRepository.update(user);
+        await this.userRepository.update({ entity: user });
 
-        await jobQueueService.enqueue({
+        await JobQueueService.enqueue({
             event: AppEvent.UserPasswordResetTokenRequested,
             payload: { userId: user.id },
         });
-    },
+    };
 
-    confirmChangePassword: async ({ userId, payload }) => {
-        const user = await userRepository.findById(userId);
+    confirmChangePassword = async ({
+        userId,
+        payload,
+    }: {
+        userId: string;
+        payload: { token: string; password: string };
+    }) => {
+        const user = await this.userRepository.findById(userId);
         if (!user) {
             ApiError.throwBadRequest('invalid user id');
         }
@@ -132,35 +159,35 @@ export const userBusiness: UserBusiness = {
             ApiError.throwBadRequest('user did confirm password reset');
         }
 
-        const isExpired = moment().unix() > user.passwordReset!.expiration;
+        const isExpired = moment().isAfter(user.passwordReset.expiresAt);
         if (isExpired) {
             ApiError.throwBadRequest('token expired');
         }
 
-        if (user.passwordReset!.token !== payload.token) {
+        if (user.passwordReset.token !== payload.token) {
             ApiError.throwBadRequest('invalid token');
         }
 
-        const isSamePassword = await hasher.compare(payload.password, user.hashedPassword);
+        const isSamePassword = await Hasher.compare(payload.password, user.hashedPassword);
         if (isSamePassword) {
             ApiError.throwUnprocessableEntity(`password alredy is used`);
         }
 
-        const newHash = await hasher.hash(payload.password);
+        const newHash = await Hasher.hash(payload.password);
 
         user.hashedPassword = newHash;
         user.passwordReset = null;
 
-        await userRepository.update(user);
+        await this.userRepository.update({ entity: user });
 
-        await jobQueueService.enqueue({
+        await JobQueueService.enqueue({
             event: AppEvent.UserPasswordChanged,
             payload: { userId: user.id },
         });
-    },
+    };
 
-    confirmEmail: async ({ userId, token }) => {
-        const user = await userRepository.findById(userId);
+    confirmEmail = async ({ userId, token }: { userId: string; token: string }) => {
+        const user = await this.userRepository.findById(userId);
         if (!user) {
             ApiError.throwBadRequest('invalid user id');
         }
@@ -169,19 +196,20 @@ export const userBusiness: UserBusiness = {
             ApiError.throwBadRequest('email already confirmed');
         }
 
-        if (user.emailConfirmation!.token !== token) {
+        if (user.emailConfirmation.token !== token) {
             ApiError.throwBadRequest('invalid token');
         }
 
-        user.emailConfirmation!.confirmedAt = new Date();
+        user.emailConfirmation.confirmedAt = moment();
 
-        await userRepository.update(user);
+        await this.userRepository.update({ entity: user });
 
-        await jobQueueService.enqueue({
+        await JobQueueService.enqueue({
             event: AppEvent.UserEmailConfirmed,
             payload: { userId: user.id },
         });
-    },
+    };
 
-    canCreateCandidate: ({ user }) => user.role === Role.Candidate || user.role === Role.SysAdmin,
-};
+    canCreateCandidate = ({ user }: { user: User }) =>
+        user.role === Role.Candidate || user.role === Role.SysAdmin;
+}

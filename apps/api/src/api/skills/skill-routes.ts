@@ -1,15 +1,10 @@
 import { Action } from '../../enums/action';
 import { Resource } from '../../enums/resource';
 import { ApiResource } from '../../types/api-resource';
-import { skillController } from './skill-controller';
-import {
-    CreateSkillSchema,
-    DeleteSkillSchema,
-    FindAllSkillsSchema,
-    FindSkillByIdSchema,
-    UpdateSkillSchema,
-    UpdateSkillStatusSchema,
-} from './skill-schema';
+import { SkillApiSchema } from '@talent-hub/shared/schemas/skill';
+import { SkillController } from './skill-controller';
+
+const skillController = new SkillController();
 
 export const skillResource: ApiResource = {
     resource: Resource.Skills,
@@ -18,7 +13,7 @@ export const skillResource: ApiResource = {
             path: '/',
             method: 'get',
             action: Action.ReadAll,
-            schema: FindAllSkillsSchema,
+            schema: SkillApiSchema.FindAll,
             handler: skillController.findAll,
             auth: true,
         },
@@ -26,7 +21,7 @@ export const skillResource: ApiResource = {
             path: '/:id',
             method: 'get',
             action: Action.ReadById,
-            schema: FindSkillByIdSchema,
+            schema: SkillApiSchema.FindById,
             handler: skillController.findById,
             auth: true,
         },
@@ -34,7 +29,7 @@ export const skillResource: ApiResource = {
             path: '/',
             method: 'post',
             action: Action.Create,
-            schema: CreateSkillSchema,
+            schema: SkillApiSchema.Create,
             handler: skillController.create,
             auth: true,
         },
@@ -42,7 +37,7 @@ export const skillResource: ApiResource = {
             path: '/:id',
             method: 'put',
             action: Action.Update,
-            schema: UpdateSkillSchema,
+            schema: SkillApiSchema.Update,
             handler: skillController.update,
             auth: true,
         },
@@ -50,7 +45,7 @@ export const skillResource: ApiResource = {
             path: '/:id',
             method: 'delete',
             action: Action.Delete,
-            schema: DeleteSkillSchema,
+            schema: SkillApiSchema.Remove,
             handler: skillController.remove,
             auth: true,
         },
@@ -58,7 +53,7 @@ export const skillResource: ApiResource = {
             path: '/:id/status',
             method: 'patch',
             action: Action.skillUpdateStatus,
-            schema: UpdateSkillStatusSchema,
+            schema: SkillApiSchema.UpdateStatus,
             handler: skillController.updateStatus,
             auth: true,
         },

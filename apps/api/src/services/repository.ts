@@ -1,140 +1,129 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Id, FindAllArgs, PagedResponse, FilterOperator } from '@talent-hub/shared';
-import { Attributes, Model, ModelStatic, Op, Order, WhereOptions } from 'sequelize';
-import { ApiError } from '../types/api-error';
-import { PagedResponseImp } from '../types/paged-response';
+import { DbParser, PagedResponse } from '@talent-hub/shared';
+import { Model, ModelStatic, Order, Transaction, WhereOptions } from 'sequelize';
 
-const operatorToSequelizeSymbol = {
-    [FilterOperator.endsWith]: Op.endsWith,
-    [FilterOperator.startsWith]: Op.startsWith,
-    [FilterOperator.substring]: Op.substring,
-    [FilterOperator.eq]: Op.eq,
-    [FilterOperator.gt]: Op.gt,
-    [FilterOperator.gte]: Op.gte,
-    [FilterOperator.iLike]: Op.iLike,
-    [FilterOperator.like]: Op.like,
-    [FilterOperator.in]: Op.in,
-    [FilterOperator.notIn]: Op.notIn,
-    [FilterOperator.is]: Op.is,
-    [FilterOperator.lt]: Op.lt,
-    [FilterOperator.lte]: Op.lte,
-    [FilterOperator.not]: Op.not,
-};
-
-const toSequelizeSymbol = (operator: FilterOperator) => operatorToSequelizeSymbol[operator];
-
-export const makeRepository = <
-    TEntity extends Id,
-    TModelAttr extends Record<string, any>,
+export abstract class Repository<
+    TEntity extends { id: string },
+    TModelAttr extends {},
     TModel extends Model<TModelAttr | any>,
->({
-    model,
-    fromDatabase,
-    toDatabase,
-}: {
-    model: ModelStatic<TModel>;
-    toDatabase: (entity: TEntity) => TModelAttr;
-    fromDatabase: (model: TModelAttr) => TEntity;
-}) => {
-    const findAll = async ({
+> {
+    protected constructor(
+        private model: ModelStatic<TModel>,
+        private parser: DbParser<TEntity, TModelAttr>,
+    ) {}
+
+    async findAll({
         limit,
         offset,
         sort,
-        filter,
-        where,
-    }: FindAllArgs<TEntity> & Partial<{ where?: WhereOptions<Attributes<TModel>> }>): Promise<
-        PagedResponse<TEntity>
-    > => {
+        filter: where,
+    }: {
+        limit?: number;
+        offset?: number;
+        sort?: (keyof TEntity)[];
+        filter?: WhereOptions<TModelAttr>;
+    }): Promise<PagedResponse<TEntity>> {
         limit = limit ?? 10;
         offset = offset ?? 0;
-        sort = sort || [{ field: 'id', order: 'asc' }];
-        filter = filter || [];
+        sort = sort || ['id'];
         where = where || {};
 
-        filter.forEach(({ field, value, operator }) => {
-            (where as any)[field] = {
-                [toSequelizeSymbol(operator)]: value,
-            };
-        });
+        const order = sort.map((s) => [s, 'asc']) as Order;
 
-        const order = sort.map((s) => [s.field, s.order.toUpperCase()]) as Order;
-
-        const models = await model.findAll({
+        const models = await this.model.findAll({
             limit,
             offset,
             order,
             where,
         });
 
-        const count = await model.count({ where });
+        const count = await this.model.count({ where });
 
-        const records = models.map((m) => fromDatabase(m.toJSON()));
-        return PagedResponseImp.create(limit, offset, count, records);
-    };
+        const records = models.map((m) => this.parser.fromDb(m.toJSON()));
+        return PagedResponse.create(limit, offset, count, records);
+    }
 
-    const findById = async (id: string): Promise<TEntity | null> => {
-        const modelInstance = await model.findByPk(id as any);
-        if (!modelInstance) { 
+    async findById(id: string): Promise<TEntity | null> {
+        const modelInstance = await this.model.findByPk(id as any);
+        if (!modelInstance) {
             return null;
         }
-        
-        const raw = modelInstance.toJSON();
-        return fromDatabase(raw);
-    };
 
-    const findUnique = async (where: WhereOptions<Attributes<TModel>>): Promise<TEntity> => {
-        const modelInstance = await model.findOne({
+        const raw = modelInstance.toJSON();
+        return this.parser.fromDb(raw);
+    }
+
+    async findUnique(where: WhereOptions<TModelAttr>): Promise<TEntity | null> {
+        const modelInstance = await this.model.findOne({
             where,
         });
         if (!modelInstance) {
-            ApiError.throwNotFound('resource not found');
-            return null!;
+            return null;
         }
 
         const raw = modelInstance.toJSON();
-        return fromDatabase(raw);
-    };
+        return this.parser.fromDb(raw);
+    }
 
-    const exists = async (where: WhereOptions<Attributes<TModel>>): Promise<boolean> => {
-        const models = await model.findAll({ where });
+    async exists(where: WhereOptions<TModelAttr>): Promise<boolean> {
+        const models = await this.model.findAll({ where });
         return models.length > 0;
-    };
+    }
 
-    const create = async (entity: Required<TEntity>): Promise<void> => {
-        await model.create(toDatabase(entity) as any, {
-            returning: true,
+    async create({
+        entity,
+        transaction,
+    }: {
+        entity: TEntity;
+        transaction?: Transaction;
+    }): Promise<void> {
+        await this.model.create(this.parser.toDb(entity) as any, {
+            returning: false,
+            ...(transaction ? { transaction } : {}),
         });
-    };
+    }
 
-    const bulkCreate = async (entities: TEntity[]): Promise<void> => {
-        const modelAttrs = entities.map(toDatabase) as any;
-        await model.bulkCreate(modelAttrs);
-    };
-
-    const update = async (entity: TEntity): Promise<void> => {
-        const modelAttr = toDatabase(entity) as any;
-        const [rows] = await model.update(modelAttr, {
-            where: { id: entity.id as any },
+    async update({
+        entity,
+        transaction,
+    }: {
+        entity: TEntity;
+        transaction?: Transaction;
+    }): Promise<void> {
+        const modelAttr = this.parser.toDb(entity);
+        const [rows] = await this.model.update(modelAttr, {
+            where: <WhereOptions<TModelAttr>>{ id: entity.id as any },
             returning: true,
+            ...(transaction ? { transaction } : {}),
         });
 
         if (!rows) {
-            ApiError.throwInternalServerError('Failed to update entity');
+            throw new Error('Failed to update entity');
         }
-    };
+    }
 
-    const deleteById = async (id: string): Promise<void> => {
-        await model.destroy({ where: { id: id as any } });
-    };
+    async deleteById({
+        id,
+        transaction,
+    }: {
+        id: string;
+        transaction?: Transaction;
+    }): Promise<void> {
+        await this.model.destroy({
+            where: <WhereOptions<TModelAttr>>{ id: id as any },
+            ...(transaction ? { transaction } : {}),
+        });
+    }
 
-    return Object.freeze({
-        findAll,
-        findById,
-        findUnique,
-        exists,
-        create,
-        bulkCreate,
-        update,
-        deleteById,
-    });
-};
+    async delete({
+        where,
+        transaction,
+    }: {
+        where: WhereOptions<TModelAttr>;
+        transaction?: Transaction;
+    }): Promise<void> {
+        await this.model.destroy({
+            where,
+            ...(transaction ? { transaction } : {}),
+        });
+    }
+}

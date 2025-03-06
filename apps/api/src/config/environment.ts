@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv';
 import * as uuid from 'uuid';
 import path from 'path';
-import { logger } from '../services/logging-service';
+import { Logger } from '../services/logging-service';
 
 const env = process.env.NODE_ENV || 'development';
 
@@ -11,11 +11,11 @@ try {
     const { error } = dotenv.config({ path: envPath });
 
     if (error) {
-        logger.error(`Error loading environment variables: ${error.message}`);
+        Logger.error(`Error loading environment variables: ${error.message}`);
         process.exit(1);
     }
 } catch (error) {
-    logger.error(`Error loading environment variables: ${(error as unknown as Error).message}`);
+    Logger.error(`Error loading environment variables: ${(error as unknown as Error).message}`);
     process.exit(1);
 }
 

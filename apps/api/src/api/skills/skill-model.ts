@@ -1,103 +1,58 @@
-import { DataTypes, Model } from 'sequelize';
-
+import { DataTypes, Model, ModelStatic } from 'sequelize';
 import database from '../../config/database';
 import { primaryColumn } from '../../constants/database-column.def';
-import { UserModel } from '../users/user-model';
-import { SkillModelAttr } from '../../types/skill-model-attr';
-import { SuggestionStatus, SkillCategory, SkillType } from '@talent-hub/shared';
+import { UserModelAttr } from '../users/user-model';
+import { Skill, SkillCategory, SkillType, SuggestionStatus } from '@talent-hub/shared';
+import SuggestionModel from '../../types/suggestion-model';
+
+export type SkillModelAttr = SuggestionModel<Skill>;
 
 export class SkillModel extends Model<SkillModelAttr> {
-    toJSON() {
-        const attributes: any = super.toJSON();
-        if (attributes.relatedSkills && Array.isArray(attributes.relatedSkills)) {
-            attributes.relatedSkills = attributes.relatedSkills.map((skill: any) => skill.id);
-        }
-        return attributes;
+    static associate({ User }: { User: ModelStatic<Model<UserModelAttr>> }) {
+        SkillModel.belongsTo(User, {
+            foreignKey: 'suggestedBy',
+            onDelete: 'SET NULL',
+        });
+
+        SkillModel.belongsTo(User, {
+            foreignKey: 'validatedBy',
+            onDelete: 'SET NULL',
+        });
+
+        User.hasMany(SkillModel, {
+            foreignKey: 'suggestedBy',
+            as: 'suggestedSkills',
+        });
+
+        User.hasMany(SkillModel, {
+            foreignKey: 'validatedBy',
+            as: 'validatedSkills',
+        });
+
+        SkillModel.beforeFind((options) => {
+            options.include = [
+                {
+                    model: SkillModel,
+                    as: 'relatedSkills',
+                    attributes: ['id'],
+                },
+            ];
+        });
     }
 }
-
-export class RelatedSkillModel extends Model<{ skillId: string; relatedSkillId: string }> {}
-
-RelatedSkillModel.init(
-    {
-        skillId: {
-            type: DataTypes.UUID,
-            primaryKey: true,
-        },
-        relatedSkillId: {
-            type: DataTypes.UUID,
-            primaryKey: true,
-        },
-    },
-    {
-        sequelize: database,
-        modelName: 'RelatedSkill',
-        tableName: 'related_skills',
-        timestamps: false,
-    },
-);
 
 SkillModel.init(
     {
         id: primaryColumn,
-        name: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true,
-        },
-        status: {
-            type: DataTypes.ENUM(...Object.values(SuggestionStatus)),
-        },
-        categories: {
-            type: DataTypes.ARRAY(DataTypes.ENUM(...Object.values(SkillCategory))),
-        },
-        type: {
-            type: DataTypes.ENUM(...Object.values(SkillType)),
-        },
-        tags: {
-            type: DataTypes.ARRAY(DataTypes.STRING),
-        },
-        validatedAt: {
-            type: DataTypes.DATE,
-            allowNull: true,
-        },
-        validatedBy: {
-            type: DataTypes.UUID,
-            allowNull: true,
-        },
-        suggestedBy: {
-            type: DataTypes.UUID,
-            allowNull: true,
-        },
+        name: { type: DataTypes.STRING, allowNull: false, unique: true },
+        status: { type: DataTypes.ENUM(...Object.values(SuggestionStatus)) },
+        categories: { type: DataTypes.ARRAY(DataTypes.ENUM(...Object.values(SkillCategory))) },
+        type: { type: DataTypes.ENUM(...Object.values(SkillType)) },
+        tags: { type: DataTypes.ARRAY(DataTypes.STRING) },
+        suggestedBy: { type: DataTypes.UUID, allowNull: false },
+        suggestedAt: { type: DataTypes.DATE, allowNull: false },
+        validatedBy: { type: DataTypes.UUID, allowNull: true },
+        validatedAt: { type: DataTypes.DATE, allowNull: true },
     },
     { sequelize: database, modelName: 'Skill', tableName: 'skills' },
 );
-
-SkillModel.belongsToMany(SkillModel, {
-    through: RelatedSkillModel,
-    as: 'relatedSkills',
-    foreignKey: 'skillId',
-    otherKey: 'relatedSkillId',
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-});
-
-SkillModel.belongsTo(UserModel, {
-    foreignKey: 'suggestedBy',
-    onDelete: 'SET NULL',
-});
-
-SkillModel.belongsTo(UserModel, {
-    foreignKey: 'validatedBy',
-    onDelete: 'SET NULL',
-});
-
-SkillModel.beforeFind((options) => {
-    options.include = [
-        {
-            model: SkillModel,
-            as: 'relatedSkills',
-            attributes: ['id'],
-        },
-    ];
-});

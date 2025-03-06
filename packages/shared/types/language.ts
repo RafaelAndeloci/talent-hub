@@ -1,3 +1,4 @@
+//TODO: Add more languages
 export enum Language {
     English = 'english',
     Spanish = 'spanish',

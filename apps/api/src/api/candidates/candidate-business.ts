@@ -1,83 +1,102 @@
-import { userRepository } from '../users/user-repository';
-import { candidateRepository } from './candidate-repository';
-import { userBusiness } from '../users/user-business';
-import { candidateParser } from './candidate-parser';
-import { fileStorageService } from '../../services/file-storage-service';
-import { ApiError } from '../../types/api-error';
-import { Candidate, FindAllArgs, Role } from '@talent-hub/shared';
-import { CandidateBusiness } from '../../types/candidate-business';
+import {
+    Candidate,
+    CandidateDto,
+    CandidatePayload,
+    PagedResponse,
+    QueryArgs,
+} from '@talent-hub/shared';
+import ApiError from '../../utils/api-error';
+import { CandidateRepository } from './candidate-repository';
+import { CandidateParser } from './candidate-parser';
+import { InputFile } from '../../types/input-file';
+import FileStorageService from '../../services/file-storage-service';
 
-export const candidateBusiness: CandidateBusiness = {
-    findById: async (id) => {
-        const candidate = await candidateRepository.findById(id);
+export class CandidateBusiness {
+    public constructor(private candidateRepository = new CandidateRepository()) {}
+
+    async findById(id: string): Promise<CandidateDto> {
+        const candidate = await this.candidateRepository.findById(id);
         if (!candidate) {
             ApiError.throwNotFound('candidate not found');
         }
 
-        return candidateParser.toDto({ candidate });
-    },
+        return CandidateParser.toDto(candidate);
+    }
 
-    findAll: ({ query }) => candidateRepository.findAll(query as unknown as FindAllArgs<Candidate>),
+    async findAll(query: QueryArgs<Candidate>): Promise<PagedResponse<CandidateDto>> {
+        const candidates = await this.candidateRepository.findAll({
+            ...query,
+            filter: query.filter as any,
+        });
 
-    create: async ({ userId, payload }) => {
-        const user = await userRepository.findById(userId);
-        if (!user) {
-            ApiError.throwNotFound('user not found');
-        }
+        return candidates.parse(CandidateParser.toDto);
+    }
 
-        const candidateAlreadyExists = await candidateRepository.exists({ userId });
+    async create({
+        userId,
+        payload,
+    }: {
+        userId: string;
+        payload: CandidatePayload;
+    }): Promise<CandidateDto> {
+        const candidateAlreadyExists = await this.candidateRepository.exists({ userId });
         if (candidateAlreadyExists) {
             ApiError.throwUnprocessableEntity('candidate already exists');
         }
 
-        if (!userBusiness.canCreateCandidate({ user })) {
-            ApiError.throwForbidden('user cannot create candidate');
-        }
+        const candidate = CandidateParser.newInstance({ userId, payload });
 
-        const candidate = candidateParser.newInstance({ userId, payload });
+        await this.candidateRepository.create({ entity: candidate });
 
-        await candidateRepository.create({
-            ...candidate,
-            userId,
-        });
+        return CandidateParser.toDto(candidate);
+    }
 
-        return candidateParser.toDto({ candidate });
-    },
-
-    update: async ({ candidateId, payload }) => {
-        const candidate = await candidateRepository.findById(candidateId);
+    async update({
+        candidateId,
+        payload,
+    }: {
+        candidateId: string;
+        payload: CandidatePayload;
+    }): Promise<CandidateDto> {
+        const candidate = await this.candidateRepository.findById(candidateId);
         if (!candidate) {
             ApiError.throwNotFound('candidate not found');
         }
 
-        const updated: Candidate = {
-            ...candidate,
-            ...payload,
-        };
+        const updated = CandidateParser.merge({
+            original: candidate,
+            changes: payload,
+        });
 
-        await candidateRepository.update(updated);
+        await this.candidateRepository.update({ entity: updated });
 
-        return candidateParser.toDto({ candidate: updated });
-    },
+        return CandidateParser.toDto(updated);
+    }
 
-    remove: async (id) => {
-        const candidate = await candidateRepository.findById(id);
+    async remove(id: string): Promise<void> {
+        const candidate = await this.candidateRepository.findById(id);
         if (!candidate) {
             ApiError.throwNotFound(`candidate with id ${id} not found`);
         }
 
-        await candidateRepository.deleteById(id);
-    },
+        await this.candidateRepository.deleteById({ id });
+    }
 
-    updateCv: async ({ candidateId, file }) => {
-        const candidate = await candidateRepository.findById(candidateId);
+    async updateCv({
+        candidateId,
+        file,
+    }: {
+        candidateId: string;
+        file: InputFile;
+    }): Promise<CandidateDto> {
+        const candidate = await this.candidateRepository.findById(candidateId);
         if (!candidate) {
             ApiError.throwNotFound(`candidate with id ${candidateId} not found`);
         }
 
         const key = `candidate-${candidateId}-cv.${file.mimetype.split('/')[1]}`;
 
-        const url = await fileStorageService.upload({
+        const url = await FileStorageService.upload({
             file: file.content,
             contentType: file.mimetype,
             key,
@@ -85,20 +104,28 @@ export const candidateBusiness: CandidateBusiness = {
         if (!url) {
             ApiError.throwInternalServerError('error uploading cv file');
         }
+
         candidate.cvUrl = url;
 
-        await candidateRepository.update(candidate);
-        return candidateParser.toDto({ candidate });
-    },
+        await this.candidateRepository.update({ entity: candidate });
 
-    updateBanner: async ({ candidateId, file }) => {
-        const candidate = await candidateRepository.findById(candidateId);
+        return CandidateParser.toDto(candidate);
+    }
+
+    async updateBanner({
+        candidateId,
+        file,
+    }: {
+        candidateId: string;
+        file: InputFile;
+    }): Promise<CandidateDto> {
+        const candidate = await this.candidateRepository.findById(candidateId);
         if (!candidate) {
             ApiError.throwNotFound(`candidate with id ${candidateId} not found`);
         }
 
         const key = `candidate-${candidateId}-banner.${file.mimetype.split('/')[1]}`;
-        const url = await fileStorageService.upload({
+        const url = await FileStorageService.upload({
             file: file.content,
             contentType: file.mimetype,
             key,
@@ -110,11 +137,18 @@ export const candidateBusiness: CandidateBusiness = {
 
         candidate.bannerUrl = url;
 
-        await candidateRepository.update(candidate);
-        return candidateParser.toDto({ candidate });
-    },
+        await this.candidateRepository.update({ entity: candidate });
 
-    validateForApplication: async ({ userRole, candidate }) => {
+        return CandidateParser.toDto(candidate);
+    }
+
+    async validateForApplication({
+        userRole,
+        candidate,
+    }: {
+        userRole: string;
+        candidate: Candidate;
+    }): Promise<void> {
         if (!candidate.isAvailableForWork) {
             ApiError.throwUnprocessableEntity(
                 `candidate ${candidate.id} is not available for work`,
@@ -122,11 +156,11 @@ export const candidateBusiness: CandidateBusiness = {
         }
 
         const thirdPartyApplicationAvailable =
-            userRole !== Role.Candidate && candidate.allowThirdPartyApplications;
+            userRole !== 'candidate' && candidate.allowThirdPartyApplications;
         if (thirdPartyApplicationAvailable) {
             ApiError.throwUnprocessableEntity(
                 `candidate ${candidate.id} does not allow third party applications`,
             );
         }
-    },
-};
+    }
+}

@@ -2,7 +2,7 @@ import express from 'express';
 import methodOverride from 'method-override';
 import cors from 'cors';
 
-import { logger } from '../services/logging-service';
+import { Logger } from '../services/logging-service';
 import { buildApiRouter } from './routes';
 import { config } from '../config/environment';
 import { getStaticFilesRouter } from './static-files';
@@ -38,24 +38,24 @@ async function startServer() {
     ] as express.RequestHandler[]);
 
     app.listen(port, host, () => {
-        logger.info(`Server is running at http://${host}:${port}`);
+        Logger.info(`Server is running at http://${host}:${port}`);
     })
         .on('error', (error) => {
-            logger.error('Error while starting the server', error);
+            Logger.error('Error while starting the server', error);
             process.exit(1);
         })
         .on('close', () => {
-            logger.info('Server is closing');
+            Logger.info('Server is closing');
         });
 }
 
 process.on('SIGINT', () => {
-    logger.info('Received SIGINT, shutting down...');
+    Logger.info('Received SIGINT, shutting down...');
     app.emit('close');
 });
 
 process.on('SIGTERM', () => {
-    logger.info('Received SIGTERM, shutting down...');
+    Logger.info('Received SIGTERM, shutting down...');
     app.emit('close');
 });
 
