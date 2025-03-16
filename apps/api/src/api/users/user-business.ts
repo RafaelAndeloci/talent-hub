@@ -3,6 +3,7 @@ import {
     newUUID,
     PagedResponse,
     QueryArgs,
+    Role,
     User,
     UserDto,
 } from '@talent-hub/shared';
@@ -11,11 +12,10 @@ import { userParser } from './user-parser';
 import UserRepository from './user-repository';
 import ApiError from '../../utils/api-error';
 import Hasher from '../../services/hasher';
-import JobQueueService from '../../services/job-queue-service';
+import { JobQueueService } from '../../services/job-queue-service';
 import { AppEvent } from '../../enums/app-event';
-import Role from '@talent-hub/shared/types/role';
 import JwtService from '../../services/jwt-service';
-import FileStorageService from '../../services/file-storage-service';
+import { FileStorageService } from '../../services/file-storage-service';
 import moment from 'moment';
 
 export default class UserBusiness {

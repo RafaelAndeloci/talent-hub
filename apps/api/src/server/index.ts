@@ -7,6 +7,7 @@ import { buildApiRouter } from './routes';
 import { config } from '../config/environment';
 import { getStaticFilesRouter } from './static-files';
 import { errorHandler } from '../middlewares/error-handler-middleware';
+import { newUUID } from '@talent-hub/shared';
 const {
     api: { host, port },
 } = config;
@@ -17,6 +18,9 @@ async function startServer() {
     const apiRouter = await buildApiRouter();
 
     app.use([
+        (req, res, _) => {
+            res.locals.requestId = req.headers['x-request-id'] || newUUID();
+        },
         getStaticFilesRouter(),
         cors({
             origin: '*',

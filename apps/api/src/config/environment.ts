@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv';
-import * as uuid from 'uuid';
 import path from 'path';
 import { Logger } from '../services/logging-service';
+import { newUUID } from '@talent-hub/shared';
 
 const env = process.env.NODE_ENV || 'development';
 
@@ -67,7 +67,7 @@ export const config = {
         },
     },
     sysAdmin: {
-        id: process.env.SYS_ADMIN_ID || uuid.v4(),
+        id: process.env.SYS_ADMIN_ID || newUUID(),
         email: process.env.SYS_ADMIN_EMAIL || 'pedro.lima47@fatec.sp.gov.br',
         password: process.env.SYS_ADMIN_PASSWORD || 'admin123',
         username: process.env.SYS_ADMIN_USERNAME || 'admin',

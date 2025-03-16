@@ -1,137 +1,107 @@
-import { RequestHandler } from 'express';
-import { courseRepository } from './course-repository';
 import {
-    AuthContext,
     Course,
     CourseDto,
-    CreateCoursePayload,
-    FindAllArgs,
-    Id,
+    CoursePayload,
     PagedResponse,
+    QueryArgs,
     SuggestionStatus,
-    UpdateCoursePayload,
+    UpdateStatusPayload,
+    UserDto,
 } from '@talent-hub/shared';
-import { newInstance, toDto } from './course-parser';
-import { academicInstitutionRepository } from '../academic-institutions/academic-institution-repository';
-import { ApiError } from '../../types/api-error';
-import _ from 'lodash';
+import { RequestHandler } from 'express';
+import { CourseRepository } from './course-repository';
+import { CourseParser } from './course-parser';
+import ApiError from '../../utils/api-error';
+import HTTPStatus from 'http-status';
 
-export const findById: RequestHandler<Id, CourseDto, void, void, AuthContext> = async (
-    req,
-    res,
-) => {
-    const course = await courseRepository.findById(req.params.id);
-    if (!course) {
-        ApiError.throwNotFound('Course not found');
-        return;
-    }
-    
-    res.json(toDto(course));
-};
+export class CourseController {
+    constructor(private readonly courseRepository = new CourseRepository()) {}
 
-export const findAll: RequestHandler<
-    void,
-    PagedResponse<CourseDto>,
-    void,
-    FindAllArgs<CourseDto>,
-    AuthContext
-> = async (req, res) => {
-    const courses = await courseRepository.findAll(req.query as unknown as FindAllArgs<Course>);
-    res.json(courses.parse(toDto));
-};
+    findById: RequestHandler<{ id: string }, CourseDto, void, void, UserDto> = async (req, res) => {
+        const course = await this.courseRepository.findById(req.params.id);
+        if (!course) {
+            res.status(404).end();
+            return;
+        }
 
-export const create: RequestHandler<
-    void,
-    CourseDto,
-    CreateCoursePayload,
-    void,
-    AuthContext
-> = async (req, res) => {
-    const academicInstitution = await academicInstitutionRepository.findById(
-        req.body.institution.id,
-    );
-    if (academicInstitution === null) {
-        ApiError.throwNotFound('Academic institution not found');
-        return;
-    }
+        res.json(CourseParser.toDto(course));
+    };
 
-    if (academicInstitution.status === SuggestionStatus.Rejected) {
-        ApiError.throwBadRequest('Academic institution is not approved');
-        return;
-    }
+    findAll: RequestHandler<void, PagedResponse<CourseDto>, void, QueryArgs<Course>, UserDto> =
+        async (req, res) => {
+            const courses = await this.courseRepository.findAll(req.query);
+            res.json(courses.parse(CourseParser.toDto));
+        };
 
-    if (
-        await courseRepository.exists({
-            institutionId: req.body.institution.id,
+    create: RequestHandler<void, CourseDto, CourseDto, void, UserDto> = async (req, res) => {
+        const alreadyExists = await this.courseRepository.exists({
             name: req.body.name,
-        })
-    ) {
-        ApiError.throwBadRequest('Course already exists');
-        return;
-    }
+            degreeType: req.body.degreeType,
+        });
+        if (alreadyExists) {
+            ApiError.throwBadRequest('Course already exists');
+        }
 
-    const course = newInstance({
-        payload: req.body,
-        user: res.locals.user,
-    });
+        const course = CourseParser.newInstance({
+            payload: req.body,
+            user: res.locals,
+        });
 
-    await courseRepository.create(course);
+        await this.courseRepository.create({ entity: course });
 
-    res.json(toDto(course));
-};
+        res.status(HTTPStatus.CREATED).json(CourseParser.toDto(course));
+    };
 
-export const update: RequestHandler<Id, CourseDto, UpdateCoursePayload, void, AuthContext> = async (
-    req,
-    res,
-) => {
-    let course = await courseRepository.findById(req.params.id);
-    if (!course) {
-        ApiError.throwNotFound('Course not found');
-        return;
-    }
+    update: RequestHandler<{ id: string }, CourseDto, CoursePayload, void, UserDto> = async (
+        req,
+        res,
+    ) => {
+        let course = await this.courseRepository.findById(req.params.id);
+        if (!course) {
+            res.status(404).end();
+            return;
+        }
 
-    if ([SuggestionStatus.Pending, SuggestionStatus.Rejected].includes(course.status)) {
-        ApiError.throwBadRequest('Course is not approved');
-        return;
-    }
+        if (course.suggestion.status !== SuggestionStatus.Approved) {
+            ApiError.throwBadRequest('Course is not approved');
+        }
 
-    const academicInstitution = await academicInstitutionRepository.findById(course.institution.id);
+        course = { ...course, ...req.body };
 
-    if (academicInstitution === null) {
-        ApiError.throwNotFound('Academic institution not found');
-        return;
-    }
+        await this.courseRepository.update({ entity: course });
 
-    if (academicInstitution.status === SuggestionStatus.Rejected) {
-        ApiError.throwBadRequest('Academic institution is not approved');
-        return;
-    }
+        res.json(CourseParser.toDto(course));
+    };
 
-    if (
-        await courseRepository.exists({
-            institutionId: course.institution.id,
-            name: req.body.name,
-        })
-    ) {
-        ApiError.throwBadRequest('Course already exists');
-        return;
-    }
+    remove: RequestHandler<{ id: string }, void, void, void, UserDto> = async (req, res) => {
+        const course = await this.courseRepository.findById(req.params.id);
+        if (!course) {
+            res.status(404).end();
+            return;
+        }
 
-    course = _.merge(course, req.body);
+        await this.courseRepository.deleteById({ id: course.id });
 
-    await courseRepository.update(course);
+        res.status(204).end();
+    };
 
-    res.json(toDto(course));
-};
+    updateStatus: RequestHandler<
+        { id: string } & UpdateStatusPayload,
+        CourseDto,
+        void,
+        void,
+        UserDto
+    > = async (req, res) => {
+        let course = await this.courseRepository.findById(req.params.id);
+        if (!course) {
+            res.status(404).end();
+            return;
+        }
 
-export const remove: RequestHandler<Id, void, void, void, AuthContext> = async (req, res) => {
-    const course = await courseRepository.findById(req.params.id);
-    if (!course) {
-        ApiError.throwNotFound('Course not found');
-        return;
-    }
+        course = { ...course, suggestion: { ...course.suggestion, status: req.params.status } };
 
-    await courseRepository.deleteById(course.id);
+        await this.courseRepository.update({ entity: course });
 
-    res.status(204).end();
-};
+        res.json(CourseParser.toDto(course));
+    };
+}

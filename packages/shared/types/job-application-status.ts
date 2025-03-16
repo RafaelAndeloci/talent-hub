@@ -1,6 +1,6 @@
 export enum JobApplicationStatus {
-    // aplicação realizada
-    applied = 'applied',
+    // aplicação realizada, mas ainda não avaliada
+    waiting = 'waiting',
 
     // aplicação rejeitada
     rejected = 'rejected',

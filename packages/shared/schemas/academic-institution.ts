@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { AcademicDegreeType } from '../types/academic-degree-type';
+import { AcademicDegreeLevel } from '../types/academic-degree-type';
 import Schema from '../utils/schema-builder';
 import { Suggestion, SuggestionSchema } from './suggestion';
 import { SuggestionStatus } from '../types/suggestion-status';
@@ -9,7 +9,7 @@ export const AcademicInstitutionSchema = z.object({
     name: z.string().min(3).max(150),
     city: z.string(),
     website: z.string().url(),
-    offeredDegreeTypes: z.nativeEnum(AcademicDegreeType).array(),
+    offeredDegreeTypes: z.nativeEnum(AcademicDegreeLevel).array(),
     suggestion: SuggestionSchema,
 });
 

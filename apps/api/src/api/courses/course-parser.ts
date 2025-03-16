@@ -1,52 +1,39 @@
-import { Course, CoursePayload, SuggestionStatus, UserDto } from '@talent-hub/shared';
+import { Course, CourseDto, CoursePayload, DbParser, newUUID, UserDto } from '@talent-hub/shared';
 import { CourseModelAttr } from './course-model';
-import * as uuid from 'uuid';
-import { Role } from '@talent-hub/shared/types/role';
-import moment from 'moment';
+import {
+    fromPlainSuggestion,
+    makeSuggestionForUser,
+    plainSuggestion,
+} from '../../utils/suggestion-util';
 
-type CourseParser = {
-    fromDatabase: (course: CourseModelAttr) => Course;
-    toDatabase: (course: Course) => CourseModelAttr;
+type CourseParser = DbParser<Course, CourseModelAttr> & {
     newInstance: (args: { payload: CoursePayload; user: UserDto }) => Course;
+
+    toDto: (data: Course) => CourseDto;
 };
 
 export const CourseParser: CourseParser = {
-    fromDatabase: (course) => ({
-        id: course.id,
-        name: course.name,
-        degreeType: course.degreeType,
-        suggestion: {
-            validation:
-                course.validatedAt && course.validatedBy
-                    ? {
-                          by: course.validatedBy,
-                          at: course.validatedAt,
-                      }
-                    : null,
+    toDb: (course) => ({
+        ...course,
+        ...plainSuggestion(course.suggestion),
+    }),
+
+    fromDb: (course) => ({
+        ...course,
+        suggestion: fromPlainSuggestion({
             status: course.status,
-        },
+            suggestedAt: course.suggestedAt,
+            suggestedBy: course.suggestedBy,
+            validatedAt: course.validatedAt,
+            validatedBy: course.validatedBy,
+        }),
     }),
-    toDatabase: (course) => ({
-        id: course.id,
-        name: course.name,
-        degreeType: course.degreeType,
-        validatedBy: course.suggestion.validation?.by || null,
-        validatedAt: course.suggestion.validation?.at || null,
-        status: course.suggestion.status,
-    }),
+
     newInstance: ({ payload, user }) => ({
-        id: uuid.v4(),
-        name: payload.name,
-        degreeType: payload.degreeType,
-        suggestion:
-            user.role === Role.SysAdmin
-                ? {
-                      status: SuggestionStatus.Approved,
-                      validation: { by: user.id, at: moment() },
-                  }
-                : {
-                      status: SuggestionStatus.Pending,
-                      validation: null,
-                  },
+        id: newUUID(),
+        ...payload,
+        suggestion: makeSuggestionForUser(user),
     }),
+
+    toDto: ({ suggestion: { status }, ...rest }) => ({ ...rest, status }),
 };

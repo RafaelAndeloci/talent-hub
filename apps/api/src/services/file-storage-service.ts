@@ -21,7 +21,7 @@ const s3Client = new S3Client({
     endpoint: serviceUrl,
 });
 
-export default class FileStorageService {
+export class FileStorageService {
     public static async upload({
         key,
         bucket,

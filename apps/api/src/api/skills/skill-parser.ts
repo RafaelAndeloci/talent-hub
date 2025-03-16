@@ -1,5 +1,4 @@
-import { newUUID, Skill, SkillDto, SkillPayload, UserDto } from '@talent-hub/shared';
-import DbParser from '@talent-hub/shared/types/db-parser';
+import { DbParser, newUUID, Skill, SkillDto, SkillPayload, UserDto } from '@talent-hub/shared';
 import _ from 'lodash';
 import { SkillModelAttr } from './skill-model';
 import {

@@ -9,7 +9,7 @@ import ApiError from '../../utils/api-error';
 import { CandidateRepository } from './candidate-repository';
 import { CandidateParser } from './candidate-parser';
 import { InputFile } from '../../types/input-file';
-import FileStorageService from '../../services/file-storage-service';
+import { FileStorageService } from '../../services/file-storage-service';
 
 export class CandidateBusiness {
     public constructor(private candidateRepository = new CandidateRepository()) {}
@@ -147,7 +147,7 @@ export class CandidateBusiness {
         candidate,
     }: {
         userRole: string;
-        candidate: Candidate;
+        candidate: Candidate | CandidateDto;
     }): Promise<void> {
         if (!candidate.isAvailableForWork) {
             ApiError.throwUnprocessableEntity(

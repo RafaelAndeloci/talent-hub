@@ -1,4 +1,7 @@
 export enum JobApplicationStage {
+    /** candidatura, mas não foi aprovada para a próxima etapa */
+    applied = 'applied',
+
     /** triagem */
     screening = 'screening',
 

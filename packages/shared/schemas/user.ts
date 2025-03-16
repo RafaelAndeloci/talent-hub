@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import Role from '../types/role';
 import Schema from '../utils/schema-builder';
+import { Role } from '../types/role';
 
 export const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 

@@ -6,12 +6,14 @@ import {
     AcademicInstitutionDto,
     PagedResponse,
     QueryArgs,
+    SuggestionStatus,
     UpdateAcademicInstitutionStatusPayload,
     UserDto,
 } from '@talent-hub/shared';
 
 import AcademicInstitutionRepository from './academic-institution-repository';
 import { AcademicInstitutionParser } from './academic-institution-parser';
+import ApiError from '../../utils/api-error';
 
 export default class AcademicInstitutionController {
     constructor(private academicInstitutionRepository = new AcademicInstitutionRepository()) {}
@@ -95,6 +97,10 @@ export default class AcademicInstitutionController {
         if (!academicInstitution) {
             res.sendStatus(HttpStatus.NOT_FOUND);
             return;
+        }
+
+        if (academicInstitution.suggestion.status !== SuggestionStatus.Approved) {
+            ApiError.throwBadRequest('Academic institution is not approved');
         }
 
         academicInstitution = { ...academicInstitution, ...req.body };

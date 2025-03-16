@@ -1,8 +1,6 @@
 import _ from 'lodash';
-import DbParser from '@talent-hub/shared/types/db-parser';
-import { CreateUserPayload, newUUID, User, UserDto } from '@talent-hub/shared';
+import { CreateUserPayload, DbParser, newUUID, Role, User, UserDto } from '@talent-hub/shared';
 import { UserModelAttr } from './user-model';
-import Role from '@talent-hub/shared/types/role';
 import moment from 'moment';
 
 type UserParser = DbParser<User, UserModelAttr> & {

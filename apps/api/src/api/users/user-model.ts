@@ -2,9 +2,8 @@ import { Model, DataTypes } from 'sequelize';
 
 import { primaryColumn } from '../../constants/database-column.def';
 import database from '../../config/database';
-import { User } from '@talent-hub/shared';
+import { Role, User } from '@talent-hub/shared';
 import moment, { Moment } from 'moment';
-import Role from '@talent-hub/shared/types/role';
 
 export type UserModelAttr = Omit<User, 'emailConfirmation' | 'passwordReset'> & {
     emailConfirmationToken: string | null;

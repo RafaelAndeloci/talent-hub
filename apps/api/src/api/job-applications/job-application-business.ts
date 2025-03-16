@@ -1,55 +1,74 @@
-import { ApiError } from '../../types/api-error';
-import { jobApplicationRepository } from './job-application-repository';
-import { candidateBusiness } from '../candidates/candidate-business';
-import { jobOpeningBusiness } from '../job-openings/job-opening-business';
+import {
+    CreateJobApplicationPayload,
+    JobApplication,
+    JobApplicationStatus,
+    PagedResponse,
+    QueryArgs,
+    UpdateJobApplicationCoverLetterPayload,
+    UpdateJobApplicationStagePayload,
+    UpdateJobApplicationStatusPayload,
+} from '@talent-hub/shared';
+import { JobApplicationRepository } from './job-application-repository';
+import ApiError from '../../utils/api-error';
+import UserRepository from '../users/user-repository';
+import { RequestContext } from '../../types/request-context';
 import { jobApplicationParser } from './job-application-parser';
-import { jobQueueService } from '../../services/job-queue-service';
+import { CandidateBusiness } from '../candidates/candidate-business';
+import { JobOpeningBusiness } from '../job-openings/job-opening-business';
+import {JobQueueService} from '../../services/job-queue-service';
 import { AppEvent } from '../../enums/app-event';
-import _ from 'lodash';
-import { JobApplication, JobApplicationStatus } from '@talent-hub/shared';
-import { JobApplicationBusiness } from '../../types/job-application-business';
+import moment from 'moment';
 
-const canChangeStatus = (jobApplication: JobApplication) =>
-    jobApplication.status === JobApplicationStatus.applied;
+export class JobApplicationBusiness {
+    public constructor(
+        private readonly jobApplicationRepository = new JobApplicationRepository(),
+        private readonly userRepository = new UserRepository(),
+        private readonly candidateBusiness = new CandidateBusiness(),
+        private readonly jobOpeningBusiness = new JobOpeningBusiness(),
+    ) {}
 
-export const jobApplicationBusiness: JobApplicationBusiness = {
-    findById: async ({ jobApplicationId }) => {
-        const jobApplication = await jobApplicationRepository.findById(jobApplicationId);
+    findById: (jobApplicationId: string) => Promise<JobApplication> = async (jobApplicationId) => {
+        const jobApplication = await this.jobApplicationRepository.findById(jobApplicationId);
         if (!jobApplication) {
             ApiError.throwNotFound(`job application with id ${jobApplicationId} not found`);
-            return null!;
         }
 
         return jobApplication;
-    },
+    };
 
-    findAll: async ({ query }) => jobApplicationRepository.findAll(query),
+    findAll: (args: {
+        query: QueryArgs<JobApplication>;
+    }) => Promise<PagedResponse<JobApplication>> = async ({ query }) =>
+        this.jobApplicationRepository.findAll(query);
 
-    create: async ({ payload, context }) => {
-        const existing = await jobApplicationRepository.exists({
-            candidateId: payload.candidateId,
-            jobOpeningId: payload.jobOpeningId,
-            status: JobApplicationStatus.applied,
-        });
-        if (existing) {
-            ApiError.throwBadRequest('job application already exists');
+    create: (args: {
+        payload: CreateJobApplicationPayload;
+        context: RequestContext;
+    }) => Promise<JobApplication> = async ({ payload, context }) => {
+        const userExists = await this.userRepository.exists({ id: context.user!.id });
+        if (!userExists) {
+            ApiError.throwNotFound(`user with id ${context.user!.id} not found`);
         }
 
-        const candidate = await candidateBusiness.findById(payload.candidateId);
+        const candidate = await this.candidateBusiness.findById(context.user!.id);
         if (!candidate) {
-            ApiError.throwNotFound(`candidate with id ${payload.candidateId} not found`);
+            ApiError.throwNotFound(`candidate with id ${context.user!.id} not found`);
         }
-        candidateBusiness.validateForApplication({ userRole: context.user.role, candidate });
 
-        await jobOpeningBusiness.validateForApplication({
-            jobOpeningId: payload.jobOpeningId,
-            context,
+        await this.candidateBusiness.validateForApplication({
+            userRole: context.user!.role,
+            candidate,
         });
 
-        const jobApplication = jobApplicationParser.newInstance({ payload, user: context.user });
-        await jobApplicationRepository.create(jobApplication);
+        await this.jobOpeningBusiness.validateForApplication({
+            jobOpeningId: payload.jobOpening.id,
+        });
 
-        await jobQueueService.enqueue({
+        const jobApplication = jobApplicationParser.newInstance({ payload, user: context.user! });
+
+        await this.jobApplicationRepository.create({ entity: jobApplication });
+
+        await JobQueueService.enqueue({
             event: AppEvent.JobApplicationCreated,
             payload: {
                 jobApplicationId: jobApplication.id,
@@ -57,49 +76,58 @@ export const jobApplicationBusiness: JobApplicationBusiness = {
         });
 
         return jobApplication;
-    },
+    };
 
-    remove: async ({ jobApplicationId }) => {
-        const jobApplication = await jobApplicationRepository.findById(jobApplicationId);
+    async remove({ jobApplicationId }: { jobApplicationId: string }) {
+        const jobApplication = await this.jobApplicationRepository.findById(jobApplicationId);
         if (!jobApplication) {
             ApiError.throwNotFound(`job application with id ${jobApplicationId} not found`);
-            return null!;
         }
 
-        await jobApplicationRepository.deleteById(jobApplicationId);
+        await this.jobApplicationRepository.deleteById({ id: jobApplicationId });
 
-        await jobQueueService.enqueue({
+        await JobQueueService.enqueue({
             event: AppEvent.JobApplicationRemoved,
             payload: {
                 jobApplicationId,
             },
         });
-    },
+    }
 
-    updateCoverLetter: async ({ jobApplicationId, payload }) => {
-        const jobApplication = await jobApplicationRepository.findById(jobApplicationId);
+    async updateCoverLetter({
+        jobApplicationId,
+        payload,
+    }: {
+        jobApplicationId: string;
+        payload: UpdateJobApplicationCoverLetterPayload;
+    }) {
+        const jobApplication = await this.jobApplicationRepository.findById(jobApplicationId);
         if (!jobApplication) {
             ApiError.throwNotFound(`job application with id ${jobApplicationId} not found`);
-            return null!;
         }
 
         jobApplication.coverLetter = payload.coverLetter;
-        await jobApplicationRepository.update(jobApplication);
+        await this.jobApplicationRepository.update({ entity: jobApplication });
 
         return jobApplication;
-    },
+    }
 
-    updateStage: async ({ jobApplicationId, payload }) => {
-        const jobApplication = await jobApplicationRepository.findById(jobApplicationId);
+    async updateStage({
+        jobApplicationId,
+        payload,
+    }: {
+        jobApplicationId: string;
+        payload: UpdateJobApplicationStagePayload;
+    }) {
+        const jobApplication = await this.jobApplicationRepository.findById(jobApplicationId);
         if (!jobApplication) {
             ApiError.throwNotFound(`job application with id ${jobApplicationId} not found`);
-            return null!;
         }
 
         jobApplication.stage = payload.stage;
-        await jobApplicationRepository.update(jobApplication);
+        await this.jobApplicationRepository.update({ entity: jobApplication });
 
-        await jobQueueService.enqueue({
+        await JobQueueService.enqueue({
             event: AppEvent.JobApplicationStageUpdated,
             payload: {
                 jobApplicationId: jobApplication.id,
@@ -107,39 +135,45 @@ export const jobApplicationBusiness: JobApplicationBusiness = {
         });
 
         return jobApplication;
-    },
+    }
 
-    updateStatus: async ({ jobApplicationId, payload, context }) => {
-        const jobApplication = await jobApplicationRepository.findById(jobApplicationId);
+    async updateStatus({
+        jobApplicationId,
+        payload,
+        context,
+    }: {
+        jobApplicationId: string;
+        payload: UpdateJobApplicationStatusPayload;
+        context: RequestContext;
+    }) {
+        const jobApplication = await this.jobApplicationRepository.findById(jobApplicationId);
         if (!jobApplication) {
             ApiError.throwNotFound(`job application with id ${jobApplicationId} not found`);
-            return null!;
         }
 
-        if (!canChangeStatus(jobApplication)) {
+        if (jobApplication.status !== JobApplicationStatus.waiting) {
             ApiError.throwBadRequest('job application status cannot be changed');
-            return null!;
         }
 
         jobApplication.status = payload.status;
 
-        if (payload.rejectionReason) {
+        if (payload.rejection) {
             if (payload.status !== JobApplicationStatus.rejected) {
                 ApiError.throwBadRequest(
                     'rejection reason can only be set for rejected applications',
                 );
-                return null!;
             }
 
             jobApplication.rejection = {
-                rejectedBy: context.user.id,
-                reason: payload.rejectionReason,
+                by: context.user!.id,
+                reason: payload.rejection.reason,
+                at: moment(),
             };
         }
 
-        await jobApplicationRepository.update(jobApplication);
+        await this.jobApplicationRepository.update({ entity: jobApplication });
 
-        await jobQueueService.enqueue({
+        await JobQueueService.enqueue({
             event: AppEvent.JobApplicationStatusUpdated,
             payload: {
                 jobApplicationId: jobApplication.id,
@@ -147,5 +181,5 @@ export const jobApplicationBusiness: JobApplicationBusiness = {
         });
 
         return jobApplication;
-    },
-};
+    }
+}

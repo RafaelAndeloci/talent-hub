@@ -1,41 +1,41 @@
-import { jobOpeningRepository } from './job-opening-repository';
-import { companyRepository } from '../companies/company-repository';
-import { ApiError } from '../../types/api-error';
-import { jobQueueService } from '../../services/job-queue-service';
+import { JobOpeningRepository } from './job-opening-repository';
+import ApiError from '../../utils/api-error';
+import {
+    FillJobOpeningPayload,
+    JobApplicationStatus,
+    JobOpening,
+    JobOpeningPayload,
+    JobOpeningStatus,
+    QueryArgs,
+} from '@talent-hub/shared';
+import { JobOpeningParser } from './job-opening-parser';
+import { JobQueueService } from '../../services/job-queue-service';
 import { AppEvent } from '../../enums/app-event';
-import { jobApplicationRepository } from '../job-applications/job-application-repository';
-import { jobOpeningParser } from './job-opening-parser';
-import _ from 'lodash';
-import { JobOpeningStatus, JobApplicationStatus } from '@talent-hub/shared';
-import { JobOpeningBusiness } from '../../types/job-opening-business';
+import { JobApplicationRepository } from '../job-applications/job-application-repository';
 
-export const jobOpeningBusiness: JobOpeningBusiness = {
-    findById: async ({ jobOpeningId, context }) => {
-        const jobOpening = await jobOpeningRepository.findById(jobOpeningId);
+export class JobOpeningBusiness {
+    constructor(
+        private readonly jobOpeningRepository = new JobOpeningRepository(),
+        private readonly jobApplicationRepository = new JobApplicationRepository(),
+    ) {}
+
+    async findById({ jobOpeningId }: { jobOpeningId: string }) {
+        const jobOpening = await this.jobOpeningRepository.findById(jobOpeningId);
         if (!jobOpening) {
-            throw new Error(`job opening with id ${jobOpeningId} not found`);
+            ApiError.throwNotFound(`job opening with id ${jobOpeningId} not found`);
         }
 
-        return jobOpeningParser.toDto({ jobOpening, role: context.user.role });
-    },
+        return jobOpening;
+    }
 
-    findAll: async ({ query, context }) => {
-        const jobOpenings = await jobOpeningRepository.findAll(query);
+    async findAll({ query }: { query: QueryArgs<JobOpening> }) {
+        return this.jobOpeningRepository.findAll(query);
+    }
 
-        return jobOpenings.parse((jobOpening) =>
-            jobOpeningParser.toDto({ jobOpening, role: context.user.role }),
-        );
-    },
-
-    create: async ({ payload, context }) => {
-        const company = await companyRepository.findById(payload.companyId);
-        if (!company) {
-            ApiError.throwNotFound(`company with id ${payload.companyId} not found`);
-        }
-
-        const alreadyExists = await jobOpeningRepository.existsByPosition({
+    async create({ payload }: { payload: JobOpeningPayload }) {
+        const alreadyExists = await this.jobOpeningRepository.existsByPosition({
             position: payload.position,
-            companyId: payload.companyId,
+            companyId: payload.company.id,
         });
         if (alreadyExists) {
             ApiError.throwBadRequest(
@@ -43,30 +43,29 @@ export const jobOpeningBusiness: JobOpeningBusiness = {
             );
         }
 
-        const jobOpening = jobOpeningParser.newInstance({ payload });
-        await jobOpeningRepository.create(jobOpening);
+        const jobOpening = JobOpeningParser.newInstance({ payload });
+        await this.jobOpeningRepository.create({ entity: jobOpening });
 
-        await jobQueueService.enqueue({
+        await JobQueueService.enqueue({
             event: AppEvent.JobOpeningCreated,
             payload: {
                 jobOpeningId: jobOpening.id,
             },
         });
 
-        return jobOpeningParser.toDto({ jobOpening, role: context.user.role });
-    },
+        return jobOpening;
+    }
 
-    update: async ({ jobOpeningId, payload, context }) => {
-        const jobOpening = await jobOpeningRepository.findById(jobOpeningId);
+    async update({ jobOpeningId, payload }: { jobOpeningId: string; payload: JobOpeningPayload }) {
+        const jobOpening = await this.jobOpeningRepository.findById(jobOpeningId);
         if (!jobOpening) {
             ApiError.throwNotFound(`job opening with id ${jobOpeningId} not found`);
-            return null!;
         }
 
         if (jobOpening.position !== payload.position) {
-            const alreadyExists = await jobOpeningRepository.existsByPosition({
-                position: payload.position!,
-                companyId: jobOpening.companyId,
+            const alreadyExists = await this.jobOpeningRepository.existsByPosition({
+                position: payload.position,
+                companyId: jobOpening.company.id,
             });
             if (alreadyExists) {
                 ApiError.throwBadRequest(
@@ -75,49 +74,47 @@ export const jobOpeningBusiness: JobOpeningBusiness = {
             }
         }
 
-        const updatedJobOpening = _.merge(jobOpening, payload);
-        await jobOpeningRepository.update(updatedJobOpening);
+        const updatedJobOpening = { ...jobOpening, ...payload };
+        await this.jobOpeningRepository.update({ entity: updatedJobOpening });
 
-        await jobQueueService.enqueue({
+        await JobQueueService.enqueue({
             event: AppEvent.JobOpeningUpdated,
             payload: {
                 jobOpeningId: updatedJobOpening.id,
             },
         });
 
-        return jobOpeningParser.toDto({ jobOpening: updatedJobOpening, role: context.user.role });
-    },
+        return updatedJobOpening;
+    }
 
-    close: async ({ jobOpeningId, context }) => {
-        const jobOpening = await jobOpeningRepository.findById(jobOpeningId);
+    async close({ jobOpeningId }: { jobOpeningId: string }) {
+        const jobOpening = await this.jobOpeningRepository.findById(jobOpeningId);
         if (!jobOpening) {
             ApiError.throwNotFound(`job opening with id ${jobOpeningId} not found`);
-            return null!;
         }
 
-        if (!jobOpeningBusiness.canBeClosed({ jobOpening, context })) {
+        if (!this.canBeClosed({ jobOpening })) {
             ApiError.throwBadRequest('job opening cannot be closed');
         }
 
         jobOpening.status = JobOpeningStatus.Closed;
 
-        await jobOpeningRepository.update(jobOpening);
+        await this.jobOpeningRepository.update({ entity: jobOpening });
 
-        await jobQueueService.enqueue({
+        await JobQueueService.enqueue({
             event: AppEvent.JobOpeningClosed,
             payload: {
                 jobOpeningId: jobOpening.id,
             },
         });
 
-        return jobOpeningParser.toDto({ jobOpening, role: context.user.role });
-    },
+        return jobOpening;
+    }
 
-    open: async ({ jobOpeningId, context }) => {
-        const jobOpening = await jobOpeningRepository.findById(jobOpeningId);
+    async open({ jobOpeningId }: { jobOpeningId: string }) {
+        const jobOpening = await this.jobOpeningRepository.findById(jobOpeningId);
         if (!jobOpening) {
             ApiError.throwNotFound(`job opening with id ${jobOpeningId} not found`);
-            return null!;
         }
 
         if (jobOpening.status !== JobOpeningStatus.Draft) {
@@ -126,23 +123,28 @@ export const jobOpeningBusiness: JobOpeningBusiness = {
 
         jobOpening.status = JobOpeningStatus.Open;
 
-        await jobOpeningRepository.update(jobOpening);
+        await this.jobOpeningRepository.update({ entity: jobOpening });
 
-        await jobQueueService.enqueue({
+        await JobQueueService.enqueue({
             event: AppEvent.JobOpeningOpened,
             payload: {
                 jobOpeningId: jobOpening.id,
             },
         });
 
-        return jobOpeningParser.toDto({ jobOpening, role: context.user.role });
-    },
+        return jobOpening;
+    }
 
-    fill: async ({ jobOpeningId, payload, context }) => {
-        const jobOpening = await jobOpeningRepository.findById(jobOpeningId);
+    async fill({
+        jobOpeningId,
+        payload,
+    }: {
+        jobOpeningId: string;
+        payload: FillJobOpeningPayload;
+    }) {
+        const jobOpening = await this.jobOpeningRepository.findById(jobOpeningId);
         if (!jobOpening) {
             ApiError.throwNotFound(`job opening with id ${jobOpeningId} not found`);
-            return null!;
         }
 
         if (jobOpening.status !== JobOpeningStatus.Open) {
@@ -150,36 +152,34 @@ export const jobOpeningBusiness: JobOpeningBusiness = {
         }
 
         jobOpening.status = JobOpeningStatus.Filled;
-        jobOpening.selectedApplicationId = payload.selectedJobApplicationId;
+        jobOpening.selectedApplicationId = payload.selectedApplicationId;
 
-        await jobOpeningRepository.update(jobOpening);
+        await this.jobOpeningRepository.update({ entity: jobOpening });
 
-        await jobQueueService.enqueue({
+        await JobQueueService.enqueue({
             event: AppEvent.JobOpeningFilled,
             payload: {
                 jobOpeningId: jobOpening.id,
+                selectedJobApplicationId: payload.selectedApplicationId,
             },
         });
 
-        return jobOpeningParser.toDto({ jobOpening, role: context.user.role });
-    },
+        return jobOpening;
+    }
 
-    toDraft: async ({ jobOpeningId, context }) => {
-        const jobOpening = await jobOpeningRepository.findById(jobOpeningId);
+    async toDraft({ jobOpeningId }: { jobOpeningId: string }) {
+        const jobOpening = await this.jobOpeningRepository.findById(jobOpeningId);
         if (!jobOpening) {
             ApiError.throwNotFound(`job opening with id ${jobOpeningId} not found`);
-            return null!;
         }
 
         if (jobOpening.status !== JobOpeningStatus.Open) {
             ApiError.throwBadRequest('job opening cannot be set to draft');
         }
 
-        const existsApplications = await jobApplicationRepository.exists({
-            jobOpeningId: jobOpening.id,
-            status: JobApplicationStatus.applied,
-        });
-        if (existsApplications) {
+        const applications =
+            await this.jobApplicationRepository.findJobOpenningApplications(jobOpeningId);
+        if (applications.some((app) => app.status === JobApplicationStatus.waiting)) {
             ApiError.throwBadRequest(
                 'job opening cannot be set to draft. There are pending applications. To set to draft, all applications must be reject all applications or delete them',
             );
@@ -187,33 +187,31 @@ export const jobOpeningBusiness: JobOpeningBusiness = {
 
         jobOpening.status = JobOpeningStatus.Draft;
 
-        await jobOpeningRepository.update(jobOpening);
+        await this.jobOpeningRepository.update({ entity: jobOpening });
 
-        return jobOpeningParser.toDto({ jobOpening, role: context.user.role });
-    },
+        return jobOpening;
+    }
 
-    remove: async ({ jobOpeningId }) => {
-        const jobOpening = await jobOpeningRepository.findById(jobOpeningId);
+    async remove({ jobOpeningId }: { jobOpeningId: string }) {
+        const jobOpening = await this.jobOpeningRepository.findById(jobOpeningId);
         if (!jobOpening) {
             ApiError.throwNotFound(`job opening with id ${jobOpeningId} not found`);
-            return null!;
         }
 
-        await jobQueueService.enqueue({
+        await JobQueueService.enqueue({
             event: AppEvent.JobOpeningRemoved,
             payload: {
                 jobOpeningId: jobOpening.id,
             },
         });
 
-        await jobOpeningRepository.deleteById(jobOpeningId);
-    },
+        await this.jobOpeningRepository.deleteById({ id: jobOpeningId });
+    }
 
-    validateForApplication: async ({ jobOpeningId }) => {
-        const jobOpening = await jobOpeningRepository.findById(jobOpeningId);
+    async validateForApplication({ jobOpeningId }: { jobOpeningId: string }) {
+        const jobOpening = await this.jobOpeningRepository.findById(jobOpeningId);
         if (!jobOpening) {
             ApiError.throwNotFound(`job opening with id ${jobOpeningId} not found`);
-            return null!;
         }
 
         const acceptNewApplications = jobOpening.status === JobOpeningStatus.Open;
@@ -224,13 +222,13 @@ export const jobOpeningBusiness: JobOpeningBusiness = {
         }
 
         return jobOpening;
-    },
+    }
 
-    canBeClosed: ({ jobOpening }) => {
+    private canBeClosed({ jobOpening }: { jobOpening: JobOpening }) {
         const closableStatuses: JobOpeningStatus[] = [
             JobOpeningStatus.Open,
             JobOpeningStatus.Draft,
         ];
         return closableStatuses.includes(jobOpening.status);
-    },
-};
+    }
+}

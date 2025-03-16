@@ -8,7 +8,7 @@ import {
 } from '../../constants/database-column.def';
 import {
     AcademicBackground,
-    AcademicDegreeType,
+    AcademicDegreeLevel,
     Achievement,
     Benefit,
     Candidate,
@@ -46,7 +46,7 @@ export type AcademicBackgroundModelAttr = AcademicBackgroundModelAttrInternal & 
     course: {
         id: string;
         name: string | null;
-        degreeType: AcademicDegreeType | null;
+        degreeType: AcademicDegreeLevel | null;
     };
     institution: {
         id: string;

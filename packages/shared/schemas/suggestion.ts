@@ -7,8 +7,6 @@ export const SuggestionValidation = z.object({
     at: Schema.moment(),
 });
 
-export type SuggestionValidation = z.infer<typeof SuggestionValidation>;
-
 export const SuggestionSchema = z.object({
     by: Schema.id(),
     at: Schema.moment(),
@@ -19,3 +17,5 @@ export const SuggestionSchema = z.object({
 export type Suggestion = Omit<z.infer<typeof SuggestionSchema>, 'validation'> & {
     validation: SuggestionValidation | null;
 };
+
+export type SuggestionValidation = z.infer<typeof SuggestionValidation>;

@@ -1,15 +1,24 @@
 import { JobApplication } from '@talent-hub/shared';
-import { makeRepository } from '../../services/repository';
-import { JobApplicationModelAttr } from '../../types/job-application-model-attr';
-import { JobApplicationModel } from './job-application-model';
+import { JobApplicationModel, JobApplicationModelAttr } from './job-application-model';
 import { jobApplicationParser } from './job-application-parser';
+import { Repository } from '../../services/repository';
 
-export const jobApplicationRepository = makeRepository<
+export class JobApplicationRepository extends Repository<
     JobApplication,
     JobApplicationModelAttr,
     JobApplicationModel
->({
-    model: JobApplicationModel,
-    toDatabase: jobApplicationParser.toDatabase,
-    fromDatabase: jobApplicationParser.fromDatabase,
-});
+> {
+    constructor() {
+        super(JobApplicationModel, jobApplicationParser);
+    }
+
+    public async findJobOpenningApplications(jobOpeningId: string): Promise<JobApplication[]> {
+        const models = await JobApplicationModel.findAll({
+            where: {
+                jobOpeningId,
+            },
+        });
+
+        return models.map((model) => jobApplicationParser.fromDb(model.toJSON()));
+    }
+}

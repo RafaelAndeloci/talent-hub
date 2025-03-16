@@ -5,7 +5,7 @@ import {
     newUUID,
     UserDto,
 } from '@talent-hub/shared';
-import DbParser from '@talent-hub/shared/types/db-parser';
+import { DbParser } from '@talent-hub/shared/types/db-parser';
 import { AcademicInstitutionModelAttr } from './academic-institution-model';
 import {
     fromPlainSuggestion,

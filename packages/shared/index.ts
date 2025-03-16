@@ -6,9 +6,11 @@ export * from './schemas/social-medias';
 export * from './schemas/academic-institution';
 export * from './schemas/user';
 export * from './schemas/course';
-export * from './schemas/job-opening';
 export * from './schemas/salary-range';
 export * from './schemas/company';
+export * from './schemas/job-application';
+export * from './schemas/job-opening';
+export * from './schemas/suggestion'
 
 export * from './types/academic-degree-type';
 export * from './types/academic-status';
@@ -24,6 +26,13 @@ export * from './types/auth-result';
 export * from './types/role';
 export * from './types/skill-category';
 export * from './types/skill-type';
+export * from './types/job-application-stage';
+export * from './types/job-application-status';
+export * from './types/role';
+export * from './types/language';
+export * from './types/language-proficiency';
+export * from './types/job-opening-status';
+export * from './types/entity';
 
 export * from './utils/schema-builder';
 export * from './utils/uuid';

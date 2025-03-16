@@ -2,11 +2,13 @@ import { z } from 'zod';
 import { JobApplicationStatus } from '../types/job-application-status';
 import { JobApplicationStage } from '../types/job-application-stage';
 import moment from 'moment';
+import Schema from '../utils/schema-builder';
 
 // <schema>
 export const JobApplicationRejectionSchema = z.object({
     reason: z.string(),
-    date: z.string().transform((val) => moment(val)),
+    at: z.string().transform((val) => moment(val)),
+    by: Schema.id(),
 });
 
 export const JobApplicationSchema = z.object({
@@ -19,6 +21,7 @@ export const JobApplicationSchema = z.object({
         id: z.string().uuid(),
         title: z.string().nullish().default(null),
     }),
+    createdBy: Schema.id(),
     coverLetter: z.string().nullable().default(null),
     status: z.nativeEnum(JobApplicationStatus),
     stage: z.nativeEnum(JobApplicationStage),
@@ -71,3 +74,43 @@ export type UpdateJobApplicationStatusPayload = z.infer<
     typeof UpdateJobApplicationStatusPayloadSchema
 >;
 // </type>
+
+type JobApplicationQuery = Omit<JobApplication, 'candidate'> & {
+    'candidate.id': string;
+};
+
+export const JobApplicationApiSchema = {
+    FindById: Schema.paramsWithId(),
+    FindAll: Schema.query<JobApplicationQuery>()
+        .paginate()
+        .sort(['candidate.id', 'stage', 'status', 'createdAt', 'updatedAt'])
+        .filter([
+            {
+                field: 'candidate.id',
+                operators: 'eq',
+                builder: (value) => ({ 'candidate.id': value }),
+            },
+            {
+                field: 'stage',
+                operators: 'eq',
+            },
+            {
+                field: 'status',
+                operators: 'eq',
+            },
+        ])
+        .build(),
+    Create: z.object({
+        body: CreateJobApplicationPayloadSchema,
+    }),
+    UpdateCoverLetter: Schema.paramsWithId().extend({
+        body: UpdateJobApplicationCoverLetterPayloadSchema,
+    }),
+    UpdateStage: Schema.paramsWithId().extend({
+        body: UpdateJobApplicationStagePayloadSchema,
+    }),
+    UpdateStatus: Schema.paramsWithId().extend({
+        body: UpdateJobApplicationStatusPayloadSchema,
+    }),
+    Remove: Schema.paramsWithId(),
+};

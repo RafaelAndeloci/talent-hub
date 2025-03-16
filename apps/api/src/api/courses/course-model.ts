@@ -1,7 +1,7 @@
 import database from '../../config/database';
 import { DataTypes, Model, ModelStatic } from 'sequelize';
 import { primaryColumn } from '../../constants/database-column.def';
-import { AcademicDegreeType, Course, SuggestionStatus } from '@talent-hub/shared';
+import { AcademicDegreeLevel, Course, SuggestionStatus } from '@talent-hub/shared';
 import { UserModelAttr } from '../users/user-model';
 import SuggestionModel from '../../types/suggestion-model';
 
@@ -24,7 +24,7 @@ CourseModel.init(
         id: { ...primaryColumn },
         name: { type: DataTypes.STRING(100), allowNull: false },
         degreeType: {
-            type: DataTypes.ENUM(...Object.values(AcademicDegreeType)),
+            type: DataTypes.ENUM(...Object.values(AcademicDegreeLevel)),
             allowNull: false,
         },
         status: { type: DataTypes.ENUM(...Object.values(SuggestionStatus)), allowNull: false },

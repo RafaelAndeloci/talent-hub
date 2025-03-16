@@ -1,16 +1,10 @@
 import { Resource } from '../../enums/resource';
 import { Action } from '../../enums/action';
 import { ApiResource } from '../../types/api-resource';
-import {
-    CreateJobApplicationSchema,
-    DeleteJobApplicationSchema,
-    FindAllJobApplicationsSchema,
-    FindJobApplicationByIdSchema,
-    UpdateJobApplicationCoverLetterSchema,
-    UpdateJobApplicationStageSchema,
-    UpdateJobApplicationStatusSchema,
-} from './job-application-schema';
-import { jobApplicationController } from './job-application-controller';
+import { JobApplicationController } from './job-application-controller';
+import { JobApplicationApiSchema } from '@talent-hub/shared';
+
+const jobApplicationController = new JobApplicationController();
 
 export const jobApplicationRoutes: ApiResource = {
     resource: Resource.JobApplications,
@@ -19,7 +13,7 @@ export const jobApplicationRoutes: ApiResource = {
             method: 'get',
             path: '/',
             auth: true,
-            schema: FindAllJobApplicationsSchema,
+            schema: JobApplicationApiSchema.FindAll,
             action: Action.ReadAll,
             handler: jobApplicationController.findAll,
         },
@@ -27,7 +21,7 @@ export const jobApplicationRoutes: ApiResource = {
             method: 'get',
             path: '/:id',
             auth: true,
-            schema: FindJobApplicationByIdSchema,
+            schema: JobApplicationApiSchema.FindById,
             action: Action.ReadById,
             handler: jobApplicationController.findById,
         },
@@ -35,7 +29,7 @@ export const jobApplicationRoutes: ApiResource = {
             method: 'post',
             path: '/',
             auth: true,
-            schema: CreateJobApplicationSchema,
+            schema: JobApplicationApiSchema.Create,
             action: Action.Create,
             handler: jobApplicationController.create,
         },
@@ -43,7 +37,7 @@ export const jobApplicationRoutes: ApiResource = {
             method: 'patch',
             path: '/:id/cover-letter',
             auth: true,
-            schema: UpdateJobApplicationCoverLetterSchema,
+            schema: JobApplicationApiSchema.UpdateCoverLetter,
             action: Action.jobApplicationUpdateCoverLetter,
             handler: jobApplicationController.updateCoverLetter,
         },
@@ -51,7 +45,7 @@ export const jobApplicationRoutes: ApiResource = {
             method: 'patch',
             path: '/:id/stage',
             auth: true,
-            schema: UpdateJobApplicationStageSchema,
+            schema: JobApplicationApiSchema.UpdateStage,
             action: Action.jobApplicationUpdateStage,
             handler: jobApplicationController.updateStage,
         },
@@ -59,7 +53,7 @@ export const jobApplicationRoutes: ApiResource = {
             method: 'patch',
             path: '/:id/status',
             auth: true,
-            schema: UpdateJobApplicationStatusSchema,
+            schema: JobApplicationApiSchema.UpdateStatus,
             action: Action.jobApplicationUpdateStatus,
             handler: jobApplicationController.updateStatus,
         },
@@ -67,7 +61,7 @@ export const jobApplicationRoutes: ApiResource = {
             method: 'delete',
             path: '/:id',
             auth: true,
-            schema: DeleteJobApplicationSchema,
+            schema: JobApplicationApiSchema.Remove,
             action: Action.Delete,
             handler: jobApplicationController.remove,
         },

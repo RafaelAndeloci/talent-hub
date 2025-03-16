@@ -1,20 +1,22 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response, NextFunction } from 'express';
-import { ApiError } from '../types/api-error';
 import { Action } from '../enums/action';
 import { Permissions } from '../enums/permissions';
 import { Resource } from '../enums/resource';
-import { MiddlewareFactory } from '../types/middleware-factory';
-import { AuthContext } from '@talent-hub/shared';
+import { AnyHandler } from '../types/handler';
+import { RequestContext } from '../types/request-context';
+import ApiError from '../utils/api-error';
 
-export const authorize: MiddlewareFactory<{ resource: Resource; action: Action }> =
+type AuthorizeMiddleware = ({
+    resource,
+    action,
+}: {
+    resource: Resource;
+    action: Action;
+}) => AnyHandler;
+
+export const authorize: AuthorizeMiddleware =
     ({ resource, action }) =>
-    (
-        _req: Request,
-        res: Response<any, AuthContext | Record<string, any>>,
-        next: NextFunction,
-    ): any => {
-        const { user } = res.locals as AuthContext;
+    (_, res, next) => {
+        const { user } = res.locals as RequestContext;
         if (!user) {
             ApiError.throwUnauthorized('user is not authenticated');
         }

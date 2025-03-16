@@ -2,12 +2,12 @@ import HTTPStatus from 'http-status';
 import { ZodError } from 'zod';
 import { ErrorRequestHandler } from 'express';
 import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
-import { ApiError } from '../types/api-error';
 import { Logger } from '../services/logging-service';
+import ApiError from '../utils/api-error';
 
 export const errorHandler: ErrorRequestHandler = (err, _, res, next) => {
     if (err instanceof ApiError && err.expose) {
-        res.status(err.code).json(err.toJson());
+        res.status(err.status).json(err.toJSON());
         return;
     }
 

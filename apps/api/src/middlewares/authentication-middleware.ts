@@ -1,19 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response, NextFunction, RequestHandler } from 'express';
-import { ApiError } from '../types/api-error';
-import { jwtService } from '../services/jwt-service';
+import ApiError from '../utils/api-error';
+import JwtService from '../services/jwt-service';
+import { Handler } from '../types/handler';
 
-export const authenticate: RequestHandler = (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-): any => {
+export const authenticate: Handler<any, any, any, any> = (req, res, next) => {
     const [type, token] = req.headers.authorization?.split(' ') ?? [];
     if (!token || type !== 'Bearer') {
         ApiError.throwUnauthorized('missing authorization token');
     }
 
-    const user = jwtService.authenticateToken(token);
+    const user = JwtService.authenticateToken(token);
     if (!user) {
         ApiError.throwUnauthorized('invalid authorization token');
     }

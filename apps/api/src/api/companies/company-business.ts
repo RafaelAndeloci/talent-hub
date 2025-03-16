@@ -4,13 +4,13 @@ import {
     CompanyPayload,
     PagedResponse,
     QueryArgs,
+    Role,
     UserDto,
 } from '@talent-hub/shared';
 import { CompanyRepository } from './company-repository';
 import ApiError from '../../utils/api-error';
 import { CompanyParser } from './company-parser';
-import Role from '@talent-hub/shared/types/role';
-import FileStorageService from '../../services/file-storage-service';
+import { FileStorageService } from '../../services/file-storage-service';
 import { InputFile } from '../../types/input-file';
 
 export class CompanyBusiness {

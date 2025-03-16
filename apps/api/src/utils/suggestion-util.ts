@@ -1,8 +1,7 @@
-import { SuggestionStatus, UserDto } from '@talent-hub/shared';
-import { SuggestionSchema } from '@talent-hub/shared/schemas/suggestion';
-import Role from '@talent-hub/shared/types/role';
+import { Role, SuggestionStatus, UserDto } from '@talent-hub/shared';
 import moment from 'moment';
 import { PlainSuggestion } from '../types/plain-suggestion';
+import { Suggestion } from '@talent-hub/shared/schemas/suggestion';
 
 export const makeSuggestionForUser = (user: UserDto): Suggestion => ({
     status: user.role === Role.SysAdmin ? SuggestionStatus.Approved : SuggestionStatus.Pending,

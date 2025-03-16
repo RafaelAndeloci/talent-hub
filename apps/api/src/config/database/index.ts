@@ -1,10 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Sequelize, Transaction } from 'sequelize';
-import * as uuid from 'uuid';
-
 import { Logger } from '../../services/logging-service';
 import { config } from '../environment';
 import { formatSql } from '../../utils/sql-formatter';
+import { newUUID } from '@talent-hub/shared';
 
 const {
     database: { database: name, port, host, user, password, logEnabled, pool },
@@ -51,7 +49,7 @@ const database = new Sequelize(name, user, password, {
 });
 
 (database as any).dialect.queryGenerator.generateTransactionId = function () {
-    return `talenthub_api_${uuid.v4()}`.replace(/-/g, '');
+    return `talenthub_api_${newUUID()}`.replace(/-/g, '');
 };
 
 export default database;

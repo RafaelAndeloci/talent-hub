@@ -1,8 +1,7 @@
-import Role from '@talent-hub/shared/types/role';
 import { AppEvent } from '../../enums/app-event';
 import UserRepository from '../users/user-repository';
 import { SkillRepository } from './skill-repository';
-import { SuggestionStatus } from '@talent-hub/shared';
+import { Role, SuggestionStatus } from '@talent-hub/shared';
 import EmailService from '../../services/email-service';
 
 const skillRepository = new SkillRepository();

@@ -1,39 +1,119 @@
-import { Op } from 'sequelize';
-import { makeRepository } from '../../services/repository';
-import { JobOpeningModel } from './job-opening-model';
-import { jobOpeningParser } from './job-opening-parser';
+import { Op, Transaction } from 'sequelize';
+import {
+    JobOpeningModel,
+    JobOpeningModelAttr,
+    SkillProfileModel,
+    LanguageProficiencyProfileModel,
+    CourseProfileModel,
+} from './job-opening-model';
+import { Repository } from '../../services/repository';
+import { JobOpeningParser } from './job-opening-parser';
 import { JobOpening, JobOpeningStatus } from '@talent-hub/shared';
-import { JobOpeningModelAttr } from '../../types/job-opening-model-attr';
 
-export const jobOpeningRepositoryBase = makeRepository<
+export class JobOpeningRepository extends Repository<
     JobOpening,
     JobOpeningModelAttr,
     JobOpeningModel
->({
-    model: JobOpeningModel,
-    toDatabase: jobOpeningParser.toDatabase,
-    fromDatabase: jobOpeningParser.fromDatabase,
-});
+> {
+    constructor() {
+        super(JobOpeningModel, JobOpeningParser);
+    }
 
-export const jobOpeningRepository = {
-    ...jobOpeningRepositoryBase,
-    existsByPosition: async ({
+    override async create({
+        entity,
+        transaction,
+    }: {
+        entity: JobOpening;
+        transaction?: Transaction;
+    }) {
+        const t = transaction || (await JobOpeningModel.sequelize!.transaction());
+
+        try {
+            const model = JobOpeningParser.toDb(entity);
+
+            await JobOpeningModel.create(model, { transaction: t });
+            await SkillProfileModel.bulkCreate(model.desiredSkills, { transaction: t });
+            await LanguageProficiencyProfileModel.bulkCreate(model.desiredLanguages, {
+                transaction: t,
+            });
+            await CourseProfileModel.bulkCreate(model.desiredCourses, { transaction: t });
+
+            if (!transaction) {
+                await t.commit();
+            }
+        } catch (error) {
+            if (!transaction) {
+                await t.rollback();
+            }
+            throw error;
+        }
+    }
+
+    override async update({
+        entity,
+        transaction,
+    }: {
+        entity: JobOpening;
+        transaction?: Transaction;
+    }) {
+        const t: Transaction = transaction || (await JobOpeningModel.sequelize!.transaction());
+
+        try {
+            const model = JobOpeningParser.toDb(entity);
+
+            await JobOpeningModel.update(model, {
+                where: { id: entity.id },
+                transaction: t,
+            });
+
+            await SkillProfileModel.destroy({ where: { jobOpeningId: entity.id }, transaction: t });
+            await LanguageProficiencyProfileModel.destroy({
+                where: { jobOpeningId: entity.id },
+                transaction: t,
+            });
+            await CourseProfileModel.destroy({
+                where: { jobOpeningId: entity.id },
+                transaction: t,
+            });
+
+            await SkillProfileModel.bulkCreate(model.desiredSkills, { transaction: t });
+            await LanguageProficiencyProfileModel.bulkCreate(model.desiredLanguages, {
+                transaction: t,
+            });
+            await CourseProfileModel.bulkCreate(model.desiredCourses, { transaction: t });
+
+            if (!transaction) {
+                await t.commit();
+            }
+        } catch (error) {
+            if (!transaction) {
+                await t.rollback();
+            }
+            throw error;
+        }
+    }
+
+    async existsByPosition({
         position,
         companyId,
     }: {
         position: string;
         companyId: string;
-    }): Promise<boolean> => {
-        return await jobOpeningRepositoryBase.exists({
-            [Op.and]: [
-                { companyId },
-                { position },
-                {
-                    status: {
-                        [Op.not]: [JobOpeningStatus.Closed, JobOpeningStatus.Filled],
-                    },
+    }): Promise<boolean> {
+        return (
+            (await JobOpeningModel.count({
+                where: {
+                    [Op.and]: [
+                        { companyId },
+                        { position },
+                        {
+                            status: {
+                                [Op.not]: [JobOpeningStatus.Closed, JobOpeningStatus.Filled],
+                            },
+                        },
+                    ],
                 },
-            ],
-        });
-    },
-};
+            })) > 0
+        );
+    }
+}

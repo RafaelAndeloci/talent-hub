@@ -1,98 +1,125 @@
-import { Role, JobOpeningStatus, SallaryRange } from '@talent-hub/shared';
-import _ from 'lodash';
-import * as uuid from 'uuid';
-import { JobOpeningSkillProfileModelAttr } from '../../types/job-opening-model-attr';
-import { JobOpeningParser } from '../../types/job-opening-parser';
+import { DbParser, JobOpening, JobOpeningPayload, newUUID } from '@talent-hub/shared';
+import { JobOpeningModelAttr } from './job-opening-model';
 
-export const jobOpeningParser: JobOpeningParser = {
-    toDto: ({ jobOpening, role }) =>
-        role === Role.Candidate ? _.omit(jobOpening, ['selectedApplicationId']) : jobOpening,
+type JobOpeningParser = DbParser<JobOpening, JobOpeningModelAttr> & {
+    newInstance: (args: { payload: JobOpeningPayload }) => JobOpening;
+};
 
-    newInstance: ({ payload }) => ({
-        id: uuid.v4(),
-        position: payload.position,
-        description: payload.description,
-        status: JobOpeningStatus.Draft,
-        companyId: payload.companyId,
-        selectedApplicationId: null,
-        positionLevel: payload.positionLevel,
-        workplaceType: payload.workplaceType,
-        employmentType: payload.employmentType,
-        salary: payload.salary,
-        employmentRegime: payload.employmentRegime,
-        benefits: payload.benefits,
-        deadline: payload.deadline,
-        responsibilities: payload.responsibilities,
-        profile: payload.profile,
-        requirements: payload.requirements,
-    }),
-
-    toDatabase: (jobOpening) => ({
-        id: jobOpening.id,
-        position: jobOpening.position,
-        description: jobOpening.description,
-        status: jobOpening.status,
-        companyId: jobOpening.companyId,
-        selectedApplicationId: jobOpening.selectedApplicationId,
-        positionLevel: jobOpening.positionLevel,
-        workplaceType: jobOpening.workplaceType,
-        employmentType: jobOpening.employmentType,
-        employmentRegime: jobOpening.employmentRegime,
-        benefits: jobOpening.benefits,
-        deadline: jobOpening.deadline,
-        responsibilities: jobOpening.responsibilities,
-        yearsOfExperience: jobOpening.profile?.yearsOfExperience ?? 0,
-        minimumSalary: jobOpening.salary?.min ?? null,
-        languages: jobOpening.profile?.languages ?? [],
-        maximumSalary: jobOpening.salary?.max ?? null,
-        certifications: jobOpening.profile?.certifications ?? [],
-        courses: jobOpening.profile?.courses ?? [],
-        skills:
-            jobOpening.profile?.skills.map((skill) => ({
-                skillId: skill.skillId,
-                proficiencyLevel: skill.proficiencyLevel,
-                mandatory: skill.mandatory,
-            })) ?? [],
-        minimumEducationLevel: jobOpening.profile?.minimumEducationLevel,
-        gradePointAvaregeMin: jobOpening.profile?.gradePointAvaregeMin,
-        requirements: jobOpening.requirements,
-    }),
-
-    fromDatabase: (jobOpening) => ({
-        id: jobOpening.id,
-        position: jobOpening.position,
-        description: jobOpening.description,
-        status: jobOpening.status,
-        companyId: jobOpening.companyId,
-        selectedApplicationId: jobOpening.selectedApplicationId,
-        positionLevel: jobOpening.positionLevel,
-        workplaceType: jobOpening.workplaceType,
-        employmentType: jobOpening.employmentType,
-        salary: jobOpening.minimumSalary
-            ? ({
-                  min: jobOpening.minimumSalary,
-                  max: jobOpening.maximumSalary,
-              } as SallaryRange)
-            : null,
-        employmentRegime: jobOpening.employmentRegime,
-        benefits: jobOpening.benefits,
-        deadline: jobOpening.deadline,
-        responsibilities: jobOpening.responsibilities,
-        requirements: jobOpening.requirements,
+export const JobOpeningParser: JobOpeningParser = {
+    fromDb: ({
+        customBenefits,
+        fixedBenefits,
+        desiredCourses,
+        desiredGradePointAverageMin,
+        desiredLanguages,
+        desiredMinimumEducationLevel,
+        desiredYearsOfExperience,
+        desiredCertifications,
+        desiredSkills,
+        companyId,
+        companyTradeName,
+        salaryMax,
+        salaryMin,
+        ...rest
+    }) => ({
+        ...rest,
+        company: {
+            id: companyId,
+            tradeName: companyTradeName,
+        },
+        salaryRange:
+            salaryMax && salaryMin
+                ? {
+                      min: salaryMin,
+                      max: salaryMax,
+                  }
+                : null,
+        benefits: {
+            fixed: fixedBenefits,
+            custom: customBenefits,
+        },
         profile: {
-            yearsOfExperience: jobOpening.yearsOfExperience,
-            skills: (jobOpening as any).skills.map(
-                (skillProfile: JobOpeningSkillProfileModelAttr) => ({
-                    skillId: skillProfile.skill!.id,
-                    skillName: skillProfile.skill!.name,
-                    skillType: skillProfile.skill!.type,
-                    mandatory: skillProfile.mandatory,
-                    proficiencyLevel: skillProfile.proficiencyLevel,
+            certifications: desiredCertifications,
+            yearsOfExperience: desiredYearsOfExperience,
+            minimumEducationLevel: desiredMinimumEducationLevel,
+            gradePointAverageMin: desiredGradePointAverageMin,
+            languages: desiredLanguages.map(({ id, ...rest }) => rest),
+            courses: desiredCourses.map(
+                ({ couseName, courseId, semestreMax, semestreMin, ...desiredCourse }) => ({
+                    ...desiredCourse,
+                    course: {
+                        id: courseId,
+                        name: couseName,
+                    },
+                    semestreRange: {
+                        min: semestreMin,
+                        max: semestreMax,
+                    },
                 }),
             ),
-            courses: jobOpening.courses,
-            languages: jobOpening.languages,
-            certifications: jobOpening.certifications,
+            skills: desiredSkills.map(({ skillId, skillName, skillType, ...rest }) => ({
+                ...rest,
+                skill: {
+                    id: skillId,
+                    name: skillName,
+                    type: skillType,
+                },
+            })),
         },
+    }),
+
+    toDb: ({
+        company: { id: companyId, tradeName: companyTradeName },
+        salaryRange,
+        benefits: { custom: customBenefits, fixed: fixedBenefits },
+        profile: {
+            certifications: desiredCertifications,
+            yearsOfExperience: desiredYearsOfExperience,
+            minimumEducationLevel: desiredMinimumEducationLevel,
+            gradePointAverageMin: desiredGradePointAverageMin,
+            languages,
+            courses,
+            skills,
+        },
+        ...rest
+    }) => ({
+        ...rest,
+        companyTradeName,
+        companyId,
+        salaryMax: salaryRange?.max ?? null,
+        salaryMin: salaryRange?.min ?? null,
+        customBenefits,
+        fixedBenefits,
+        desiredCertifications,
+        desiredYearsOfExperience,
+        desiredMinimumEducationLevel,
+        desiredGradePointAverageMin,
+        desiredLanguages: languages.map((l) => ({
+            id: newUUID(),
+            jobOpeningId: rest.id,
+            ...l,
+        })),
+        desiredCourses: courses.map(({ course, semestreRange, ...c }) => ({
+            id: newUUID(),
+            jobOpeningId: rest.id,
+            ...c,
+            courseId: course.id,
+            couseName: course.name,
+            semestreMax: semestreRange.max,
+            semestreMin: semestreRange.min,
+        })),
+        desiredSkills: skills.map(({ skill, ...s }) => ({
+            ...s,
+            jobOpeningId: rest.id,
+            id: newUUID(),
+            skillId: skill.id,
+            skillName: skill.name,
+            skillType: skill.type,
+        })),
+    }),
+
+    newInstance: ({ payload }) => ({
+        ...payload,
+        id: newUUID(),
     }),
 };

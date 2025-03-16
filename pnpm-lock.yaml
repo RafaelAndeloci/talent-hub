@@ -87,9 +87,6 @@ importers:
       sql-formatter:
         specifier: ^15.4.10
         version: 15.4.10
-      uuid:
-        specifier: ^11.0.5
-        version: 11.0.5
       winston:
         specifier: ^3.17.0
         version: 3.17.0

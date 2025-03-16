@@ -1,15 +1,10 @@
 import { Resource } from '../../enums/resource';
 import { Action } from '../../enums/action';
-import {
-    CreateJobOpeningSchema,
-    FillJobOpeningSchema,
-    FindJobOpeningByIdSchema,
-    FindAllJobOpeningsSchema,
-    UpdateJobOpeningSchema,
-    UpdateJobOpeningStatusSchema,
-} from './job-opening-schema';
-import { jobOpeningController } from './job-opening-controller';
 import { ApiResource } from '../../types/api-resource';
+import { JobOpeningController } from './job-opening-controller';
+import { JobOpeningApiSchema } from '@talent-hub/shared';
+
+const jobOpeningController = new JobOpeningController();
 
 export const jobOpeningRoutes: ApiResource = {
     resource: Resource.JobOpenings,
@@ -18,7 +13,7 @@ export const jobOpeningRoutes: ApiResource = {
             method: 'get',
             path: '/',
             auth: true,
-            schema: FindAllJobOpeningsSchema,
+            schema: JobOpeningApiSchema.FindAll,
             action: Action.ReadAll,
             handler: jobOpeningController.findAll,
         },
@@ -26,7 +21,7 @@ export const jobOpeningRoutes: ApiResource = {
             method: 'get',
             path: '/:id',
             auth: true,
-            schema: FindJobOpeningByIdSchema,
+            schema: JobOpeningApiSchema.FindById,
             action: Action.ReadById,
             handler: jobOpeningController.findById,
         },
@@ -34,7 +29,7 @@ export const jobOpeningRoutes: ApiResource = {
             method: 'post',
             path: '/',
             auth: true,
-            schema: CreateJobOpeningSchema,
+            schema: JobOpeningApiSchema.Create,
             action: Action.Create,
             handler: jobOpeningController.create,
         },
@@ -42,47 +37,23 @@ export const jobOpeningRoutes: ApiResource = {
             method: 'put',
             path: '/:id',
             auth: true,
-            schema: UpdateJobOpeningSchema,
+            schema: JobOpeningApiSchema.Update,
             action: Action.Update,
             handler: jobOpeningController.update,
         },
         {
             method: 'patch',
-            path: `/:id/open`,
-            auth: true,
-            schema: UpdateJobOpeningStatusSchema,
-            action: Action.Update,
-            handler: jobOpeningController.open,
-        },
-        {
-            method: 'patch',
-            path: '/:id/close',
-            auth: true,
-            schema: UpdateJobOpeningStatusSchema,
-            action: Action.Update,
-            handler: jobOpeningController.close,
-        },
-        {
-            method: 'patch',
-            path: '/:id/draft',
-            auth: true,
-            schema: UpdateJobOpeningStatusSchema,
-            action: Action.Update,
-            handler: jobOpeningController.toDraft,
-        },
-        {
-            method: 'patch',
             path: '/:id/fill',
             auth: true,
-            schema: FillJobOpeningSchema,
+            schema: JobOpeningApiSchema.UpdateStatus,
             action: Action.Update,
-            handler: jobOpeningController.fill,
+            handler: jobOpeningController.updateStatus,
         },
         {
             method: 'delete',
             path: '/:id',
             auth: true,
-            schema: FindJobOpeningByIdSchema,
+            schema: JobOpeningApiSchema.Remove,
             action: Action.Delete,
             handler: jobOpeningController.remove,
         },

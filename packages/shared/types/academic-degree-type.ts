@@ -1,4 +1,4 @@
-export enum AcademicDegreeType {
+export enum AcademicDegreeLevel {
     ElementarySchool = 'elementary_school',
     HighSchool = 'high_school',
     Technical = 'technical',

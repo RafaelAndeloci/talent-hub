@@ -1,54 +1,72 @@
-import { Role, JobApplicationStatus, JobApplicationStage } from '@talent-hub/shared';
-import * as uuid from 'uuid';
-import { JobApplicationParser } from '../../types/job-application-parser';
+import {
+    CreateJobApplicationPayload,
+    DbParser,
+    JobApplication,
+    JobApplicationStage,
+    JobApplicationStatus,
+    newUUID,
+    Role,
+    UserDto,
+} from '@talent-hub/shared';
+import { JobApplicationModelAttr } from './job-application-model';
+import moment from 'moment';
+
+type JobApplicationParser = DbParser<JobApplication, JobApplicationModelAttr> & {
+    newInstance: (args: { payload: CreateJobApplicationPayload; user: UserDto }) => JobApplication;
+};
 
 export const jobApplicationParser: JobApplicationParser = {
-    newInstance: ({ payload, user }) => ({
-        id: uuid.v4(),
-        candidateId: payload.candidateId,
-        coverLetter: payload.coverLetter,
-        jobOpeningId: payload.jobOpeningId,
-        isAutoCreated: user.role === Role.SysAdmin,
-        status: JobApplicationStatus.applied,
-        stage: JobApplicationStage.screening,
-        appliedBy: user.id,
+    newInstance: ({ payload: { candidate, jobOpening, ...rest }, user }) => ({
+        id: newUUID(),
+        ...rest,
+        candidate: {
+            id: candidate.id,
+            name: null,
+        },
+        jobOpening: {
+            id: jobOpening.id,
+            title: null,
+        },
         rejection: null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        stage: JobApplicationStage.applied,
+        status: JobApplicationStatus.waiting,
+        createdAt: moment(),
+        updatedAt: moment(),
+        isAutoCreated: user.role === Role.SysAdmin,
+        createdBy: user.id,
     }),
 
-    fromDatabase: (model) => ({
-        id: model.id,
-        candidateId: model.candidateId,
-        coverLetter: model.coverLetter,
-        jobOpeningId: model.jobOpeningId,
-        isAutoCreated: model.isAutoCreated,
-        stage: model.stage,
-        status: model.status,
+    toDb: (data) => ({
+        ...data,
+        rejectedBy: data.rejection?.by ?? null,
+        rejectionReason: data.rejection?.reason ?? null,
+        rejectionAt: data.rejection?.at ?? null,
+        candidateId: data.candidate.id,
+        jobOpeningId: data.jobOpening.id,
+        candidateName: null,
+        jobOpeningTitle: null,
+    }),
+
+    fromDb: ({
+        candidateId,
+        candidateName,
+        jobOpeningId,
+        jobOpeningTitle,
+        rejectedBy,
+        rejectionAt,
+        rejectionReason,
+        ...rest
+    }) => ({
+        ...rest,
+        candidate: { id: candidateId, name: candidateName },
+        jobOpening: { id: jobOpeningId, title: jobOpeningTitle },
         rejection:
-            model.rejectedBy && model.rejectionReason
+            rejectedBy && rejectionAt && rejectionReason
                 ? {
-                      rejectedBy: model.rejectedBy,
-                      reason: model.rejectionReason,
+                      by: rejectedBy,
+                      at: rejectionAt,
+                      reason: rejectionReason,
                   }
                 : null,
-        appliedBy: model.appliedBy,
-        createdAt: model.createdAt,
-        updatedAt: model.updatedAt,
-    }),
-
-    toDatabase: (entity) => ({
-        id: entity.id,
-        candidateId: entity.candidateId,
-        coverLetter: entity.coverLetter,
-        jobOpeningId: entity.jobOpeningId,
-        stage: entity.stage,
-        status: entity.status,
-        createdAt: entity.createdAt,
-        updatedAt: entity.updatedAt,
-        rejectedBy: entity.rejection?.rejectedBy ?? null,
-        rejectionReason: entity.rejection?.reason ?? null,
-        appliedBy: entity.appliedBy,
-        isAutoCreated: entity.isAutoCreated,
     }),
 };

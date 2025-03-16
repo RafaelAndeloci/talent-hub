@@ -1,43 +1,48 @@
 export default class ApiError extends Error {
-    private status: number;
+    public expose: boolean = false;
+    public status: number;
 
-    private constructor(message: string, status: number) {
+    private constructor(message: string, status: number, expose: boolean = true) {
         super(message);
         this.status = status;
+        this.expose = expose;
     }
 
-    static throwBadRequest(message: string): never {
+    public static throwBadRequest(message: string): never {
         throw new ApiError(message, 400);
     }
 
-    static throwNotFound(message: string): never {
+    public static throwNotFound(message: string): never {
         throw new ApiError(message, 404);
     }
 
-    static throwConflict(message: string): never {
+    public static throwConflict(message: string): never {
         throw new ApiError(message, 409);
     }
 
-    static throwUnprocessableEntity(message: string): never {
+    public static throwUnprocessableEntity(message: string): never {
         throw new ApiError(message, 422);
     }
 
-    static throwForbidden(message: string): never {
+    public static throwForbidden(message: string): never {
         throw new ApiError(message, 403);
     }
 
-    static throwUnauthorized(message: string): never {
+    public static throwUnauthorized(message: string): never {
         throw new ApiError(message, 401);
     }
 
-    static throwInternalServerError(message: string): never {
+    public static throwInternalServerError(message: string): never {
         throw new ApiError(message, 500);
     }
 
-    toJSON() {
-        return {
-            message: this.message,
-            status: this.status,
-        };
+    public static throwWithoutExpose(message: string): never {
+        throw new ApiError(message, 500, false);
+    }
+
+    public toJSON() {
+        return this.expose
+            ? { message: this.message, status: this.status }
+            : { message: 'Internal Server Error', status: 500 };
     }
 }

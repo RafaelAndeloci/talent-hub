@@ -1,6 +1,5 @@
-import { Company, CompanyDto, CompanyPayload, DbParser, newUUID } from '@talent-hub/shared';
+import { Company, CompanyDto, CompanyPayload, DbParser, newUUID, Role } from '@talent-hub/shared';
 import { CompanyModelAttr } from './company-model';
-import Role from '@talent-hub/shared/types/role';
 
 type CompanyParser = DbParser<Company, CompanyModelAttr> & {
     toDto: (args: { company: Company; userRole: Role }) => CompanyDto;

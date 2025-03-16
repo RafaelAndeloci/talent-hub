@@ -10,7 +10,7 @@ import { SocialMedias, SocialMediasSchema } from './social-medias';
 import Schema from '../utils/schema-builder';
 import AcademicStatus from '../types/academic-status';
 import AchievementType from '../types/achievement-type';
-import { AcademicDegreeType } from '../types/academic-degree-type';
+import { AcademicDegreeLevel } from '../types/academic-degree-type';
 import { EmploymentRegime } from '../types/employment-regime';
 import { EmploymentType } from '../types/employment-type';
 import { PositionLevel } from '../types/position-level';
@@ -24,7 +24,7 @@ const AcademicBackgroundSchema = z.object({
     course: z.object({
         id: Schema.id(),
         name: z.string().nullish().default(null),
-        degreeType: z.nativeEnum(AcademicDegreeType).nullish().default(null),
+        degreeType: z.nativeEnum(AcademicDegreeLevel).nullish().default(null),
     }),
     institution: z.object({
         id: Schema.id(),

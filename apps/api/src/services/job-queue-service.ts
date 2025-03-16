@@ -5,7 +5,7 @@ import { config } from '../config/environment';
 import { AppEvent } from '../enums/app-event';
 import BullQueue from 'bull';
 
-export default class JobQueueService {
+export class JobQueueService {
     private static listenersRegistered = false;
 
     private static readonly eventsQueue = new BullQueue('jobs', {

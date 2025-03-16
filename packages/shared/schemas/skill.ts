@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { SkillCategory } from '../types/skill-category';
-import { SuggestionSchema } from './suggestion';
+import { Suggestion, SuggestionSchema } from './suggestion';
 import Schema from '../utils/schema-builder';
 import { SuggestionStatus } from '../types/suggestion-status';
 import { SkillType } from '../types/skill-type';
@@ -23,7 +23,7 @@ export const SkillPayloadSchema = SkillSchema.omit({
     suggestion: true,
 });
 
-export type Skill = Omit<z.infer<typeof SkillSchema>, 'suggestionValidation'> & {
+export type Skill = Omit<z.infer<typeof SkillSchema>, 'suggestion'> & {
     suggestion: Suggestion;
 };
 

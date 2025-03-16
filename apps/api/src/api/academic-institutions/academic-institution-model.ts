@@ -1,20 +1,20 @@
 import database from '../../config/database';
 import { DataTypes, Model, ModelStatic } from 'sequelize';
 import { primaryColumn } from '../../constants/database-column.def';
-import { AcademicDegreeType, AcademicInstitution, SuggestionStatus } from '@talent-hub/shared';
+import { AcademicDegreeLevel, AcademicInstitution, SuggestionStatus } from '@talent-hub/shared';
 import SuggestionModel from '../../types/suggestion-model';
 import { UserModelAttr } from '../users/user-model';
 
 export type AcademicInstitutionModelAttr = SuggestionModel<AcademicInstitution>;
 export class AcademicInstitutionModel extends Model<AcademicInstitutionModelAttr> {
-    static associate({ UserModel }: { UserModel: ModelStatic<Model<UserModelAttr>> }) {
-        AcademicInstitutionModel.belongsTo(UserModel, {
+    static associate({ User }: { User: ModelStatic<Model<UserModelAttr>> }) {
+        AcademicInstitutionModel.belongsTo(User, {
             foreignKey: 'validatedBy',
             targetKey: 'id',
             as: 'validator',
         });
 
-        UserModel.hasMany(AcademicInstitutionModel, {
+        User.hasMany(AcademicInstitutionModel, {
             foreignKey: 'validatedBy',
             as: 'validatedAcademicInstitutions',
         });
@@ -32,7 +32,7 @@ AcademicInstitutionModel.init(
             validate: { isUrl: true },
         },
         offeredDegreeTypes: {
-            type: DataTypes.ARRAY(DataTypes.ENUM(...Object.values(AcademicDegreeType))),
+            type: DataTypes.ARRAY(DataTypes.ENUM(...Object.values(AcademicDegreeLevel))),
             allowNull: false,
         },
         validatedAt: { type: DataTypes.DATE, allowNull: true },

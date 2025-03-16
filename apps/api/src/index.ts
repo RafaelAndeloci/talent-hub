@@ -1,7 +1,8 @@
 import { Logger } from './services/logging-service';
 import { initDatabase } from './config/database/init';
 import { config } from './config/environment';
-import { registerJobQueueListeners } from './services/job-queue-service';
+import { JobQueueService } from './services/job-queue-service';
+
 const {
     database: { sync },
 } = config;
@@ -14,7 +15,7 @@ const runApplication = async () => {
             alter: sync.alter,
         });
 
-        await registerJobQueueListeners();
+        await JobQueueService.registerListeners();
 
         await import('./server');
     } catch (e) {

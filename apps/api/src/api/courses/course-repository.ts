@@ -1,11 +1,10 @@
-import { CourseModel } from './course-model';
-import { CourseModelAttr } from '../../types/course-model-attr';
+import { CourseModel, CourseModelAttr } from './course-model';
 import { Course } from '@talent-hub/shared';
-import { makeRepository } from '../../services/repository';
-import { fromDatabase, toDatabase } from './course-parser';
+import { Repository } from '../../services/repository';
+import { CourseParser } from './course-parser';
 
-export const courseRepository = makeRepository<Course, CourseModelAttr, CourseModel>({
-    model: CourseModel,
-    fromDatabase,
-    toDatabase,
-});
+export class CourseRepository extends Repository<Course, CourseModelAttr, CourseModel> {
+    constructor() {
+        super(CourseModel, CourseParser);
+    }
+}

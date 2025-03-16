@@ -1,4 +1,4 @@
-import { AcademicDegreeType } from './academic-degree-type';
+import { AcademicDegreeLevel } from './academic-degree-type';
 import { Benefit } from './benefit';
 import { EmploymentRegime } from './employment-regime';
 import { EmploymentType } from './employment-type';
@@ -17,7 +17,7 @@ export interface JobOpeningSkillProfile extends SkillProfile {
 export interface JobOpeningProfile {
     yearsOfExperience: number;
     skills: JobOpeningSkillProfile[];
-    minimumEducationLevel?: AcademicDegreeType;
+    minimumEducationLevel?: AcademicDegreeLevel;
     gradePointAvaregeMin?: number;
     courses: string[];
     languages: LanguageProfile[];

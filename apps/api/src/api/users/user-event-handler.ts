@@ -6,8 +6,8 @@ import { Logger } from '../../services/logging-service';
 import { config } from '../../config/environment';
 import moment from 'moment';
 import UserRepository from './user-repository';
-import Role from '@talent-hub/shared/types/role';
 import EmailService from '../../services/email-service';
+import { Role } from '@talent-hub/shared';
 
 const emailTemplatePath = path.resolve(__dirname, '../../../static/templates/emails');
 

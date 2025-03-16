@@ -1,58 +1,103 @@
+import { JobApplicationBusiness } from './job-application-business';
+import {
+    CreateJobApplicationPayload,
+    Entity,
+    JobApplication,
+    PagedResponse,
+    QueryArgs,
+    UpdateJobApplicationCoverLetterPayload,
+    UpdateJobApplicationStagePayload,
+    UpdateJobApplicationStatusPayload,
+} from '@talent-hub/shared';
 import HTTPStatus from 'http-status';
+import { Handler } from '../../types/handler';
 
-import { jobApplicationBusiness } from './job-application-business';
-import { JobApplicationController } from '../../types/job-application-controller';
+export class JobApplicationController {
+    public constructor(private readonly jobApplicationBusiness = new JobApplicationBusiness()) {}
 
-export const jobApplicationController: JobApplicationController = {
-    findById: async ({ params: { id: jobApplicationId } }, res) => {
-        const jobApplication = await jobApplicationBusiness.findById({
+    findById: Handler<void, JobApplication, void, Entity> = async (req, res) => {
+        const jobApplication = await this.jobApplicationBusiness.findById(req.params.id);
+        res.status(HTTPStatus.OK).json(jobApplication).end();
+    };
+
+    findAll: Handler<void, PagedResponse<JobApplication>, QueryArgs<JobApplication>, void> = async (
+        req,
+        res,
+    ) => {
+        const response = await this.jobApplicationBusiness.findAll({ query: req.query });
+        res.status(HTTPStatus.OK).json(response).end();
+    };
+
+    create: Handler<CreateJobApplicationPayload, JobApplication, void, void> = async (req, res) => {
+        const payload = req.body;
+        const context = res.locals;
+
+        const jobApplication = await this.jobApplicationBusiness.create({ payload, context });
+        res.status(HTTPStatus.CREATED).json(jobApplication).end();
+    };
+
+    updateCoverLetter: Handler<
+        UpdateJobApplicationCoverLetterPayload,
+        JobApplication,
+        void,
+        Entity
+    > = async (req, res) => {
+        const {
+            params: { id: jobApplicationId },
+            body: payload,
+        } = req;
+
+        const jobApplication = await this.jobApplicationBusiness.updateCoverLetter({
             jobApplicationId,
-        });
-        res.status(HTTPStatus.OK).json(jobApplication!);
-    },
-
-    findAll: async ({ query }, res) => {
-        const result = await jobApplicationBusiness.findAll({
-            query,
-        });
-        res.status(HTTPStatus.OK).json(result);
-    },
-
-    create: async ({ body: payload }, res) => {
-        const jobApplication = await jobApplicationBusiness.create({
-            payload,
-            context: res.locals,
-        });
-        res.status(HTTPStatus.CREATED).json(jobApplication);
-    },
-
-    remove: async ({ params: { id: jobApplicationId } }, res) => {
-        await jobApplicationBusiness.remove({ jobApplicationId });
-        res.status(HTTPStatus.NO_CONTENT).send();
-    },
-
-    updateCoverLetter: async ({ params: { id: jobApplicationId }, body: payload }, res) => {
-        const jobApplication = await jobApplicationBusiness.updateCoverLetter({
-            jobApplicationId,
             payload,
         });
+
         res.status(HTTPStatus.OK).json(jobApplication);
-    },
+    };
 
-    updateStage: async ({ params: { id: jobApplicationId }, body: payload }, res) => {
-        const jobApplication = await jobApplicationBusiness.updateStage({
+    updateStatus: Handler<UpdateJobApplicationStatusPayload, JobApplication, void, Entity> = async (
+        req,
+        res,
+    ) => {
+        const {
+            params: { id: jobApplicationId },
+            body: payload,
+        } = req;
+        const { locals: context } = res;
+
+        const jobApplication = await this.jobApplicationBusiness.updateStatus({
+            jobApplicationId,
+            payload,
+            context,
+        });
+
+        res.status(HTTPStatus.OK).json(jobApplication).end();
+    };
+
+    updateStage: Handler<UpdateJobApplicationStagePayload, JobApplication, void, Entity> = async (
+        req,
+        res,
+    ) => {
+        const {
+            params: { id: jobApplicationId },
+            body: payload,
+        } = req;
+
+        const jobApplication = await this.jobApplicationBusiness.updateStage({
             jobApplicationId,
             payload,
         });
-        res.status(HTTPStatus.OK).json(jobApplication);
-    },
 
-    updateStatus: async ({ params: { id: jobApplicationId }, body: payload }, res) => {
-        const jobApplication = await jobApplicationBusiness.updateStatus({
-            jobApplicationId,
-            payload,
-            context: res.locals,
-        });
-        res.status(HTTPStatus.OK).json(jobApplication);
-    },
-};
+        res.status(HTTPStatus.OK).json(jobApplication).end();
+    };
+
+    remove: Handler<void, void, void, Entity> = async (req, res) => {
+        const {
+            params: { id: jobApplicationId },
+        } = req;
+
+        await this.jobApplicationBusiness.remove({ jobApplicationId });
+        
+        res.status(HTTPStatus.NO_CONTENT).end();
+    };
+}

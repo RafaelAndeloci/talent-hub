@@ -1,9 +1,9 @@
 import { Role } from '@talent-hub/shared';
 import database from '.';
-import { hasher } from '../../services/hasher';
 import { Logger } from '../../services/logging-service';
 import { config } from '../environment';
 import models from './models';
+import Hasher from '../../services/hasher';
 
 export const initDatabase = async ({
     sync,
@@ -33,7 +33,7 @@ export const initDatabase = async ({
             username: config.sysAdmin.username,
             email: config.sysAdmin.email,
             role: Role.SysAdmin,
-            hashedPassword: await hasher.hash(config.sysAdmin.password),
+            hashedPassword: await Hasher.hash(config.sysAdmin.password),
             updatedAt: new Date(),
             createdAt: new Date(),
         });

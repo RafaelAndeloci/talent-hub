@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { Logger } from '../services/logging-service';
-import { fileStorageService } from '../services/file-storage-service';
+import { FileStorageService } from '../services/file-storage-service';
 import { validate } from '../middlewares/validation-middleware';
 import { Router } from 'express';
 
@@ -19,7 +19,7 @@ export const getStaticFilesRouter = () => {
         async (req, res, next) => {
             try {
                 const { fileKey } = req.params;
-                const { stream, contentType } = await fileStorageService.getFileStream({
+                const { stream, contentType } = await FileStorageService.getFileStream({
                     key: fileKey,
                 });
 
@@ -31,7 +31,7 @@ export const getStaticFilesRouter = () => {
                 res.setHeader('Content-Type', contentType);
                 stream.pipe(res);
 
-                stream.on('error', (error) => {
+                stream.on('error', (error: any) => {
                     Logger.error(error);
                     res.status(500).send('Internal server error');
                 });

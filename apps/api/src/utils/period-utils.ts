@@ -1,15 +1,16 @@
-import { Period, YearMonth } from '@talent-hub/shared';
+import { Period } from "@talent-hub/shared/schemas/period";
+import { Moment } from "moment";
 
 export interface ModelWithPeriod {
     period: Period;
     isCurrent: boolean;
 }
 
-const comparePeriods = (left: YearMonth, right: YearMonth): number => {
-    if (left.year !== right.year) {
-        return left.year - right.year;
+const comparePeriods = (left: Moment, right: Moment): number => {
+    if (left.year() !== right.year()) {
+        return left.year() - right.year();
     }
-    return left.month - right.month;
+    return left.month() - right.month();
 };
 
 export const sortModelsByPeriod = <T extends ModelWithPeriod>(models: T[]): T[] => {
