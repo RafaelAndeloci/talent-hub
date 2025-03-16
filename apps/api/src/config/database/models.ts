@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createRequire } from 'module';
 const requireSync = createRequire(__filename);
 import path from 'path';
@@ -18,7 +17,6 @@ klawSync(modelsBasePath, {
     nodir: true,
     filter: ({ path }) => path.indexOf('-model') > 0,
 }).forEach(({ path }) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { __esModule, ...rest } = requireSync(path);
     const values = Object.values(rest);
 
@@ -28,6 +26,12 @@ klawSync(modelsBasePath, {
 
     const model = values[0] as ModelStatic<Model<any, any>>;
     models[model.name] = model;
+});
+
+Object.keys(models).forEach((modelName) => {
+    if (models[modelName].associate) {
+        models[modelName].associate(models);
+    }
 });
 
 export default models;
