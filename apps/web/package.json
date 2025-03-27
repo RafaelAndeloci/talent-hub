@@ -49,7 +49,7 @@
     "input-otp": "^1.4.2",
     "lucide-react": "^0.484.0",
     "next": "15.1.6",
-    "next-themes": "^0.4.4",
+    "next-themes": "^0.4.6",
     "react": "^19.0.0",
     "react-day-picker": "8.10.1",
     "react-dom": "^19.0.0",
@@ -60,7 +60,7 @@
     "tailwind-merge": "^3.0.2",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^1.1.2",
-    "zod": "^3.24.1"
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.0",
