@@ -29,7 +29,7 @@ export default function JobListings() {
               placeholder="Pesquise estágios e empregos de nível de entrada..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="flex-grow"
+              className="grow"
             />
             <Button>
               <Search className="mr-2 h-4 w-4" />

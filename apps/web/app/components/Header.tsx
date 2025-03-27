@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function Header() {
   return (
-    <header className="bg-background shadow-sm">
+    <header className="bg-background shadow-xs">
       <div className="container mx-auto flex items-center justify-between px-4 py-4">
         <Link
           href="/"
