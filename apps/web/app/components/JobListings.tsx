@@ -39,12 +39,12 @@ export default function JobListings() {
         </div>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {filteredJobs.map((job) => (
-            <div key={job.id} className="rounded-lg bg-card p-6 shadow-md">
+            <div key={job.id} className="bg-card rounded-lg p-6 shadow-md">
               <h3 className="mb-2 text-xl font-semibold">{job.title}</h3>
-              <p className="mb-2 text-muted-foreground">{job.company}</p>
-              <p className="mb-2 text-muted-foreground">{job.location}</p>
-              <p className="mb-2 text-muted-foreground">{job.type}</p>
-              <p className="font-medium text-card-foreground">{job.salary}</p>
+              <p className="text-foreground mb-2">{job.company}</p>
+              <p className="text-foreground mb-2">{job.location}</p>
+              <p className="text-foreground mb-2">{job.type}</p>
+              <p className="text-card-foreground font-medium">{job.salary}</p>
               <Button variant="default" className="mt-4">
                 Inscreva-se
               </Button>
