@@ -38,7 +38,9 @@ enum Role {
 
 export const CreateUserPayloadSchema = z
   .object({
-    username: z.string({ message: "Preencha o campo." }),
+    username: z.string({
+      message: "Preencha o campo.",
+    }),
     email: z
       .string({ message: "Preencha o campo." })
       .email({ message: "Email no formato inválido." }),
@@ -116,7 +118,7 @@ export function RegisterForm({
       >
         <div className="flex flex-col items-center gap-2 text-center">
           <h1 className="text-2xl font-bold">Crie sua conta</h1>
-          <p className="text-muted-foreground text-sm text-balance">
+          <p className="text-foreground text-sm text-balance">
             Digite os campos abaixo para prosseguir
           </p>
         </div>
@@ -125,20 +127,23 @@ export function RegisterForm({
             <FormField
               name="email"
               control={form.control}
-              render={({ field }) => {
+              render={({ field: { value = "", ...field } }) => {
                 return (
                   <FormItem>
-                    <FormLabel htmlFor="email">Email</FormLabel>
+                    <FormLabel htmlFor="email">
+                      Email
+                      <FormMessage />
+                    </FormLabel>
                     <FormControl>
                       <Input
                         id="email"
                         type="email"
                         placeholder="john@doe.com"
                         autoComplete="email"
+                        value={value}
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 );
               }}
@@ -148,20 +153,21 @@ export function RegisterForm({
             <FormField
               name="username"
               control={form.control}
-              render={({ field }) => {
+              render={({ field: { value = "", ...field } }) => {
                 return (
                   <FormItem>
-                    <FormLabel htmlFor="username">Nome de usuário</FormLabel>
+                    <FormLabel htmlFor="username">
+                      Nome de usuário <FormMessage />
+                    </FormLabel>
                     <FormControl>
                       <Input
                         id="username"
                         type="text"
                         placeholder="john_doe123"
-                        autoComplete="username"
+                        value={value}
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 );
               }}
@@ -171,20 +177,22 @@ export function RegisterForm({
             <FormField
               name="password"
               control={form.control}
-              render={({ field }) => {
+              render={({ field: { value = "", ...field } }) => {
                 return (
                   <FormItem>
-                    <FormLabel htmlFor="password">Senha</FormLabel>
+                    <FormLabel htmlFor="password">
+                      Senha <FormMessage />
+                    </FormLabel>
                     <FormControl>
                       <Input
                         id="password"
                         type="password"
                         placeholder="******"
                         autoComplete="new-password"
+                        value={value}
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 );
               }}
@@ -194,11 +202,12 @@ export function RegisterForm({
             <FormField
               name="confirmPassword"
               control={form.control}
-              render={({ field }) => {
+              render={({ field: { value = "", ...field } }) => {
                 return (
                   <FormItem>
                     <FormLabel htmlFor="confirm-password">
                       Confirmar senha
+                      <FormMessage />
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -206,10 +215,10 @@ export function RegisterForm({
                         type="password"
                         placeholder="******"
                         autoComplete="new-password"
+                        value={value}
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 );
               }}
@@ -222,7 +231,10 @@ export function RegisterForm({
               render={({ field: { name, onChange, value = "candidate" } }) => {
                 return (
                   <FormItem>
-                    <FormLabel htmlFor="role">No momento estou</FormLabel>
+                    <FormLabel htmlFor="role">
+                      No momento estou
+                      <FormMessage />
+                    </FormLabel>
                     <FormControl>
                       <Select
                         value={value}
@@ -249,7 +261,6 @@ export function RegisterForm({
                         </SelectContent>
                       </Select>
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 );
               }}
@@ -257,8 +268,12 @@ export function RegisterForm({
 
             <Label htmlFor="role">No momento estou</Label>
           </div>
-          <Button type="submit" className="w-full">
-            {isPending ? <Loader2Icon className="spin" /> : "Entrar"}
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isPending || !isValid}
+          >
+            {isPending ? <Loader2Icon className="animate-spin" /> : "Entrar"}
           </Button>
         </div>
         <div className="flex gap-1 text-center text-sm">

@@ -7,7 +7,7 @@ import JobListings from "../components/app/JobListings";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex h-full flex-col">
       <Header />
       <main className="grow">
         <Hero />
