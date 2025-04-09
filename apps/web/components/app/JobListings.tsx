@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { useState } from "react";
-import jobsData from "../data/jobs.json";
+import jobsData from "../../app/data/jobs.json";
 
 export default function JobListings() {
   const [searchTerm, setSearchTerm] = useState("");

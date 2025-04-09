@@ -3,7 +3,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-
 export function LoginForm({
   className,
   ...props
@@ -19,7 +18,8 @@ export function LoginForm({
       <div className="grid gap-6">
         <div className="grid gap-2">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" placeholder="m@example.com" required />
+
+          <Input id="email" type="email" placeholder="m@example.com" />
         </div>
         <div className="grid gap-2">
           <div className="flex items-center">

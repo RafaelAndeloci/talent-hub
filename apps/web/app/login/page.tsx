@@ -2,45 +2,13 @@
 
 import { GraduationCap } from "lucide-react";
 
-import { LoginForm } from "@/components/login/login-form";
+import { LoginForm } from "@/components/app/login/login-form";
 import loginImg from "@/public/placeholder.svg";
 // import { userService } from "@/services/user-service";
 import Image from "next/image";
 import Link from "next/link";
-import { FormEventHandler, useEffect } from "react";
 
 export default function LoginPage() {
-  const handleSubmit: FormEventHandler<HTMLFormElement> = async (event) => {
-    event.preventDefault();
-
-    const email = (
-      event.currentTarget.elements.namedItem("email") as HTMLInputElement
-    ).value;
-    const password = (
-      event.currentTarget.elements.namedItem("password") as HTMLInputElement
-    ).value;
-
-    try {
-      // const response = await userService.auth({
-      //   identifier: email,
-      //   password,
-      // });
-      // localStorage.setItem("token", response.data.accessToken);
-      // localStorage.setItem(
-      //   "token-expires-in",
-      //   response.data.expiresIn.toString(),
-      // );
-      // window.location.href = "/";
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("token-expires-in");
-  }, []);
-
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -54,7 +22,7 @@ export default function LoginPage() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
-            <LoginForm onSubmit={handleSubmit} />
+            <LoginForm />
           </div>
         </div>
       </div>

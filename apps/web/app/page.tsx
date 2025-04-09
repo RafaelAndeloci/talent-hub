@@ -1,9 +1,9 @@
-import CallToAction from "./components/CallToAction";
-import Features from "./components/Features";
-import Footer from "./components/Footer";
-import Header from "./components/Header";
-import Hero from "./components/Hero";
-import JobListings from "./components/JobListings";
+import CallToAction from "../components/app/CallToAction";
+import Features from "../components/app/Features";
+import Footer from "../components/app/Footer";
+import Header from "../components/app/Header";
+import Hero from "../components/app/Hero";
+import JobListings from "../components/app/JobListings";
 
 export default function Home() {
   return (
