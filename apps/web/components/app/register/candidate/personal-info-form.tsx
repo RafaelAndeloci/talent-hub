@@ -166,7 +166,7 @@ export function PersonalInfoForm() {
                             variant={"outline"}
                             className={cn(
                               "w-full text-left font-normal [&_button]:w-full",
-                              !field.value && "text-muted-foreground",
+                              !field.value && "text-foreground",
                             )}
                           >
                             {field.value ? (
@@ -206,7 +206,7 @@ export function PersonalInfoForm() {
                       <AnimatedTextarea
                         custom={3}
                         placeholder="Nos diga sobre você, suas habilidades, e suas metas de carreira..."
-                        className="min-h-[120px]"
+                        className="[&_textarea]:min-h-[120px]"
                         value={value!}
                         {...field}
                       />
@@ -345,8 +345,8 @@ export function PersonalInfoForm() {
                           className="h-full w-full object-cover"
                         />
                       ) : (
-                        <div className="bg-muted flex h-full w-full items-center justify-center">
-                          <Upload className="text-muted-foreground h-8 w-8" />
+                        <div className="dark:bg-muted bg-accent flex h-full w-full items-center justify-center">
+                          <Upload className="text-muted dark:text-foreground h-8 w-8" />
                         </div>
                       )}
                     </div>
@@ -358,7 +358,7 @@ export function PersonalInfoForm() {
                         title=""
                         onChange={handleUserImageChange}
                       />
-                      <p className="text-muted-foreground mt-1 text-xs">
+                      <p className="text-foreground mt-1 text-xs">
                         Recomendamos escolher uma imagem quadrada (Máx 5 MB)
                       </p>
                     </div>
@@ -383,7 +383,7 @@ export function PersonalInfoForm() {
                       accept="image/*"
                       onChange={handleBannerImageChange}
                     />
-                    <p className="text-muted-foreground text-xs">
+                    <p className="text-foreground text-xs">
                       Recomendamos uma imagem 1200×300 pixels (Máx 5MB)
                     </p>
                   </div>
