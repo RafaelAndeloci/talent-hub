@@ -6,8 +6,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-max min-h-screen w-full flex-col overflow-y-scroll">
-      {children}
-    </div>
+    <div className="flex h-max min-h-screen w-full flex-col">{children}</div>
   );
 }
