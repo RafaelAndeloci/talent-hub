@@ -1,47 +1,25 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRegisterCandidate } from "@/contexts/register/candidate";
-import { cn } from "@/lib/utils";
 import { InterestsForm } from "./interests-form";
 import { PersonalInfoForm } from "./personal-info-form";
 import { ProfessionalInfoForm } from "./professional-info";
 
 interface MultiStepRegistrationProps {}
 export function MultiStepRegistration({}: MultiStepRegistrationProps) {
-  const { currentStep, next, previous } = useRegisterCandidate();
+  const { currentStep } = useRegisterCandidate();
 
   return (
-    <Card className="flex min-h-[600px] w-max min-w-[800px] flex-col">
+    <Card className="flex min-h-[600px] w-full min-w-screen flex-col border-0 shadow-none lg:w-max lg:min-w-[800px] lg:border lg:shadow-sm">
       <CardHeader className="w-full">
-        <CardTitle className="text-center text-3xl text-nowrap">
+        <CardTitle className="text-center text-3xl lg:text-nowrap">
           Crie seu perfil de candidato!
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-1">
-        {currentStep === "personal-info" && <PersonalInfoForm />}
-        {currentStep === "professional-info" && <ProfessionalInfoForm />}
-        {currentStep === "interests" && <InterestsForm />}
-      </CardContent>
-      <CardFooter
-        className={cn(
-          currentStep !== "personal-info" ? "justify-between" : "justify-end",
-        )}
-      >
-        {currentStep !== "personal-info" && (
-          <Button onClick={() => previous()} variant="ghost">
-            Voltar
-          </Button>
-        )}
-        <Button onClick={() => next()}>Continuar</Button>
-      </CardFooter>
+      {currentStep === "personal-info" && <PersonalInfoForm />}
+      {currentStep === "professional-experience" && <ProfessionalInfoForm />}
+      {currentStep === "interests" && <InterestsForm />}
     </Card>
   );
 }

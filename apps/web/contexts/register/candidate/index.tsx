@@ -6,14 +6,19 @@ import { createContext, ReactNode, useContext, useState } from "react";
 
 export type FormSteps =
   | "personal-info"
-  | "professional-info"
+  | "contact"
+  | "address"
+  | "social"
+  | "academicBackgrounds"
+  | "professional-experience"
+  | "languages"
+  | "references"
+  | "skills"
   | "interests"
   | "done";
 
 interface RegisterCandidateContextProps {
-  next(cb?: () => void): void;
-  previous(cb?: () => void): void;
-  goTo(step: FormSteps): void;
+  goToStep(step: FormSteps): void;
   updateFormData(values: Partial<CreateCandidateRequest>): void;
   formData: Partial<CreateCandidateRequest> | undefined;
   currentStep: FormSteps;
@@ -33,29 +38,7 @@ export function RegisterCandidateContextProvider({
   const [formData, setFormData] =
     useState<Partial<CreateCandidateRequest | undefined>>(undefined);
 
-  function next(cb?: () => void) {
-    if (currentStep === "personal-info") {
-      setCurrentStep("professional-info");
-    } else if (currentStep === "professional-info") {
-      setCurrentStep("interests");
-    } else if (currentStep === "interests") {
-      setCurrentStep("done");
-    }
-  }
-  function previous(cb?: () => void) {
-    if (currentStep === "done") {
-      setCurrentStep("interests");
-    } else if (currentStep === "interests") {
-      setCurrentStep("professional-info");
-    } else if (currentStep === "professional-info") {
-      setCurrentStep("personal-info");
-    }
-  }
-
-  function beforePrevious() {}
-  function beforeNext() {}
-
-  function goTo(step: FormSteps) {
+  function goToStep(step: FormSteps) {
     setCurrentStep(step);
   }
 
@@ -71,9 +54,7 @@ export function RegisterCandidateContextProvider({
   return (
     <RegisterCandidateContext.Provider
       value={{
-        goTo,
-        next,
-        previous,
+        goToStep,
         formData,
         updateFormData,
         currentStep,

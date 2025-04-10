@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className="scroll-smooth">
       <Providers>
-        <body className={inter.className + " antialiased h-screen flex flex-col"}>{children}</body>
+        <body className={inter.className + " antialiased"}>{children}</body>
       </Providers>
     </html>
   );
