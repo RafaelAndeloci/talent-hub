@@ -1,4 +1,5 @@
 import { RegisterForm } from "@/components/app/register/register-form";
+import { ThemeToggle } from "@/components/theme/theme-toggle";
 import loginImg from "@/public/placeholder.svg";
 import { GraduationCap } from "lucide-react";
 import Image from "next/image";
@@ -21,6 +22,10 @@ export default function RegisterPage({}: RegisterPageProps) {
           src={loginImg}
           alt="Image"
           className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+        />
+        <ThemeToggle
+          className="absolute bottom-6 left-6 rounded-full"
+          variant="secondary"
         />
       </div>
       <div className="flex flex-col gap-4 p-6 md:p-10">

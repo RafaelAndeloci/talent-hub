@@ -2,6 +2,7 @@
 
 import * as LabelPrimitive from "@radix-ui/react-label";
 import { Slot } from "@radix-ui/react-slot";
+import * as motion from "motion/react-client";
 import * as React from "react";
 import {
   Controller,
@@ -15,6 +16,7 @@ import {
 
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
 
 const Form = FormProvider;
 
@@ -80,7 +82,7 @@ function FormItem({ className, ...props }: React.ComponentProps<"div">) {
     <FormItemContext.Provider value={{ id }}>
       <div
         data-slot="form-item"
-        className={cn("grid gap-2", className)}
+        className={cn("relative grid gap-2", className)}
         {...props}
       />
     </FormItemContext.Provider>
@@ -97,7 +99,10 @@ function FormLabel({
     <Label
       data-slot="form-label"
       data-error={!!error}
-      className={cn("data-[error=true]:text-destructive", className)}
+      className={cn(
+        "data-[error=true]:text-destructive relative flex items-center gap-2 truncate text-nowrap",
+        className,
+      )}
       htmlFor={formItemId}
       {...props}
     />
@@ -130,13 +135,16 @@ function FormDescription({ className, ...props }: React.ComponentProps<"p">) {
     <p
       data-slot="form-description"
       id={formDescriptionId}
-      className={cn("text-muted-foreground text-sm", className)}
+      className={cn("text-foreground text-sm", className)}
       {...props}
     />
   );
 }
 
-function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
+function FormMessage({
+  className,
+  ...props
+}: React.ComponentProps<typeof motion.p>) {
   const { error, formMessageId } = useFormField();
   const body = error ? String(error?.message ?? "") : props.children;
 
@@ -145,14 +153,38 @@ function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
   }
 
   return (
-    <p
-      data-slot="form-message"
-      id={formMessageId}
-      className={cn("text-destructive text-sm", className)}
-      {...props}
-    >
-      {body}
-    </p>
+    <div className="flex w-full overflow-hidden">
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.4,
+              scale: { type: "tween", visualDuration: 0.4 },
+            }}
+            data-slot="form-message"
+            id={formMessageId}
+            className={cn(
+              "text-destructive truncate text-sm leading-none text-nowrap",
+              className,
+            )}
+            {...props}
+          >
+            {"*" + body}
+          </motion.p>
+        </TooltipTrigger>
+        <TooltipContent
+          align="start"
+          hideArrow
+          className="max-w-[224px] overflow-hidden"
+        >
+          <p className="text-destructive truncate text-sm text-pretty">
+            {"" + body}
+          </p>
+        </TooltipContent>
+      </Tooltip>
+    </div>
   );
 }
 

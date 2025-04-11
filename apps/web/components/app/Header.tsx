@@ -34,7 +34,7 @@ export default function Header() {
           <Button variant="outline" asChild>
             <Link href="/login">Login</Link>
           </Button>
-          <Button asChild>
+          <Button className="hidden md:block" asChild>
             <Link href="/register">Cadastrar</Link>
           </Button>
         </div>
