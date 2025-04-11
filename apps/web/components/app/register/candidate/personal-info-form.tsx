@@ -102,24 +102,6 @@ export function PersonalInfoForm() {
     );
   }
 
-  function addSocialMedia() {
-    const currentLinks = form.getValues().social;
-    // form.setValue("social", [
-    //   ...currentLinks,
-    //   { platform: "", url: "" },
-    // ]);
-  }
-
-  function removeSocialMedia(index: number) {
-    const currentLinks = form.getValues().social;
-    // if (currentLinks.length > 1) {
-    //   form.setValue(
-    //     "socialMediaLinks",
-    //     currentLinks.filter((_, i) => i !== index),
-    //   );
-    // }
-  }
-
   return (
     <Form {...form}>
       <CardContent className="flex flex-1">
@@ -269,66 +251,6 @@ export function PersonalInfoForm() {
               ))}
             </div>
 
-            {/* Social Media Links */}
-            <div className="space-y-4 md:col-span-2">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-medium">Links sociais</h3>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  // onClick={addSocialMedia}
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  Adicionar
-                </Button>
-              </div>
-
-              {/* {form.watch("social").map((_, index) => (
-                <div key={index} className="flex items-start gap-2">
-                  <div className="grid flex-1 grid-cols-1 gap-2 md:grid-cols-2">
-                    <FormField
-                      control={form.control}
-                      name={`social.${index}.platform`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <AnimatedInput
-                              placeholder="Platform (e.g., LinkedIn)"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name={`socialMediaLinks.${index}.url`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <AnimatedInput placeholder="URL (https://...)" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    // onClick={() => removeSocialMedia(index)}
-                    disabled={form.watch("socialMediaLinks").length <= 1}
-                    className="mt-1"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))} */}
-            </div>
-
             {/* Profile Images */}
             <div className="space-y-6 md:col-span-2">
               <h3 className="text-lg font-medium">Images do perfil</h3>
@@ -390,59 +312,11 @@ export function PersonalInfoForm() {
                 </div>
               </div>
             </div>
-
-            {/* Contact Information */}
-            <div className="space-y-6 md:col-span-2">
-              <h3 className="text-lg font-medium">Contato</h3>
-
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <FormField
-                  control={form.control}
-                  name="contact.email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Email para contato
-                        <FormMessage />
-                      </FormLabel>
-                      <FormControl>
-                        <AnimatedInput
-                          custom={5}
-                          type="email"
-                          placeholder="Ex:john@doe.com"
-                          {...field}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="contact.phone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Número de celular</FormLabel>
-                      <FormControl>
-                        <AnimatedInput
-                          custom={6}
-                          placeholder="+55 (16) 1234-5678"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
           </div>
         </div>
       </CardContent>
       <CardFooter className="flex w-full items-center justify-end">
-        <Button onClick={() => goToStep("professional-experience")}>
-          Continuar
-        </Button>
+        <Button onClick={() => goToStep("professional-info")}>Continuar</Button>
       </CardFooter>
     </Form>
   );

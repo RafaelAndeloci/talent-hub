@@ -1,10 +1,15 @@
 "use client";
 
+import {
+  AddressAndContactForm,
+  EducationInfoForm,
+  ExperienceAndSkillsForm,
+  PersonalInfoForm,
+  ProfessionalInfoForm,
+} from "@/components/app/register/candidate";
+
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRegisterCandidate } from "@/contexts/register/candidate";
-import { InterestsForm } from "./interests-form";
-import { PersonalInfoForm } from "./personal-info-form";
-import { ProfessionalInfoForm } from "./professional-info";
 
 interface MultiStepRegistrationProps {}
 export function MultiStepRegistration({}: MultiStepRegistrationProps) {
@@ -18,8 +23,10 @@ export function MultiStepRegistration({}: MultiStepRegistrationProps) {
         </CardTitle>
       </CardHeader>
       {currentStep === "personal-info" && <PersonalInfoForm />}
-      {currentStep === "professional-experience" && <ProfessionalInfoForm />}
-      {currentStep === "interests" && <InterestsForm />}
+      {currentStep === "address-and-contact" && <AddressAndContactForm />}
+      {currentStep === "professional-info" && <ProfessionalInfoForm />}
+      {currentStep === "education-info" && <EducationInfoForm />}
+      {currentStep === "experience-and-skills" && <ExperienceAndSkillsForm />}
     </Card>
   );
 }

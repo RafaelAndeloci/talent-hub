@@ -6,16 +6,10 @@ import { createContext, ReactNode, useContext, useState } from "react";
 
 export type FormSteps =
   | "personal-info"
-  | "contact"
-  | "address"
-  | "social"
-  | "academicBackgrounds"
-  | "professional-experience"
-  | "languages"
-  | "references"
-  | "skills"
-  | "interests"
-  | "done";
+  | "address-and-contact"
+  | "professional-info"
+  | "education-info"
+  | "experience-and-skills";
 
 interface RegisterCandidateContextProps {
   goToStep(step: FormSteps): void;
