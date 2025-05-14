@@ -1,38 +1,20 @@
-"use client";
+import { LoginForm } from "@/components/auth/login-form"
+import { RegistrationLayoutAlt } from "@/components/layouts/registration-layout-alt"
 
-import { GraduationCap } from "lucide-react";
-
-import { LoginForm } from "@/components/app/login/login-form";
-import loginImg from "@/public/placeholder.svg";
-// import { userService } from "@/services/user-service";
-import Image from "next/image";
-import Link from "next/link";
+export const metadata = {
+  title: "Login | Talent Hub",
+  description: "Log in to your Talent Hub account",
+}
 
 export default function LoginPage() {
   return (
-    <div className="grid min-h-svh lg:grid-cols-2">
-      <div className="flex flex-col gap-4 p-6 md:p-10">
-        <div className="flex justify-center gap-2 md:justify-start">
-          <Link href="/" className="flex items-center gap-2 font-medium">
-            <div className="bg-primary text-primary-foreground flex h-6 w-6 items-center justify-center rounded-md">
-              <GraduationCap className="size-4" />
-            </div>
-            Talent Hub
-          </Link>
-        </div>
-        <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-xs">
-            <LoginForm />
-          </div>
-        </div>
-      </div>
-      <div className="bg-muted relative hidden lg:block">
-        <Image
-          src={loginImg}
-          alt="Image"
-          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-        />
-      </div>
-    </div>
-  );
+    <RegistrationLayoutAlt
+      title="Welcome Back"
+      subtitle="Log in to your Talent Hub account"
+      currentStep={1}
+      totalSteps={1}
+    >
+      <LoginForm />
+    </RegistrationLayoutAlt>
+  )
 }

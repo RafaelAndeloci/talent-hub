@@ -2,7 +2,7 @@
 /*
   ---break---
 */
-@custom-variant dark (&:is(.dark *));
+/* @custom-variant dark (&:is(.dark *)); */
 
 @config '../tailwind.config.ts';
 
@@ -64,7 +64,7 @@
     --chart-5: 349 77% 62%;
   }
 
-  .dark {
+  /* .dark {
     --background: 0 0% 0%;
     --foreground: 0 0% 97%;
     --card: 0 0% 5.2% / 82%;
@@ -98,7 +98,7 @@
     --chart-3: 350 80% 72%;
     --chart-4: 351 83% 82%;
     --chart-5: 352 83% 91%;
-  }
+  } */
 }
 
 @layer base {
@@ -129,7 +129,7 @@
   ---break---
 */
 
-.dark {
+/* .dark {
   --sidebar: hsl(240 5.9% 10%);
   --sidebar-foreground: hsl(240 4.8% 95.9%);
   --sidebar-primary: hsl(224.3 76.3% 48%);
@@ -138,7 +138,7 @@
   --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
   --sidebar-border: hsl(240 3.7% 15.9%);
   --sidebar-ring: hsl(217.2 91.2% 59.8%);
-}
+} */
 
 /*
   ---break---
@@ -185,9 +185,27 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring/50 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 dark:[&::-webkit-scrollbar-track]:bg-neutral-700;
   }
   body {
     @apply bg-background text-foreground;
   }
+}
+@utility container {
+  margin-inline: auto;
+  padding-inline: 1rem;
+
+  @media (width >= theme(--breakpoint-sm)) {
+    padding-inline: 2rem;
+  }
+}
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
