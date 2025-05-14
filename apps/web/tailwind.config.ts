@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 // import preset from "./preset";
 export default {
-  darkMode: ["class", "dark"],
+  // darkMode: ["class", "dark"],
   // presets: [preset],
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",

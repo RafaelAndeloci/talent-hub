@@ -13,4 +13,12 @@ export async function loginAction(payload: LoginRequest) {
 async function login(payload: LoginRequest) {
   const { success, data, error } =
     await loginRequestSchema.safeParseAsync(payload);
+
+  if(success) {
+    const endpoint = "/users"
+
+    
+  } else {
+
+  }
 }
