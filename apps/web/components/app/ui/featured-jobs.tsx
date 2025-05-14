@@ -19,11 +19,11 @@ export function FeaturedJobs() {
         <div className="flex flex-col items-center justify-center space-y-4 text-center">
           <div className="space-y-2">
             <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">
-              Featured Opportunities
+              Oportunidades em destaque
             </h2>
             <p className="text-muted-foreground max-w-[700px] md:text-xl">
-              Discover jobs and internships that fit your schedule and career
-              goals
+              Descubra vagas e estágios que encaixem na sua rotina e suas metas
+              de carreira
             </p>
           </div>
         </div>
@@ -75,7 +75,7 @@ export function FeaturedJobs() {
                     href={`/jobs/${job.id}`}
                     aria-label={`View details for ${job.title} at ${job.company}`}
                   >
-                    View Details
+                    Ver detalhes
                   </Link>
                 </Button>
               </CardFooter>
@@ -86,7 +86,7 @@ export function FeaturedJobs() {
         <div className="mt-8 flex justify-center">
           <Button variant="outline" size="lg" asChild>
             <Link href="/jobs" aria-label="Browse all job listings">
-              View All Jobs
+              Ver todas as oportunidades
             </Link>
           </Button>
         </div>

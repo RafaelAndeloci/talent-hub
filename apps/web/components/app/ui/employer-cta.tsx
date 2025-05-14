@@ -10,12 +10,12 @@ export function EmployerCTA() {
           <div className="flex flex-col justify-center space-y-4">
             <div className="space-y-2">
               <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">
-                Post your job and reach dedicated students
+                Anuncie sua vaga e alcance estudantes dedicados
               </h2>
-              <p className="text-muted-foreground max-w-[600px] md:text-xl">
-                Connect with motivated college talent looking for part-time
-                work, internships, and entry-level positions that match your
-                needs.
+              <p className="text-foreground max-w-[600px] md:text-xl">
+                Se conecte com talentos motivados procurando por trabalhos de
+                meio período, estágio ou níveis baixos que corresponda às suas
+                necessidades
               </p>
             </div>
             <div className="flex flex-col gap-2 sm:flex-row">
@@ -24,7 +24,7 @@ export function EmployerCTA() {
                   href="/register?role=employer"
                   aria-label="Register as an employer"
                 >
-                  Post a Job
+                  Anuncie uma vaga
                 </Link>
               </Button>
               <Button size="lg" variant="outline" className="sm:w-auto" asChild>
@@ -32,20 +32,9 @@ export function EmployerCTA() {
                   href="/employer/learn-more"
                   aria-label="Learn more about hiring students"
                 >
-                  Learn More
+                  Saiba mais
                 </Link>
               </Button>
-            </div>
-            <div className="text-muted-foreground flex items-center gap-4 text-sm">
-              <div className="flex items-center gap-1">
-                <span className="font-medium">500+</span> Active Students
-              </div>
-              <div className="flex items-center gap-1">
-                <span className="font-medium">50+</span> Universities
-              </div>
-              <div className="flex items-center gap-1">
-                <span className="font-medium">24hr</span> Average Response
-              </div>
             </div>
           </div>
           <div className="flex items-center justify-center">

@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Image from "next/image";
+import { BriefcaseBusiness, FileUser, UserRound } from "lucide-react";
 
 export function HowItWorks() {
   return (
@@ -13,12 +13,11 @@ export function HowItWorks() {
       <div className="container px-4 md:px-6">
         <div className="flex flex-col items-center justify-center space-y-4 text-center">
           <div className="space-y-2">
-            <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">
-              How Talent Hub Works
+            <h2 className="text-3xl font-bold tracking-tighter text-white md:text-4xl">
+              Como funciona
             </h2>
-            <p className="text-muted-foreground max-w-[700px] md:text-xl">
-              Simple steps to find the perfect job that fits your college
-              schedule
+            <p className="max-w-[700px] text-white md:text-xl">
+              Passos simples para achar a sua oportunidade dos sonhos
             </p>
           </div>
         </div>
@@ -29,20 +28,14 @@ export function HowItWorks() {
               key={index}
               className="flex flex-col items-center text-center"
             >
-              <CardHeader>
+              <CardHeader className="items-center">
                 <div className="bg-primary/10 flex h-20 w-20 items-center justify-center rounded-full">
-                  <Image
-                    src={step.icon || "/placeholder.svg"}
-                    alt={`Step ${index + 1} icon`}
-                    width={40}
-                    height={40}
-                    className="h-10 w-10"
-                  />
+                  {step.icon}
                 </div>
                 <CardTitle className="mt-4">{step.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription className="text-base">
+                <CardDescription className="text-foreground text-base">
                   {step.description}
                 </CardDescription>
               </CardContent>
@@ -56,21 +49,21 @@ export function HowItWorks() {
 
 const steps = [
   {
-    title: "Create Your Profile",
+    title: "Crie seu perfil",
     description:
-      "Sign up and build your student profile with your skills, experience, and availability.",
-    icon: "/placeholder.svg?height=40&width=40",
+      "Cadastre-se e construa seu perfil de estudante com suas habilidades, experiencia e disponibilidade.",
+    icon: <UserRound />,
   },
   {
-    title: "Discover Opportunities",
+    title: "Descubra oportunidades",
     description:
-      "Browse jobs that match your schedule, interests, and career goals.",
-    icon: "/placeholder.svg?height=40&width=40",
+      "Procure por vagas que corresponda à sua agenda, interesses e metas de carreira.",
+    icon: <BriefcaseBusiness />,
   },
   {
-    title: "Apply With Ease",
+    title: "Se candidate com facilidade",
     description:
-      "Submit applications with one click and track your application status.",
-    icon: "/placeholder.svg?height=40&width=40",
+      "Envie candidaturas com apenas um clique e acompanhe o status da vaga.",
+    icon: <FileUser />,
   },
 ];

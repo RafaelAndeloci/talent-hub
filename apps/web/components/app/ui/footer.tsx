@@ -1,7 +1,10 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Facebook, Instagram, Linkedin, Twitter } from "lucide-react";
-import Image from "next/image";
+import {
+  Facebook,
+  GraduationCap,
+  Instagram,
+  Linkedin,
+  Twitter,
+} from "lucide-react";
 import Link from "next/link";
 
 export function Footer() {
@@ -15,94 +18,68 @@ export function Footer() {
               className="flex items-center gap-2"
               aria-label="Talent Hub Home"
             >
-              <Image
-                src="/placeholder.svg?height=32&width=32"
-                alt="Talent Hub Logo"
-                width={32}
-                height={32}
-                className="rounded"
-              />
+              <GraduationCap className="size-8 rounded" />
               <span className="text-xl font-bold">Talent Hub</span>
             </Link>
             <p className="text-muted-foreground text-sm">
-              Connecting college students with meaningful job opportunities that
-              fit their schedules and career goals.
+              Conectando candidatos com oportunidades profissionais que
+              impulsionam carreiras
             </p>
-            <div className="mt-4">
-              <h3 className="mb-2 text-sm font-medium">Join our newsletter</h3>
-              <div className="flex gap-2">
-                <Input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="max-w-xs"
-                  aria-label="Email for newsletter"
-                />
-                <Button type="submit" aria-label="Subscribe to newsletter">
-                  Subscribe
-                </Button>
-              </div>
-            </div>
           </div>
 
           <div className="flex flex-col gap-2">
-            <h3 className="text-sm font-medium">For Students</h3>
+            <h3 className="text-sm font-medium">Para candidatos</h3>
             <nav className="flex flex-col gap-2" aria-label="Student resources">
               <Link
                 href="/browse-jobs"
-                className="text-muted-foreground hover:text-foreground text-sm"
+                className="text-muted-foreground hover:text-primary text-sm"
               >
-                Browse Jobs
+                Procure por vagas
               </Link>
               <Link
                 href="/create-profile"
-                className="text-muted-foreground hover:text-foreground text-sm"
+                className="text-muted-foreground hover:text-primary text-sm"
               >
-                Create Profile
+                Crie seu perfil
               </Link>
               <Link
                 href="/career-resources"
-                className="text-muted-foreground hover:text-foreground text-sm"
+                className="text-muted-foreground hover:text-primary text-sm"
               >
-                Career Resources
+                Recursos
               </Link>
               <Link
                 href="/resume-tips"
-                className="text-muted-foreground hover:text-foreground text-sm"
+                className="text-muted-foreground hover:text-primary text-sm"
               >
-                Resume Tips
+                Dicas de currículo
               </Link>
             </nav>
           </div>
 
           <div className="flex flex-col gap-2">
-            <h3 className="text-sm font-medium">For Employers</h3>
+            <h3 className="text-sm font-medium">Para empresas</h3>
             <nav
               className="flex flex-col gap-2"
               aria-label="Employer resources"
             >
               <Link
                 href="/post-job"
-                className="text-muted-foreground hover:text-foreground text-sm"
+                className="text-muted-foreground hover:text-primary text-sm"
               >
-                Post a Job
+                Anuncie uma vaga
               </Link>
               <Link
                 href="/browse-students"
-                className="text-muted-foreground hover:text-foreground text-sm"
+                className="text-muted-foreground hover:text-primary text-sm"
               >
-                Browse Students
+                Procure candidatos
               </Link>
               <Link
                 href="/employer-resources"
-                className="text-muted-foreground hover:text-foreground text-sm"
+                className="text-muted-foreground hover:text-primary text-sm"
               >
                 Resources
-              </Link>
-              <Link
-                href="/success-stories"
-                className="text-muted-foreground hover:text-foreground text-sm"
-              >
-                Success Stories
               </Link>
             </nav>
           </div>
@@ -115,27 +92,27 @@ export function Footer() {
             >
               <Link
                 href="/about"
-                className="text-muted-foreground hover:text-foreground text-sm"
+                className="text-muted-foreground hover:text-primary text-sm"
               >
-                About Us
+                Sobre nós
               </Link>
               <Link
                 href="/contact"
-                className="text-muted-foreground hover:text-foreground text-sm"
+                className="text-muted-foreground hover:text-primary text-sm"
               >
-                Contact
+                Contato
               </Link>
               <Link
                 href="/privacy"
-                className="text-muted-foreground hover:text-foreground text-sm"
+                className="text-muted-foreground hover:text-primary text-sm"
               >
-                Privacy Policy
+                Política de privacidade
               </Link>
               <Link
                 href="/terms"
-                className="text-muted-foreground hover:text-foreground text-sm"
+                className="text-muted-foreground hover:text-primary text-sm"
               >
-                Terms of Service
+                Termos de serviço
               </Link>
             </nav>
           </div>
@@ -144,20 +121,21 @@ export function Footer() {
         <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex gap-4">
             <Link href="#" aria-label="Facebook">
-              <Facebook className="text-muted-foreground hover:text-foreground h-5 w-5" />
+              <Facebook className="text-muted-foreground hover:text-primary h-5 w-5" />
             </Link>
             <Link href="#" aria-label="Twitter">
-              <Twitter className="text-muted-foreground hover:text-foreground h-5 w-5" />
+              <Twitter className="text-muted-foreground hover:text-primary h-5 w-5" />
             </Link>
             <Link href="#" aria-label="Instagram">
-              <Instagram className="text-muted-foreground hover:text-foreground h-5 w-5" />
+              <Instagram className="text-muted-foreground hover:text-primary h-5 w-5" />
             </Link>
             <Link href="#" aria-label="LinkedIn">
-              <Linkedin className="text-muted-foreground hover:text-foreground h-5 w-5" />
+              <Linkedin className="text-muted-foreground hover:text-primary h-5 w-5" />
             </Link>
           </div>
           <p className="text-muted-foreground text-xs">
-            © {new Date().getFullYear()} Talent Hub. All rights reserved.
+            © {new Date().getFullYear()} Talent Hub. Todos os direitos
+            reservados.
           </p>
         </div>
       </div>

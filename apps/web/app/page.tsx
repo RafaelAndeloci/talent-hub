@@ -4,7 +4,6 @@ import { Footer } from "@/components/app/ui/footer";
 import { Header } from "@/components/app/ui/header";
 import { HeroSection } from "@/components/app/ui/hero-section";
 import { HowItWorks } from "@/components/app/ui/how-it-works";
-import { Testimonials } from "@/components/app/ui/testimonials";
 
 export default function LandingPage() {
   return (
@@ -15,7 +14,8 @@ export default function LandingPage() {
         <FeaturedJobs />
         <EmployerCTA />
         <HowItWorks />
-        <Testimonials />
+        {/* talvez no futuro */}
+        {/* <Testimonials /> */}
       </main>
       <Footer />
     </div>
