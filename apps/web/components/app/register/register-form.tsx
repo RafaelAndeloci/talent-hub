@@ -1,6 +1,6 @@
-"use client";
+'use client'
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button'
 import {
   Form,
   FormControl,
@@ -9,79 +9,75 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { toast } from "@/hooks/use-toast";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { toast } from '@/hooks/use-toast'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Eye, EyeOff } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 const registerSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
+  email: z.string().email('Por favor, forneça um endereço de email válido'),
   username: z
     .string()
-    .min(3, "Username must be at least 3 characters")
-    .max(20, "Username must be at most 20 characters")
+    .min(3, 'Nome de usuário deve ter no mínimo 3 caracteres')
+    .max(20, 'Username must be at most 20 characters')
     .regex(
       /^[a-zA-Z0-9_]+$/,
-      "Username can only contain letters, numbers, and underscores",
+      'Nomes de usuário podem conter apenas letras, números, e underlines'
     ),
   password: z
     .string()
-    .min(8, "Password must be at least 8 characters")
-    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-    .regex(/[0-9]/, "Password must contain at least one number"),
-  role: z.enum(["student", "employer"], {
-    required_error: "Please select a role",
+    .min(8, 'Senha deve ter no mínimo 8 caracteres')
+    .regex(/[A-Z]/, 'Senha deve conter no mínimo um caractere em maiúsculo')
+    .regex(/[a-z]/, 'Senha deve conter no mínimo um caractere em minúsculo')
+    .regex(/[0-9]/, 'Senha deve conter no mínimo um caractere numérico'),
+  role: z.enum(['student', 'employer'], {
+    required_error: 'Por favor selecione uma opção',
   }),
-});
+})
 
-type RegisterFormValues = z.infer<typeof registerSchema>;
+type RegisterFormValues = z.infer<typeof registerSchema>
 
 interface RegisterFormProps {
-  defaultRole?: "student" | "employer";
-  redirectPath?: string;
+  defaultRole?: 'student' | 'employer'
+  redirectPath?: string
 }
 
 export function RegisterForm({ defaultRole, redirectPath }: RegisterFormProps) {
-  const router = useRouter();
-  const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter()
+  const [showPassword, setShowPassword] = useState(false)
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      email: "",
-      username: "",
-      password: "",
-      role: defaultRole || "student",
+      email: '',
+      username: '',
+      password: '',
+      role: defaultRole || 'student',
     },
-  });
+  })
 
-  const onSubmit = (values: RegisterFormValues) => {
-    // In a real app, you would send this data to your API
-    console.log("Form values:", values);
+  function onSubmit(values: RegisterFormValues) {
+    console.log('Form values:', values)
 
-    // Store the initial registration data in localStorage or sessionStorage
-    // This is a simplified approach - in a production app, you might use a more robust state management solution
-    sessionStorage.setItem("registrationData", JSON.stringify(values));
+    sessionStorage.setItem('registrationData', JSON.stringify(values))
 
-    // Redirect to the appropriate form based on role
-    if (values.role === "student") {
-      router.push("/register/student");
+    if (values.role === 'student') {
+      router.push('/register/student')
     } else {
-      router.push("/register/employer");
+      router.push('/register/employer')
     }
 
     toast({
-      title: "Registration started",
+      title: 'Registration started',
       description: `Continuing with ${values.role} registration...`,
-    });
-  };
+    })
+  }
 
   return (
     <div className="space-y-6">
@@ -95,7 +91,7 @@ export function RegisterForm({ defaultRole, redirectPath }: RegisterFormProps) {
                 <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="you@example.com"
+                    placeholder="email@exemplo.com"
                     type="email"
                     {...field}
                   />
@@ -109,12 +105,12 @@ export function RegisterForm({ defaultRole, redirectPath }: RegisterFormProps) {
             name="username"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Username</FormLabel>
+                <FormLabel>Usuário</FormLabel>
                 <FormControl>
-                  <Input placeholder="johndoe" {...field} />
+                  <Input placeholder="Digite seu nome de usuário" {...field} />
                 </FormControl>
                 <FormDescription>
-                  This will be your public display name
+                  Isso será mostrado como seu nome público
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -125,12 +121,12 @@ export function RegisterForm({ defaultRole, redirectPath }: RegisterFormProps) {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel>Senha</FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Input
                       placeholder="Create a secure password"
-                      type={showPassword ? "text" : "password"}
+                      type={showPassword ? 'text' : 'password'}
                       {...field}
                     />
                     <Button
@@ -140,7 +136,7 @@ export function RegisterForm({ defaultRole, redirectPath }: RegisterFormProps) {
                       className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
                       onClick={() => setShowPassword(!showPassword)}
                       aria-label={
-                        showPassword ? "Hide password" : "Show password"
+                        showPassword ? 'Hide password' : 'Show password'
                       }
                     >
                       {showPassword ? (
@@ -152,8 +148,8 @@ export function RegisterForm({ defaultRole, redirectPath }: RegisterFormProps) {
                   </div>
                 </FormControl>
                 <FormDescription>
-                  Must be at least 8 characters with uppercase, lowercase, and
-                  numbers
+                  Deve ser no mínimo 8 caracteres com letras maiúsculas,
+                  minúsculas e números
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -164,7 +160,7 @@ export function RegisterForm({ defaultRole, redirectPath }: RegisterFormProps) {
             name="role"
             render={({ field }) => (
               <FormItem className="space-y-3">
-                <FormLabel>I am a...</FormLabel>
+                <FormLabel>Eu sou...</FormLabel>
                 <FormControl>
                   <RadioGroup
                     onValueChange={field.onChange}
@@ -176,7 +172,7 @@ export function RegisterForm({ defaultRole, redirectPath }: RegisterFormProps) {
                         <RadioGroupItem value="student" />
                       </FormControl>
                       <FormLabel className="font-normal">
-                        Student looking for opportunities
+                        Candidato procurando por oportunidades
                       </FormLabel>
                     </FormItem>
                     <FormItem className="flex items-center space-y-0 space-x-3">
@@ -184,7 +180,7 @@ export function RegisterForm({ defaultRole, redirectPath }: RegisterFormProps) {
                         <RadioGroupItem value="employer" />
                       </FormControl>
                       <FormLabel className="font-normal">
-                        Employer looking to hire
+                        Empresa procurando por talentos
                       </FormLabel>
                     </FormItem>
                   </RadioGroup>
@@ -200,11 +196,11 @@ export function RegisterForm({ defaultRole, redirectPath }: RegisterFormProps) {
       </Form>
 
       <div className="text-muted-foreground text-center text-sm">
-        Already have an account?{" "}
+        Já tem uma conta?{' '}
         <a href="/login" className="text-primary underline">
-          Log in
+          Entre por aqui
         </a>
       </div>
     </div>
-  );
+  )
 }

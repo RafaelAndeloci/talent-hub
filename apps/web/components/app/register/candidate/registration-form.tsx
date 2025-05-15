@@ -1351,20 +1351,21 @@ export function StudentRegistrationForm() {
           <div className="flex justify-between pt-4">
             <Button
               type="button"
+              className="group"
               variant="outline"
               onClick={handleBack}
               disabled={step === 1}
             >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back
+              <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+              Voltar
             </Button>
-            <Button type="submit">
+            <Button type="submit" className="group">
               {step === 5 ? (
                 "Complete Registration"
               ) : (
                 <>
-                  Next
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  Próximo
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </>
               )}
             </Button>
