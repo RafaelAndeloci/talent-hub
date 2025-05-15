@@ -40,6 +40,7 @@
     "@radix-ui/react-toggle-group": "^1.1.2",
     "@radix-ui/react-tooltip": "^1.1.8",
     "@talent-hub/shared": "workspace:*",
+    "@talent-hub/env": "workspace:*",
     "axios": "^1.7.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -64,6 +65,10 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@talent-hub/eslint-config": "workspace:*",
+    "@talent-hub/prettier": "workspace:*",
+    "@talent-hub/tsconfig": "workspace:*",
+    "dotenv-cli": "^7.4.1",
     "@faker-js/faker": "^9.4.0",
     "@tailwindcss/postcss": "^4.0.0",
     "@testing-library/jest-dom": "^6.6.3",
@@ -78,5 +83,11 @@
     "tailwindcss": "^4.0.0",
     "typescript": "^5",
     "vitest": "^2.1.8"
+  },
+  "prettier": "@talent-hub/prettier",
+  "eslintConfig": {
+    "extends": [
+      "@talent-hub/eslint-config/next"
+    ]
   }
 }
