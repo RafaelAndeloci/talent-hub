@@ -31,7 +31,8 @@
   ],
   "dependencies": {
     "@talent-hub/shared": "link:packages/shared",
-    "@talent-hub/eslint-config": "link:packages/eslint-config",
-    "@talent-hub/typescript-config": "link:packages/typescript-config"
+    "@talent-hub/eslint-config": "link:config/eslint-config",
+    "@talent-hub/tsconfig": "link:config/tsconfig",
+    "@talent-hub/prettier": "link:config/prettier"
   }
 }

@@ -6,7 +6,7 @@ import Link from "next/link";
 import type React from "react";
 import { Button } from "../ui/button";
 
-interface RegistrationLayoutAltProps {
+interface LoginLayoutAltProps {
   children: React.ReactNode;
   title: string;
   subtitle: string;
@@ -15,14 +15,14 @@ interface RegistrationLayoutAltProps {
   steps?: { title: string; icon: React.ReactNode }[];
 }
 
-export function RegistrationLayout({
+export function LoginLayout({
   children,
   title,
   subtitle,
   currentStep = 1,
   totalSteps = 5,
   steps,
-}: RegistrationLayoutAltProps) {
+}: LoginLayoutAltProps) {
   return (
     <div className="to-background min-h-screen bg-gradient-to-b from-neutral-200">
       <div className="container mx-auto px-4 py-8">
@@ -42,12 +42,12 @@ export function RegistrationLayout({
               </Link>
             </Button>
             <div className="text-sm">
-              Já tem uma conta?{" "}
+              Ainda não tem uma conta?{" "}
               <Link
-                href="/login"
+                href="/register"
                 className="text-primary font-medium hover:underline"
               >
-                Entre aqui!
+                Crie uma conta aqui!
               </Link>
             </div>
           </div>

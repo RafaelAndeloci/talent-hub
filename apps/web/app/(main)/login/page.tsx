@@ -1,20 +1,20 @@
-import { LoginForm } from "@/components/auth/login-form"
-import { RegistrationLayoutAlt } from "@/components/layouts/registration-layout-alt"
+import { LoginForm } from "@/components/app/login/login-form";
+import { LoginLayout } from "@/components/layouts/login-layout";
 
 export const metadata = {
   title: "Login | Talent Hub",
-  description: "Log in to your Talent Hub account",
-}
+  description: "Entre na sua conta do Talent Hub",
+};
 
 export default function LoginPage() {
   return (
-    <RegistrationLayoutAlt
-      title="Welcome Back"
-      subtitle="Log in to your Talent Hub account"
+    <LoginLayout
+      title="Bem vindo de volta"
+      subtitle="Entre na sua conta do Talent Hub"
       currentStep={1}
       totalSteps={1}
     >
       <LoginForm />
-    </RegistrationLayoutAlt>
-  )
+    </LoginLayout>
+  );
 }

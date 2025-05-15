@@ -1,0 +1,24 @@
+{
+  "name": "@talent-hub/env",
+  "version": "0.0.0",
+  "private": true,
+  "main": "index.ts",
+  "types": "index.ts",
+  "devDependencies": {
+    "@talent-hub/eslint-config": "workspace:*",
+    "@talent-hub/prettier": "workspace:*",
+    "@talent-hub/tsconfig": "workspace:*",
+    "@types/node": "^22.15.18",
+    "tsx": "^4.19.4"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@talent-hub/eslint-config/library"
+    ]
+  },
+  "prettier": "@talent-hub/prettier",
+  "dependencies": {
+    "@t3-oss/env-nextjs": "^0.13.4",
+    "zod": "^3.24.2"
+  }
+}

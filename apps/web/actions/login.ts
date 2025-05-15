@@ -11,14 +11,10 @@ export async function loginAction(payload: LoginRequest) {
 
 // Do not export this.
 async function login(payload: LoginRequest) {
-  const { success, data, error } =
+  const { success } =
     await loginRequestSchema.safeParseAsync(payload);
 
-  if(success) {
-    const endpoint = "/users"
+  if (success) {
+    const apiUrl = `${process.env}`;else {
 
-    
-  } else {
-
-  }
 }

@@ -1,9 +1,10 @@
+import { env as environment } from '@talent-hub/env';
+import { newUUID } from '@talent-hub/shared';
 import * as dotenv from 'dotenv';
 import path from 'path';
 import { Logger } from '../services/logging-service';
-import { newUUID } from '@talent-hub/shared';
 
-const env = process.env.NODE_ENV || 'development';
+const env = environment.NODE_ENV || 'development';
 
 try {
     const envPath = path.resolve(__dirname, `../../../../.env`);
@@ -22,83 +23,83 @@ try {
 export const config = {
     env,
     api: {
-        port: parseInt(process.env.PORT || '3000'),
-        host: process.env.HOST || 'localhost',
-        docEnabled: process.env.API_DOC_ENABLED === 'true',
+        port: parseInt(environment.PORT || '3000'),
+        host: environment.HOST || 'localhost',
+        docEnabled: environment.API_DOC_ENABLED === 'true',
         basePath: '/api',
     },
     database: {
-        host: process.env.DB_HOST || 'localhost',
-        port: parseInt(process.env.DB_PORT || '5432'),
-        user: process.env.DB_USER || 'postgres',
-        password: process.env.DB_PASSWORD || 'postgres',
-        database: process.env.DB_NAME || 'postgres',
-        logEnabled: process.env.DB_LOG_ENABLED === 'true',
+        host: environment.DB_HOST || 'localhost',
+        port: parseInt(environment.DB_PORT || '5432'),
+        user: environment.DB_USER || 'postgres',
+        password: environment.DB_PASSWORD || 'postgres',
+        database: environment.DB_NAME || 'postgres',
+        logEnabled: environment.DB_LOG_ENABLED === 'true',
         pool: {
-            min: parseInt(process.env.DB_POOL_MIN || '0'),
-            max: parseInt(process.env.DB_POOL_MAX || '5'),
+            min: parseInt(environment.DB_POOL_MIN || '0'),
+            max: parseInt(environment.DB_POOL_MAX || '5'),
         },
         sync: {
-            enabled: process.env.DB_SYNC_ENABLED === 'true',
-            force: process.env.DB_SYNC_FORCE === 'true',
-            alter: process.env.DB_SYNC_ALTER === 'true',
+            enabled: environment.DB_SYNC_ENABLED === 'true',
+            force: environment.DB_SYNC_FORCE === 'true',
+            alter: environment.DB_SYNC_ALTER === 'true',
         },
     },
     security: {
-        enabled: process.env.JWT_ENABLED === 'true',
-        secret: process.env.JWT_SECRET || 'secret',
-        audience: process.env.JWT_AUDIENCE || 'audience',
-        issuer: process.env.JWT_ISSUER || 'issuer',
-        expiresIn: parseFloat(process.env.JWT_EXPIRES_IN || '1'),
+        enabled: environment.JWT_ENABLED === 'true',
+        secret: environment.JWT_SECRET || 'secret',
+        audience: environment.JWT_AUDIENCE || 'audience',
+        issuer: environment.JWT_ISSUER || 'issuer',
+        expiresIn: parseFloat(environment.JWT_EXPIRES_IN || '1'),
         password: {
-            resetExpiration: parseInt(process.env.PASSWORD_RESET_EXPIRATION || '1'),
-            hashSalt: process.env.PASSWORD_HASH_SALT || 'salt',
-            resetPageUrl: process.env.PASSWORD_RESET_PAGE_URL || 'reset',
+            resetExpiration: parseInt(environment.PASSWORD_RESET_EXPIRATION || '1'),
+            hashSalt: environment.PASSWORD_HASH_SALT || 'salt',
+            resetPageUrl: environment.PASSWORD_RESET_PAGE_URL || 'reset',
         },
     },
     fileStorage: {
         cv: {
-            allowedTypes: process.env.ALLOWED_CV_TYPES!.split(','),
-            maxSize: parseInt(process.env.MAX_CV_SIZE!),
+            allowedTypes: environment.ALLOWED_CV_TYPES!.split(','),
+            maxSize: parseInt(environment.MAX_CV_SIZE!),
         },
         images: {
-            allowedTypes: process.env.ALLOWED_IMAGE_TYPES!.split(','),
-            maxSize: parseInt(process.env.MAX_IMAGE_SIZE!),
+            allowedTypes: environment.ALLOWED_IMAGE_TYPES!.split(','),
+            maxSize: parseInt(environment.MAX_IMAGE_SIZE!),
         },
     },
     sysAdmin: {
-        id: process.env.SYS_ADMIN_ID || newUUID(),
-        email: process.env.SYS_ADMIN_EMAIL || 'pedro.lima47@fatec.sp.gov.br',
-        password: process.env.SYS_ADMIN_PASSWORD || 'admin123',
-        username: process.env.SYS_ADMIN_USERNAME || 'admin',
+        id: environment.SYS_ADMIN_ID || newUUID(),
+        email: environment.SYS_ADMIN_EMAIL || 'pedro.lima47@fatec.sp.gov.br',
+        password: environment.SYS_ADMIN_PASSWORD || 'admin123',
+        username: environment.SYS_ADMIN_USERNAME || 'admin',
     },
     bucket: {
-        accessKeyId: process.env.BUCKET_ACCESS_KEY_ID!,
-        secretAccessKey: process.env.BUCKET_SECRET_ACCESS_KEY!,
-        defaultBucket: process.env.BUCKET_DEFAULT!,
-        serviceUrl: process.env.BUCKET_SERVICE_URL!,
-        region: process.env.BUCKET_REGION!,
-        exposeUrl: process.env.BUCKET_EXPOSE_URL!,
+        accessKeyId: environment.BUCKET_ACCESS_KEY_ID!,
+        secretAccessKey: environment.BUCKET_SECRET_ACCESS_KEY!,
+        defaultBucket: environment.BUCKET_DEFAULT!,
+        serviceUrl: environment.BUCKET_SERVICE_URL!,
+        region: environment.BUCKET_REGION!,
+        exposeUrl: environment.BUCKET_EXPOSE_URL!,
     },
     cache: {
-        host: process.env.CACHE_HOST || 'localhost',
-        port: parseInt(process.env.CACHE_PORT || '6379'),
+        host: environment.CACHE_HOST || 'localhost',
+        port: parseInt(environment.CACHE_PORT || '6379'),
     },
     email: {
-        user: process.env.EMAIL_USER!,
-        password: process.env.EMAIL_PASSWORD!,
-        from: process.env.EMAIL_FROM || 'talent_hub@noreply.com',
+        user: environment.EMAIL_USER!,
+        password: environment.EMAIL_PASSWORD!,
+        from: environment.EMAIL_FROM || 'talent_hub@noreply.com',
     },
     aws: {
-        region: process.env.AWS_REGION!,
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+        region: environment.AWS_REGION!,
+        accessKeyId: environment.AWS_ACCESS_KEY_ID!,
+        secretAccessKey: environment.AWS_SECRET_ACCESS_KEY!,
         ses: {
-            from: process.env.AWS_SES_FROM!,
+            from: environment.AWS_SES_FROM!,
         },
     },
-    emailConfirmationUrl: process.env.EMAIL_CONFIRMATION_URL!,
+    emailConfirmationUrl: environment.EMAIL_CONFIRMATION_URL!,
     company: {
-        maxGallerySize: parseInt(process.env.COMPANY_MAX_GALLERY_SIZE || '5'),
-    }
+        maxGallerySize: parseInt(environment.COMPANY_MAX_GALLERY_SIZE || '5'),
+    },
 };
