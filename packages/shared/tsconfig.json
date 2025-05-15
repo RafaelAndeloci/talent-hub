@@ -1,21 +1,6 @@
 {
-  "compilerOptions": {
-    "target": "ESNext",
-    "module": "CommonJS",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "outDir": "./dist",
-    "rootDir": ".",
-    "resolveJsonModule": true,
-    "forceConsistentCasingInFileNames": true,
-    "noUnusedParameters": true,
-    "noUnusedLocals": true,
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true
-  },
+  "extends": "@talent-hub/tsconfig/library.json",
+  "include": ["./index.ts"],
   "exclude": [
     "node_modules",
     "dist"

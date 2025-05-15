@@ -1,0 +1,4 @@
+{
+  "extends": "@talent-hub/tsconfig/library.json",
+  "include": ["index.ts"]
+}

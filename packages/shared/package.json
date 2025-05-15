@@ -7,8 +7,19 @@
   "scripts": {
     "build": "tsc"
   },
+  "devDependencies": {
+    "@talent-hub/eslint-config": "workspace:*",
+    "@talent-hub/prettier": "workspace:*",
+    "@talent-hub/tsconfig": "workspace:*",
+    "@types/node": "^22.13.1"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@talent-hub/eslint-config/library"
+    ]
+  },
+  "prettier": "@talent-hub/prettier",
   "dependencies": {
-    "@types/node": "^22.13.1",
     "moment": "^2.30.1",
     "sequelize": "^6.37.5",
     "typescript": "^5.7.3",
