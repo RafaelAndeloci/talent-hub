@@ -2,37 +2,29 @@
 
 import { createApiClient } from '@/lib/api/request-handler'
 import {
-  LoginRequest,
-  loginRequestSchema,
-} from '@/types/app/login/login-request'
-import {
-  LoginResponse,
-  loginResponseSchema,
-} from '@/types/app/login/login-response'
+  CreateCandidateRequest,
+  createCandidateRequestSchema,
+} from '@/types/app/register/candidate/create-candidate-request'
+
 import { ApiResponse, ErrorCode } from '@/types/service/api'
 import { env } from '@talent-hub/env'
 import { z } from 'zod'
 
 const api = createApiClient(env.API_HOST)
 
-export async function loginAction(
-  payload: LoginRequest
-): Promise<ApiResponse<LoginResponse>> {
-  return await login(payload)
+export async function createCandidateAction(
+  payload: CreateCandidateRequest
+): Promise<ApiResponse<never>> {
+  return await createCandidate(payload)
 }
 
 // Do not export
-async function login(
-  payload: LoginRequest
-): Promise<ApiResponse<LoginResponse>> {
+async function createCandidate(
+  payload: CreateCandidateRequest
+): Promise<ApiResponse<never>> {
   try {
-    const validPayload = loginRequestSchema.parse(payload)
-
-    const response = await api.post<LoginResponse>(
-      '/users/auth',
-      validPayload,
-      loginResponseSchema
-    )
+    const validPayload = createCandidateRequestSchema.parse(payload)
+    const response = await api.post<never>('/candidate/', validPayload)
     return response
   } catch (error) {
     if (error instanceof z.ZodError) {

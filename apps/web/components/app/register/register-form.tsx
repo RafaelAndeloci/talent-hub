@@ -70,7 +70,7 @@ export function RegisterForm({ defaultRole, redirectPath }: RegisterFormProps) {
     if (values.role === 'student') {
       router.push('/register/student')
     } else {
-      router.push('/register/employer')
+      router.push('/register/company')
     }
 
     toast({

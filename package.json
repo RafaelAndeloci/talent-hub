@@ -17,8 +17,8 @@
     "commit": "cz"
   },
   "devDependencies": {
-    "prettier": "^3.4.2",
-    "turbo": "^2.3.4",
+    "prettier": "^3.5.3",
+    "turbo": "^2.5.3",
     "typescript": "5.7.3"
   },
   "packageManager": "pnpm@9.0.0",
@@ -30,9 +30,9 @@
     "packages/*"
   ],
   "dependencies": {
-    "@talent-hub/shared": "link:packages/shared",
     "@talent-hub/eslint-config": "link:config/eslint-config",
-    "@talent-hub/tsconfig": "link:config/tsconfig",
-    "@talent-hub/prettier": "link:config/prettier"
+    "@talent-hub/prettier": "link:config/prettier",
+    "@talent-hub/shared": "link:packages/shared",
+    "@talent-hub/tsconfig": "link:config/tsconfig"
   }
 }

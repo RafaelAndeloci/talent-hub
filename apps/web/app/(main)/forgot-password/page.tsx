@@ -1,20 +1,20 @@
-import { ForgotPasswordForm } from "@/components/auth/forgot-password-form"
-import { RegistrationLayoutAlt } from "@/components/layouts/registration-layout-alt"
+import { ForgotPasswordForm } from '@/components/app/forgot-password/forgot-password-form'
+import { RegistrationLayout } from '@/components/layouts/registration-layout'
 
 export const metadata = {
-  title: "Forgot Password | Talent Hub",
-  description: "Reset your Talent Hub account password",
+  title: 'Forgot Password | Talent Hub',
+  description: 'Reset your Talent Hub account password',
 }
 
 export default function ForgotPasswordPage() {
   return (
-    <RegistrationLayoutAlt
+    <RegistrationLayout
       title="Forgot Password"
       subtitle="Enter your email to reset your password"
       currentStep={1}
       totalSteps={1}
     >
       <ForgotPasswordForm />
-    </RegistrationLayoutAlt>
+    </RegistrationLayout>
   )
 }
