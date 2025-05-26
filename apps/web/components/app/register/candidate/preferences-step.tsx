@@ -9,30 +9,36 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { useRegisterCandidate } from '@/contexts/register/candidate'
-import {
-  preferencesSchema,
-  PreferencesStepSchema,
-} from '@/types/app/register/candidate/form/schemas'
-import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@radix-ui/react-select'
+} from '@/components/ui/select'
+import { useRegisterCandidate } from '@/contexts/register/candidate'
+import {
+  preferencesSchema,
+  PreferencesStepSchema,
+} from '@/types/app/register/candidate/form/schemas'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
+import { FormNavigationButtons } from './form-navigation-buttons'
 
 interface PreferencesStepProps {}
 export function PreferencesStep({}: PreferencesStepProps) {
-  const { formData } = useRegisterCandidate()
+  const { formData, setFormData, nextStep } = useRegisterCandidate()
   const form = useForm<PreferencesStepSchema>({
     resolver: zodResolver(preferencesSchema),
     defaultValues: formData.preferences ?? undefined,
   })
-
-  function onSubmit(data: PreferencesStepSchema) {}
+  const isValid = form.formState.isValid
+  function onSubmit(data: PreferencesStepSchema) {
+    if (isValid) {
+      setFormData((prev) => ({ ...prev, preferences: { ...data } }))
+      nextStep()
+    }
+  }
 
   return (
     <Form {...form}>
@@ -41,13 +47,20 @@ export function PreferencesStep({}: PreferencesStepProps) {
           <FormField
             control={form.control}
             name="salary"
-            render={({ field }) => (
+            render={({ field: { value = '', ...field } }) => (
               <FormItem>
-                <FormLabel>Expected Salary</FormLabel>
+                <FormLabel>Expectativa salarial</FormLabel>
                 <FormControl>
-                  <Input type="number" placeholder="e.g., 50000" {...field} />
+                  <Input
+                    type="number"
+                    placeholder="Digite sua expectativa salarial"
+                    value={value}
+                    {...field}
+                  />
                 </FormControl>
-                <FormDescription>Your expected annual salary</FormDescription>
+                <FormDescription>
+                  Sua expectativa de salário mensal
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -56,16 +69,13 @@ export function PreferencesStep({}: PreferencesStepProps) {
           <FormField
             control={form.control}
             name="employmentRegime"
-            render={({ field }) => (
+            render={({ field: { value = '', ...field } }) => (
               <FormItem>
-                <FormLabel>Employment Regime</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
+                <FormLabel>Regime de contratação</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select employment regime" />
+                      <SelectValue placeholder="Selecione um regime de contratação" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -75,7 +85,7 @@ export function PreferencesStep({}: PreferencesStepProps) {
                   </SelectContent>
                 </Select>
                 <FormDescription>
-                  Your preferred employment regime
+                  Seu regime de contratação preferido.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -85,27 +95,24 @@ export function PreferencesStep({}: PreferencesStepProps) {
           <FormField
             control={form.control}
             name="employmentType"
-            render={({ field }) => (
+            render={({ field: { value = '', ...field } }) => (
               <FormItem>
-                <FormLabel>Employment Type</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
+                <FormLabel>Tipo de contratação</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select employment type" />
+                      <SelectValue placeholder="Selecione um tipo de contratação" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="Full-time">Full-time</SelectItem>
-                    <SelectItem value="Part-time">Part-time</SelectItem>
-                    <SelectItem value="Contract">Contract</SelectItem>
-                    <SelectItem value="Internship">Internship</SelectItem>
+                    <SelectItem value="Full-time">Integral</SelectItem>
+                    <SelectItem value="Part-time">Meio período</SelectItem>
+                    <SelectItem value="Contract">Contrato</SelectItem>
+                    <SelectItem value="Internship">Estágio</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormDescription>
-                  Your preferred employment type
+                  O Seu tipo de contratação preferido
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -115,26 +122,23 @@ export function PreferencesStep({}: PreferencesStepProps) {
           <FormField
             control={form.control}
             name="workplaceType"
-            render={({ field }) => (
+            render={({ field: { value = '', ...field } }) => (
               <FormItem>
-                <FormLabel>Workplace Type</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
+                <FormLabel>Local de trabalho</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select workplace type" />
+                      <SelectValue placeholder="Selecione uma opção" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="Remote">Remote</SelectItem>
-                    <SelectItem value="Hybrid">Hybrid</SelectItem>
-                    <SelectItem value="On-site">On-site</SelectItem>
+                    <SelectItem value="Remote">Remoto</SelectItem>
+                    <SelectItem value="Hybrid">Híbrido</SelectItem>
+                    <SelectItem value="On-site">Presencial</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormDescription>
-                  Your preferred workplace arrangement
+                  Seu local de trabalho preferido
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -144,27 +148,24 @@ export function PreferencesStep({}: PreferencesStepProps) {
           <FormField
             control={form.control}
             name="positionLevel"
-            render={({ field }) => (
+            render={({ field: { value = '', ...field } }) => (
               <FormItem>
-                <FormLabel>Position Level</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
+                <FormLabel>Cargo</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select position level" />
+                      <SelectValue placeholder="Selecione uma opção" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="Intern">Intern</SelectItem>
-                    <SelectItem value="Junior">Junior</SelectItem>
-                    <SelectItem value="Mid-level">Mid-level</SelectItem>
+                    <SelectItem value="Intern">Estágio</SelectItem>
+                    <SelectItem value="Junior">Júnior</SelectItem>
+                    <SelectItem value="Mid-level">Pleno</SelectItem>
                     <SelectItem value="Senior">Senior</SelectItem>
                     <SelectItem value="Lead">Lead</SelectItem>
                   </SelectContent>
                 </Select>
-                <FormDescription>Your preferred position level</FormDescription>
+                <FormDescription>Seu cargo de preferência</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -176,27 +177,26 @@ export function PreferencesStep({}: PreferencesStepProps) {
           name="benefits"
           render={() => (
             <FormItem>
-              <div className="mb-4">
-                <FormLabel>Desired Benefits</FormLabel>
-                <FormDescription>Select all that apply</FormDescription>
+              <div className="my-4">
+                <FormLabel>Benefícios</FormLabel>
               </div>
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                 {[
-                  { id: 'Health Insurance', label: 'Health Insurance' },
-                  { id: 'Dental Insurance', label: 'Dental Insurance' },
-                  { id: 'Life Insurance', label: 'Life Insurance' },
-                  { id: 'Meal Voucher', label: 'Meal Voucher' },
+                  { id: 'Seguro saúde', label: 'Seguro saúde' },
+                  { id: 'Seguro odontológico', label: 'Seguro odontológico' },
+                  { id: 'Seguro de vida', label: 'Seguro de vida' },
+                  { id: 'Vale Refeição', label: 'Vale Refeição' },
                   {
-                    id: 'Transportation Voucher',
-                    label: 'Transportation Voucher',
+                    id: 'Vale Transporte',
+                    label: 'Vale Transporte',
                   },
                   {
-                    id: 'Remote Work Allowance',
-                    label: 'Remote Work Allowance',
+                    id: 'Auxílio Home Office',
+                    label: 'Auxílio Home Office',
                   },
                   {
-                    id: 'Education Assistance',
-                    label: 'Education Assistance',
+                    id: 'Auxílio Educação',
+                    label: 'Auxílio Educação',
                   },
                 ].map((item) => (
                   <FormField
@@ -239,6 +239,7 @@ export function PreferencesStep({}: PreferencesStepProps) {
             </FormItem>
           )}
         />
+        <FormNavigationButtons skip />
       </form>
     </Form>
   )
