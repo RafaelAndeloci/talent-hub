@@ -10,106 +10,35 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { useRegisterCandidate } from '@/contexts/register/candidate'
-import { PersonalStepSchema } from '@/types/app/register/candidate/form/schemas'
+import {
+  personalInfoSchema,
+  PersonalStepSchema,
+} from '@/types/app/register/candidate/form/schemas'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
+import { FormNavigationButtons } from './form-navigation-buttons'
 
 interface PersonalStepProps {}
 export function PersonalStep({}: PersonalStepProps) {
-  const { getStepSchema } = useRegisterCandidate()
+  const { formData } = useRegisterCandidate()
   const form = useForm<PersonalStepSchema>({
-    resolver: zodResolver(getStepSchema('personal')),
+    resolver: zodResolver(personalInfoSchema),
+    defaultValues: formData.personalInfo ?? undefined,
   })
+  function onSubmit(data: PersonalStepSchema) {}
+
   return (
     <Form {...form}>
-      <div className="grid gap-6 sm:grid-cols-2">
-        <FormField
-          control={form.control}
-          name="fullName"
-          render={({ field }) => (
-            <FormItem className="sm:col-span-2">
-              <FormLabel>Nome completo</FormLabel>
-              <FormControl>
-                <Input placeholder="Digite seu nome completo" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="birthDate"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Data de nascimento</FormLabel>
-              <FormControl>
-                <Input
-                  type="date"
-                  {...field}
-                  max={new Date().toISOString().split('T')[0]}
-                  min="1900-01-01"
-                />
-              </FormControl>
-              <FormDescription>Digite sua data de nascimento</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="professionalHeadline"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Título profissional</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="E.x. Estudante de Análise e Desenvolvimento de sistemas"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>
-                Uma breve descrição de sua identidade profissional
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
-
-      <FormField
-        control={form.control}
-        name="about"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Sobre</FormLabel>
-            <FormControl>
-              <Textarea
-                placeholder="Diga para os recrutadores sobre você, suas metas, e quais são seus objetivos"
-                className="min-h-[120px]"
-                {...field}
-              />
-            </FormControl>
-            <FormDescription>
-              Isso irá aparecer no seu perfil público
-            </FormDescription>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      <div className="space-y-4">
-        <h3 className="text-sm font-medium">Redes sociais</h3>
-        <div className="grid gap-4 sm:grid-cols-2">
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <div className="grid gap-6 sm:grid-cols-2">
           <FormField
             control={form.control}
-            name="social.linkedin"
+            name="fullName"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>LinkedIn</FormLabel>
+              <FormItem className="sm:col-span-2">
+                <FormLabel>Nome completo</FormLabel>
                 <FormControl>
-                  <Input placeholder="https://linkedin.com/in/" {...field} />
+                  <Input placeholder="Digite seu nome completo" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -118,13 +47,19 @@ export function PersonalStep({}: PersonalStepProps) {
 
           <FormField
             control={form.control}
-            name="social.github"
+            name="birthDate"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>GitHub</FormLabel>
+                <FormLabel>Data de nascimento</FormLabel>
                 <FormControl>
-                  <Input placeholder="https://github.com/seunome" {...field} />
+                  <Input
+                    type="date"
+                    {...field}
+                    max={new Date().toISOString().split('T')[0]}
+                    min="1900-01-01"
+                  />
                 </FormControl>
+                <FormDescription>Digite sua data de nascimento</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -132,33 +67,114 @@ export function PersonalStep({}: PersonalStepProps) {
 
           <FormField
             control={form.control}
-            name="social.twitter"
+            name="professionalHeadline"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Twitter</FormLabel>
+                <FormLabel>Título profissional</FormLabel>
                 <FormControl>
-                  <Input placeholder="https://twitter.com/seunome" {...field} />
+                  <Input
+                    placeholder="E.x. Estudante de Análise e Desenvolvimento de sistemas"
+                    {...field}
+                  />
                 </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="social.portfolio"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Portfolio</FormLabel>
-                <FormControl>
-                  <Input placeholder="https://seusite.com" {...field} />
-                </FormControl>
+                <FormDescription>
+                  Uma breve descrição de sua identidade profissional
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
-      </div>
+
+        <FormField
+          control={form.control}
+          name="about"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Sobre</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Diga para os recrutadores sobre você, suas metas, e quais são seus objetivos"
+                  className="min-h-[120px]"
+                  {...field}
+                />
+              </FormControl>
+              <FormDescription>
+                Isso irá aparecer no seu perfil público
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="space-y-4">
+          <h3 className="text-sm font-medium">Redes sociais</h3>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <FormField
+              control={form.control}
+              name="social.linkedin"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>LinkedIn</FormLabel>
+                  <FormControl>
+                    <Input placeholder="https://linkedin.com/in/" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="social.github"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>GitHub</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="https://github.com/seunome"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="social.twitter"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Twitter</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="https://twitter.com/seunome"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="social.portfolio"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Portfolio</FormLabel>
+                  <FormControl>
+                    <Input placeholder="https://seusite.com" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
+        <FormNavigationButtons />
+      </form>
     </Form>
   )
 }

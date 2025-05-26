@@ -92,11 +92,11 @@ export const languagesAndSkillsSchema = z.object({
 
 // Combined schema for all steps
 export const candidateFormSchema = z.object({
-  ...personalInfoSchema.shape,
-  ...preferencesSchema.shape,
-  ...academicSchema.shape,
-  ...professionalSchema.shape,
-  ...languagesAndSkillsSchema.shape,
+  personalInfo: personalInfoSchema,
+  preferences: preferencesSchema,
+  academic: academicSchema,
+  professional: professionalSchema,
+  languagesAndSkills: languagesAndSkillsSchema,
 })
 export type PersonalStepSchema = z.infer<typeof personalInfoSchema>
 export type PreferencesStepSchema = z.infer<typeof preferencesSchema>
