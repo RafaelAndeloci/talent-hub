@@ -9,7 +9,6 @@ import {
   professionalSchema,
 } from '@/types/app/register/candidate/form/schemas'
 import { ContextError } from '@/types/errors/contexts/context-error'
-import { zodResolver } from '@hookform/resolvers/zod'
 import {
   createContext,
   Dispatch,
@@ -19,7 +18,6 @@ import {
   useContext,
   useState,
 } from 'react'
-import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 export type FormSteps =
   | 'personal'
@@ -129,30 +127,4 @@ export function useRegisterCandidate() {
   }
 
   return ctx
-}
-
-export function useStepForm() {
-  const { currentStep, formData, setFormData, getStepSchema, nextStep } =
-    useRegisterCandidate()
-
-  const stepSchema = getStepSchema(currentStep)
-
-  const methods = useForm({
-    resolver: zodResolver(stepSchema),
-    defaultValues: formData,
-    mode: 'onChange',
-  })
-
-  const onSubmit = (data: Partial<CandidateForm>) => {
-    setFormData((prev) => ({
-      ...prev,
-      ...data,
-    }))
-    nextStep()
-  }
-
-  return {
-    ...methods,
-    onSubmit: methods.handleSubmit(onSubmit),
-  }
 }
