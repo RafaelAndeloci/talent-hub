@@ -20,12 +20,19 @@ import { FormNavigationButtons } from './form-navigation-buttons'
 
 interface PersonalStepProps {}
 export function PersonalStep({}: PersonalStepProps) {
-  const { formData } = useRegisterCandidate()
+  const { formData, setFormData, nextStep } = useRegisterCandidate()
   const form = useForm<PersonalStepSchema>({
     resolver: zodResolver(personalInfoSchema),
     defaultValues: formData.personalInfo ?? undefined,
   })
-  function onSubmit(data: PersonalStepSchema) {}
+  const isValid = form.formState.isValid
+  function onSubmit(data: PersonalStepSchema) {
+    console.log(JSON.stringify(data, null, 2))
+    if (isValid) {
+      setFormData((prev) => ({ ...prev, personalInfo: { ...data } }))
+      nextStep()
+    }
+  }
 
   return (
     <Form {...form}>
@@ -34,11 +41,15 @@ export function PersonalStep({}: PersonalStepProps) {
           <FormField
             control={form.control}
             name="fullName"
-            render={({ field }) => (
+            render={({ field: { value = '', ...field } }) => (
               <FormItem className="sm:col-span-2">
                 <FormLabel>Nome completo</FormLabel>
                 <FormControl>
-                  <Input placeholder="Digite seu nome completo" {...field} />
+                  <Input
+                    placeholder="Digite seu nome completo"
+                    value={value}
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -48,12 +59,13 @@ export function PersonalStep({}: PersonalStepProps) {
           <FormField
             control={form.control}
             name="birthDate"
-            render={({ field }) => (
+            render={({ field: { value = '', ...field } }) => (
               <FormItem>
                 <FormLabel>Data de nascimento</FormLabel>
                 <FormControl>
                   <Input
                     type="date"
+                    value={value}
                     {...field}
                     max={new Date().toISOString().split('T')[0]}
                     min="1900-01-01"
@@ -68,12 +80,13 @@ export function PersonalStep({}: PersonalStepProps) {
           <FormField
             control={form.control}
             name="professionalHeadline"
-            render={({ field }) => (
+            render={({ field: { value = '', ...field } }) => (
               <FormItem>
                 <FormLabel>Título profissional</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="E.x. Estudante de Análise e Desenvolvimento de sistemas"
+                    value={value}
                     {...field}
                   />
                 </FormControl>
@@ -89,13 +102,14 @@ export function PersonalStep({}: PersonalStepProps) {
         <FormField
           control={form.control}
           name="about"
-          render={({ field }) => (
+          render={({ field: { value = '', ...field } }) => (
             <FormItem>
               <FormLabel>Sobre</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="Diga para os recrutadores sobre você, suas metas, e quais são seus objetivos"
                   className="min-h-[120px]"
+                  value={value}
                   {...field}
                 />
               </FormControl>
@@ -113,11 +127,15 @@ export function PersonalStep({}: PersonalStepProps) {
             <FormField
               control={form.control}
               name="social.linkedin"
-              render={({ field }) => (
+              render={({ field: { value = '', ...field } }) => (
                 <FormItem>
                   <FormLabel>LinkedIn</FormLabel>
                   <FormControl>
-                    <Input placeholder="https://linkedin.com/in/" {...field} />
+                    <Input
+                      placeholder="https://linkedin.com/in/"
+                      value={value}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -127,12 +145,13 @@ export function PersonalStep({}: PersonalStepProps) {
             <FormField
               control={form.control}
               name="social.github"
-              render={({ field }) => (
+              render={({ field: { value = '', ...field } }) => (
                 <FormItem>
                   <FormLabel>GitHub</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="https://github.com/seunome"
+                      value={value}
                       {...field}
                     />
                   </FormControl>
@@ -144,12 +163,13 @@ export function PersonalStep({}: PersonalStepProps) {
             <FormField
               control={form.control}
               name="social.twitter"
-              render={({ field }) => (
+              render={({ field: { value = '', ...field } }) => (
                 <FormItem>
                   <FormLabel>Twitter</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="https://twitter.com/seunome"
+                      value={value}
                       {...field}
                     />
                   </FormControl>
@@ -161,11 +181,15 @@ export function PersonalStep({}: PersonalStepProps) {
             <FormField
               control={form.control}
               name="social.portfolio"
-              render={({ field }) => (
+              render={({ field: { value = '', ...field } }) => (
                 <FormItem>
                   <FormLabel>Portfolio</FormLabel>
                   <FormControl>
-                    <Input placeholder="https://seusite.com" {...field} />
+                    <Input
+                      placeholder="https://seusite.com"
+                      value={value}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
