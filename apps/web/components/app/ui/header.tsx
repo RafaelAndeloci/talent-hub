@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { GraduationCap } from "lucide-react";
-import Link from "next/link";
+import { Button } from '@/components/ui/button'
+import { GraduationCap } from 'lucide-react'
+import Link from 'next/link'
 
 export function Header() {
   return (
@@ -48,13 +48,13 @@ export function Header() {
 
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" asChild>
-            <Link href="/login" aria-label="Log in to your account">
-              Log in
+            <Link href="/login" aria-label="Entrar na sua conta">
+              Entrar
             </Link>
           </Button>
           <Button size="sm" asChild>
-            <Link href="/register" aria-label="Create a new account">
-              Register
+            <Link href="/register" aria-label="Crie sua conta">
+              Cadastre-se
             </Link>
           </Button>
         </div>
@@ -90,5 +90,5 @@ export function Header() {
         </nav>
       </div>
     </header>
-  );
+  )
 }
