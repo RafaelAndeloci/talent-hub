@@ -3,6 +3,7 @@
 import {
   academicSchema,
   CandidateForm,
+  contactAddressSchema,
   languagesAndSkillsSchema,
   personalInfoSchema,
   preferencesSchema,
@@ -21,6 +22,7 @@ import {
 import { z } from 'zod'
 export type FormSteps =
   | 'personal'
+  | 'contactAddress'
   | 'preferences'
   | 'academic'
   | 'professional'
@@ -53,6 +55,7 @@ export function RegisterCandidateContextProvider({
   const [currentStep, setCurrentStep] = useState<FormSteps>('personal')
   const steps: FormSteps[] = [
     'personal',
+    'contactAddress',
     'preferences',
     'academic',
     'professional',
@@ -81,6 +84,8 @@ export function RegisterCandidateContextProvider({
     switch (step) {
       case 'personal':
         return personalInfoSchema
+      case 'contactAddress':
+        return contactAddressSchema
       case 'academic':
         return academicSchema
       case 'preferences':
