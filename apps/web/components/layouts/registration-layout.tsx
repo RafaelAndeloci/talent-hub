@@ -1,18 +1,18 @@
-"use client";
+'use client'
 
-import { cn } from "@/lib/utils";
-import { ChevronRight, GraduationCap } from "lucide-react";
-import Link from "next/link";
-import type React from "react";
-import { Button } from "../ui/button";
+import { cn } from '@/lib/utils'
+import { ChevronRight, GraduationCap } from 'lucide-react'
+import Link from 'next/link'
+import type React from 'react'
+import { Button } from '../ui/button'
 
 interface RegistrationLayoutAltProps {
-  children: React.ReactNode;
-  title: string;
-  subtitle: string;
-  currentStep?: number;
-  totalSteps?: number;
-  steps?: { title: string; icon: React.ReactNode }[];
+  children: React.ReactNode
+  title: string
+  subtitle: string
+  currentStep?: number
+  totalSteps?: number
+  steps?: { title: string; icon: React.ReactNode }[]
 }
 
 export function RegistrationLayout({
@@ -42,7 +42,7 @@ export function RegistrationLayout({
               </Link>
             </Button>
             <div className="text-sm">
-              Já tem uma conta?{" "}
+              Já tem uma conta?{' '}
               <Link
                 href="/login"
                 className="text-primary font-medium hover:underline"
@@ -82,19 +82,19 @@ export function RegistrationLayout({
                   <div
                     key={index}
                     className={cn(
-                      "bg-background relative flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all",
+                      'bg-background relative flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all',
                       index + 1 < currentStep
-                        ? "border-primary bg-primary text-primary-foreground"
+                        ? 'border-primary bg-primary text-primary-foreground'
                         : index + 1 === currentStep
-                          ? "border-primary text-primary"
-                          : "border-muted-foreground/30 text-muted-foreground/50",
+                          ? 'border-primary text-primary'
+                          : 'border-muted-foreground/30 text-muted-foreground/50'
                     )}
                   >
                     {step.icon}
                     <span
                       className={cn(
-                        "absolute -bottom-6 left-1/2 w-max -translate-x-1/2 text-xs font-medium text-neutral-600",
-                        index + 1 === currentStep && "text-foreground",
+                        'absolute -bottom-6 left-1/2 w-max -translate-x-1/2 text-xs font-medium text-neutral-600',
+                        index + 1 === currentStep && 'text-foreground'
                       )}
                     >
                       {step.title}
@@ -157,5 +157,5 @@ export function RegistrationLayout({
         </footer>
       </div>
     </div>
-  );
+  )
 }

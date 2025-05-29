@@ -1,73 +1,135 @@
-"use client";
+'use client'
 
-import { CreateCandidateRequest } from "@/types/app/register/candidate/create-candidate-request";
-import { ContextError } from "@/types/errors/contexts/context-error";
-import { createContext, ReactNode, useContext, useState } from "react";
-
+import {
+  academicSchema,
+  CandidateForm,
+  contactAddressSchema,
+  languagesAndSkillsSchema,
+  personalInfoSchema,
+  preferencesSchema,
+  professionalSchema,
+} from '@/types/app/register/candidate/form/schemas'
+import { ContextError } from '@/types/errors/contexts/context-error'
+import {
+  createContext,
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useCallback,
+  useContext,
+  useState,
+} from 'react'
+import { z } from 'zod'
 export type FormSteps =
-  | "personal-info"
-  | "address-and-contact"
-  | "professional-info"
-  | "education-info"
-  | "experience-and-skills";
+  | 'personal'
+  | 'contactAddress'
+  | 'preferences'
+  | 'academic'
+  | 'professional'
+  | 'languages'
 
 interface RegisterCandidateContextProps {
-  goToStep(step: FormSteps): void;
-  updateFormData(values: Partial<CreateCandidateRequest>): void;
-  formData: Partial<CreateCandidateRequest> | undefined;
-  currentStep: FormSteps;
+  currentStep: FormSteps
+  steps: FormSteps[]
+  goToStep: (step: FormSteps) => void
+  nextStep: () => void
+  prevStep: () => void
+  isFirstStep: boolean
+  isLastStep: boolean
+  formData: Partial<CandidateForm>
+  setFormData: Dispatch<SetStateAction<Partial<CandidateForm>>>
+  getStepSchema: (step: FormSteps) => any
 }
 
 export const RegisterCandidateContext =
-  createContext<RegisterCandidateContextProps | null>(null);
+  createContext<RegisterCandidateContextProps | null>(null)
 
 interface RegisterCandidateContextProviderProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
 export function RegisterCandidateContextProvider({
   children,
 }: RegisterCandidateContextProviderProps) {
-  const [currentStep, setCurrentStep] = useState<FormSteps>("personal-info");
-  const [formData, setFormData] =
-    useState<Partial<CreateCandidateRequest | undefined>>(undefined);
+  const [formData, setFormData] = useState<Partial<CandidateForm>>({})
+  const [currentStep, setCurrentStep] = useState<FormSteps>('personal')
+  const steps: FormSteps[] = [
+    'personal',
+    'contactAddress',
+    'preferences',
+    'academic',
+    'professional',
+    'languages',
+  ]
 
-  function goToStep(step: FormSteps) {
-    setCurrentStep(step);
-  }
-
-  function updateFormData(values: Partial<CreateCandidateRequest>) {
-    if (formData === undefined) {
-      setFormData(values);
-      return;
+  const currentStepIndex = steps.indexOf(currentStep)
+  const isFirstStep = currentStepIndex === 0
+  const isLastStep = currentStepIndex === steps.length - 1
+  const nextStep = useCallback(() => {
+    if (!isLastStep) {
+      setCurrentStep(steps[currentStepIndex + 1])
     }
+  }, [currentStep, steps])
+  const prevStep = useCallback(() => {
+    if (!isFirstStep) {
+      setCurrentStep(steps[currentStepIndex - 1])
+    }
+  }, [currentStep, steps])
 
-    setFormData((prev) => ({ ...prev, ...values }));
+  const goToStep = (step: FormSteps) => {
+    setCurrentStep(step)
   }
+
+  function getCurrentSchemaGeneric(step: FormSteps) {
+    switch (step) {
+      case 'personal':
+        return personalInfoSchema
+      case 'contactAddress':
+        return contactAddressSchema
+      case 'academic':
+        return academicSchema
+      case 'preferences':
+        return preferencesSchema
+      case 'professional':
+        return professionalSchema
+      case 'languages':
+        return languagesAndSkillsSchema
+      default:
+        return z.object({})
+    }
+  }
+
+  const getStepSchema = useCallback(getCurrentSchemaGeneric, [])
 
   return (
     <RegisterCandidateContext.Provider
       value={{
+        currentStep,
+        nextStep,
+        prevStep,
+        steps,
         goToStep,
         formData,
-        updateFormData,
-        currentStep,
+        setFormData,
+        isFirstStep,
+        isLastStep,
+        getStepSchema,
       }}
     >
       {children}
     </RegisterCandidateContext.Provider>
-  );
+  )
 }
 
 export function useRegisterCandidate() {
-  const ctx = useContext(RegisterCandidateContext);
+  const ctx = useContext(RegisterCandidateContext)
 
   if (!ctx) {
     throw new ContextError(
-      "RegisterCandidateContext",
-      useRegisterCandidate.name,
-    );
+      'RegisterCandidateContext',
+      useRegisterCandidate.name
+    )
   }
 
-  return ctx;
+  return ctx
 }
