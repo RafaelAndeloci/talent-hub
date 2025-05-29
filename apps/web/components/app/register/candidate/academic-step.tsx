@@ -23,16 +23,24 @@ import {
 } from '@/types/app/register/candidate/form/schemas'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
+import { FormNavigationButtons } from './form-navigation-buttons'
 
 interface AcademicStepProps {}
 export function AcademicStep({}: AcademicStepProps) {
-  const { formData, currentStep } = useRegisterCandidate()
+  const { formData, setFormData, currentStep, nextStep } =
+    useRegisterCandidate()
   const form = useForm<AcademicStepSchema>({
     resolver: zodResolver(academicSchema),
     defaultValues: formData.academic ?? undefined,
   })
 
-  function onSubmit(data: AcademicStepSchema) {}
+  const isValid = form.formState.isValid
+  function onSubmit(academic: AcademicStepSchema) {
+    if (isValid) {
+      setFormData((prev) => ({ ...prev, academic }))
+      nextStep()
+    }
+  }
 
   const isCurrentlyStudying =
     form.watch('isCurrent') && currentStep === 'academic'
@@ -43,14 +51,18 @@ export function AcademicStep({}: AcademicStepProps) {
           <FormField
             control={form.control}
             name="courseName"
-            render={({ field }) => (
+            render={({ field: { value = '', ...field } }) => (
               <FormItem className="sm:col-span-2">
-                <FormLabel>Course Name</FormLabel>
+                <FormLabel>Nome do curso</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g., Computer Science" {...field} />
+                  <Input
+                    placeholder="Digite o nome do seu curso..."
+                    value={value}
+                    {...field}
+                  />
                 </FormControl>
                 <FormDescription>
-                  Your field of study or course name
+                  Seu campo de estudo ou o nome do seu curso
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -60,17 +72,18 @@ export function AcademicStep({}: AcademicStepProps) {
           <FormField
             control={form.control}
             name="institutionName"
-            render={({ field }) => (
+            render={({ field: { value = '', ...field } }) => (
               <FormItem className="sm:col-span-2">
-                <FormLabel>Institution Name</FormLabel>
+                <FormLabel>Nome da instituição</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="e.g., University of California"
+                    placeholder="Digite o nome da sua instituição de ensino"
+                    value={value}
                     {...field}
                   />
                 </FormControl>
                 <FormDescription>
-                  The school or university you attended
+                  Nome da universidade ou escola
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -80,28 +93,25 @@ export function AcademicStep({}: AcademicStepProps) {
           <FormField
             control={form.control}
             name="degreeType"
-            render={({ field }) => (
+            render={({ field: { value = '', ...field } }) => (
               <FormItem>
-                <FormLabel>Degree Type</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
+                <FormLabel>Tipo de graduação</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select degree type" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="High School">High School</SelectItem>
-                    <SelectItem value="Bachelor">Bachelor</SelectItem>
-                    <SelectItem value="Master">Master</SelectItem>
-                    <SelectItem value="PhD">PhD</SelectItem>
-                    <SelectItem value="Technologist">Technologist</SelectItem>
+                    <SelectItem value="High School">Ensino médio</SelectItem>
+                    <SelectItem value="Bachelor">Bacharel</SelectItem>
+                    <SelectItem value="Master">Mestrado</SelectItem>
+                    <SelectItem value="PhD">Pós Doutorado</SelectItem>
+                    <SelectItem value="Technologist">Tecnólogo</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormDescription>
-                  Your degree or certification type
+                  O tipo de graduação em que você serviu
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -111,20 +121,23 @@ export function AcademicStep({}: AcademicStepProps) {
           <FormField
             control={form.control}
             name="gradePointAverage"
-            render={({ field }) => (
+            render={({ field: { value = '', ...field } }) => (
               <FormItem>
-                <FormLabel>Grade Point Average</FormLabel>
+                <FormLabel>Média adquirida no curso</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
-                    placeholder="e.g., 3.5"
+                    placeholder="Máximo 10"
                     step="0.01"
                     min="0"
-                    max="4"
+                    max="10"
+                    value={value}
                     {...field}
                   />
                 </FormControl>
-                <FormDescription>Your GPA (if applicable)</FormDescription>
+                <FormDescription>
+                  Sua nota média no curso (se aplicável)
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -133,17 +146,20 @@ export function AcademicStep({}: AcademicStepProps) {
           <FormField
             control={form.control}
             name="startDate"
-            render={({ field }) => (
+            render={({ field: { value = '', ...field } }) => (
               <FormItem>
-                <FormLabel>Start Date</FormLabel>
+                <FormLabel>Data de início</FormLabel>
                 <FormControl>
                   <Input
                     type="date"
+                    value={value}
                     {...field}
                     max={new Date().toISOString().split('T')[0]}
                   />
                 </FormControl>
-                <FormDescription>When you started your studies</FormDescription>
+                <FormDescription>
+                  Quando você começou os seus estudos
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -152,12 +168,13 @@ export function AcademicStep({}: AcademicStepProps) {
           <FormField
             control={form.control}
             name="endDate"
-            render={({ field }) => (
+            render={({ field: { value = '', ...field } }) => (
               <FormItem>
-                <FormLabel>End Date (if completed)</FormLabel>
+                <FormLabel>Data final (caso completado)</FormLabel>
                 <FormControl>
                   <Input
                     type="date"
+                    value={value}
                     {...field}
                     disabled={isCurrentlyStudying}
                     min={form.watch('startDate') || ''}
@@ -166,35 +183,32 @@ export function AcademicStep({}: AcademicStepProps) {
                 </FormControl>
                 <FormDescription>
                   {isCurrentlyStudying
-                    ? 'This field is disabled because you are currently studying'
-                    : 'When you completed or expect to complete your studies'}
+                    ? 'Este campo está desabilitado pois você ainda está cursando-o'
+                    : 'Quando você completou o curso ou está previsto terminar'}
                 </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
-
         <FormField
           control={form.control}
           name="isCurrent"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-y-0 space-x-3">
+          render={({ field: { value = false, ...field } }) => (
+            <FormItem className="mt-2 flex flex-row items-start space-y-0 space-x-3">
               <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
+                <Checkbox checked={value} onCheckedChange={field.onChange} />
               </FormControl>
               <div className="space-y-1 leading-none">
-                <FormLabel>Currently Studying</FormLabel>
+                <FormLabel>Cursando atualmente</FormLabel>
                 <FormDescription>
-                  Check if you are still studying at this institution
+                  Marque caso esteja atualmente cursando
                 </FormDescription>
               </div>
             </FormItem>
           )}
         />
+        <FormNavigationButtons />
       </form>
     </Form>
   )

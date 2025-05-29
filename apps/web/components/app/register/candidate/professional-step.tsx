@@ -24,6 +24,7 @@ import {
 } from '@/types/app/register/candidate/form/schemas'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
+import { FormNavigationButtons } from './form-navigation-buttons'
 
 interface ProfessionalStepProps {}
 export function ProfessionalStep({}: ProfessionalStepProps) {
@@ -47,11 +48,13 @@ export function ProfessionalStep({}: ProfessionalStepProps) {
               name="position"
               render={({ field }) => (
                 <FormItem className="sm:col-span-2">
-                  <FormLabel>Position</FormLabel>
+                  <FormLabel>Cargo</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., Software Engineer" {...field} />
+                    <Input placeholder="E.x: Software Engineer" {...field} />
                   </FormControl>
-                  <FormDescription>Your job title or position</FormDescription>
+                  <FormDescription>
+                    O seu cargo atual/mais recente
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -221,6 +224,7 @@ export function ProfessionalStep({}: ProfessionalStepProps) {
               </FormItem>
             )}
           />
+          <FormNavigationButtons skip />
         </form>
       </Form>
     </div>
