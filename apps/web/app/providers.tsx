@@ -1,9 +1,15 @@
-import { Toast, ToastProvider } from "@/components/ui/toast";
-import { ReactNode } from "react";
+'use client'
+import { Sonner } from '@/components/ui/sonner'
+import { ReactNode } from 'react'
 
 interface ProvidersProps {
-  children?: ReactNode;
+  children?: ReactNode
 }
 export function Providers({ children }: ProvidersProps) {
-  return <ToastProvider>{children}</ToastProvider>;
+  return (
+    <>
+      {children}
+      <Sonner richColors theme="light" position="bottom-right" />
+    </>
+  )
 }

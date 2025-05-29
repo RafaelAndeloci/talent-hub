@@ -26,14 +26,14 @@ export function FormNavigationButtons({
       </Button>
       <div className="flex items-center gap-3">
         {skip && (
-          <Button variant="ghost" onClick={nextStep}>
+          <Button variant="ghost" type="button" onClick={nextStep}>
             Pular
           </Button>
         )}
 
         <Button className="group" type="submit">
           {isLastStep ? (
-            'Complete Registration'
+            'Completar cadastro'
           ) : (
             <>
               Próximo
